@@ -24,9 +24,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        app:labelVisibilityMode="labeled"
+        app:labelVisibilityMode="selected"
+        app:itemIconTint="@color/text_color"
         android:background="@color/background_color"
         app:menu="@menu/bottom_navigation_menu"
+        app:itemRippleColor="@color/color_pink"
         />
 
 </RelativeLayout>

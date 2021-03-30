@@ -10,6 +10,7 @@
         <item name="colorSecondaryVariant">#EE6E97</item>
         <item name="colorOnSecondary">@color/text_color</item>
         <item name="android:textColor">@color/text_color</item>
+        <item name="android:textColorSecondary">@color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">@color/background_color</item>
         <!-- Customize your theme here. -->

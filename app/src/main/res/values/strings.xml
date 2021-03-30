@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Phoco - The Image Searching App</string>
+    <string name="search">Search</string>
+    <string name="imageview">imageView</string>
 </resources>
