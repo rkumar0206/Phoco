@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.rohitthebest.phoco_theimagesearchingapp.R
@@ -50,6 +49,12 @@ class MainActivity : AppCompatActivity() {
                     handleButtons(R.id.profileFragment)
                 }
 
+                R.id.searchFragment -> {
+
+                    showBottomNav()
+                    handleButtons(R.id.searchFragment)
+                }
+
                 else -> hideBottomNav()
             }
         }
@@ -60,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigationView.menu.findItem(R.id.homeFragment).isEnabled = true
         binding.bottomNavigationView.menu.findItem(R.id.favouritesFragment).isEnabled = true
         binding.bottomNavigationView.menu.findItem(R.id.profileFragment).isEnabled = true
+        binding.bottomNavigationView.menu.findItem(R.id.searchFragment).isEnabled = true
 
         binding.bottomNavigationView.menu.findItem(id).isEnabled = false
     }

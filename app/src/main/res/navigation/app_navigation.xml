@@ -15,4 +15,8 @@
         android:id="@+id/profileFragment"
         android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.ProfileFragment"
         android:label="ProfileFragment" />
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.SearchFragment"
+        android:label="SearchFragment" />
 </navigation>
