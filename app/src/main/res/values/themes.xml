@@ -3,7 +3,7 @@
     <style name="Theme.PhocoTheImageSearchingApp" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/button_color</item>
-        <item name="colorPrimaryVariant">@color/background_color</item>
+        <item name="colorPrimaryVariant">@color/button_color</item>
         <item name="colorOnPrimary">@color/text_color</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/color_pink</item>
@@ -11,7 +11,7 @@
         <item name="colorOnSecondary">@color/text_color</item>
         <item name="android:textColor">@color/text_color</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@color/background_color</item>
         <!-- Customize your theme here. -->
         <item name="fontFamily">@font/sumana</item>
     </style>
