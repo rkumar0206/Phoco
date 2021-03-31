@@ -2,6 +2,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.api
 
 import com.rohitthebest.phoco_theimagesearchingapp.BuildConfig.UNSPLASH_CLIENT_ID
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
@@ -25,7 +26,7 @@ interface UnsplashAPI {
     @GET("photos/{id}")
     suspend fun getPhotoByID(
             @Path("id") id: String
-    ): UnsplashPhoto
+    ): Response<UnsplashPhoto>
 
 
     //getting photos related to search query
@@ -44,7 +45,7 @@ interface UnsplashAPI {
     @GET("photos/random")
     suspend fun getRandomPhotos(
             @Query("count") count: Int = 30
-    ): UnsplashResponse
+    ): Response<UnsplashResponse>
 
 
 }

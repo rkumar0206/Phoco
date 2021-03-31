@@ -22,5 +22,5 @@ class UnsplashRepository @Inject constructor(
 
     suspend fun getImageByID(id: String) = unsplashApi.getPhotoByID(id)
 
-    suspend fun getRandomImages(count: Int = 30) = unsplashApi.getRandomPhotos(count).results
+    suspend fun getRandomImages(count: Int = 30) = unsplashApi.getRandomPhotos(count)
 }
