@@ -8,7 +8,7 @@ import retrofit2.http.Query
 
 interface UnsplashAPI {
 
-    //for getting the list of photos
+   /* //for getting the list of photos
     @Headers("Accept-Version: v1", "Authorization: Client-ID $UNSPLASH_CLIENT_ID")
     @GET("photos")
     suspend fun getPhotos(
@@ -17,7 +17,7 @@ interface UnsplashAPI {
             @Query("order_by") orderBy: String = "latest"
     ): UnsplashResponse
 
-
+*/
     //Retrieving single photo using id
     @Headers("Accept-Version: v1", "Authorization: Client-ID $UNSPLASH_CLIENT_ID")
     @GET("photos/:id")
