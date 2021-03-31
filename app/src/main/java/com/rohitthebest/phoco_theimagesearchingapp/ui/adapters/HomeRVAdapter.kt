@@ -27,6 +27,14 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
                             .transition(DrawableTransitionOptions.withCrossFade())
                             .error(R.drawable.ic_outline_error_outline_24)
                             .into(image)
+
+                    Glide.with(binding.view)
+                            .load(unsplashPhoto.user.profile_image.small)
+                            .centerInside()
+                            .error(R.drawable.ic_outline_account_circle_24)
+                            .into(imageUserImage)
+
+                    imageUserNameTV.text = it.user.username
                 }
             }
         }
