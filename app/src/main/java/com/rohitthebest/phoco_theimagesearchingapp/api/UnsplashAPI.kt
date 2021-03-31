@@ -1,8 +1,10 @@
 package com.rohitthebest.phoco_theimagesearchingapp.api
 
 import com.rohitthebest.phoco_theimagesearchingapp.BuildConfig.UNSPLASH_CLIENT_ID
+import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import retrofit2.http.GET
 import retrofit2.http.Headers
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 
@@ -20,10 +22,10 @@ interface UnsplashAPI {
 */
     //Retrieving single photo using id
     @Headers("Accept-Version: v1", "Authorization: Client-ID $UNSPLASH_CLIENT_ID")
-    @GET("photos/:id")
+    @GET("photos/{id}")
     suspend fun getPhotoByID(
-            @Query("id") id: String
-    ): UnsplashResponse
+            @Path("id") id: String
+    ): UnsplashPhoto
 
 
     //getting photos related to search query

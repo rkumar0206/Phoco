@@ -7,7 +7,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class UnplashRepository @Inject constructor(
+class UnsplashRepository @Inject constructor(
         private val unsplashApi: UnsplashAPI
 ) {
 
@@ -20,4 +20,7 @@ class UnplashRepository @Inject constructor(
             pagingSourceFactory = { UnsplashPagingSource(unsplashApi, query) }
     ).flow
 
+    suspend fun getImageByID(id: String) = unsplashApi.getPhotoByID(id)
+
+    suspend fun getRandomImages(count: Int = 30) = unsplashApi.getRandomPhotos(count).results
 }

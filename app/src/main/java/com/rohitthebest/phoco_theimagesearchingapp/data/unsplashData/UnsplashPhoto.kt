@@ -5,7 +5,7 @@ data class UnsplashPhoto(
         val width: Int,
         val height: Int,
         val color: String,
-        val description: String? = null,
+        val alt_description: String? = null,
         val urls: UnsplashPhotoUrls,
         val links: Links,
         val user: UnsplashUser
