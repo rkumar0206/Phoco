@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.data
+package com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData
 
 data class UnsplashPhoto(
         val id: String,
@@ -34,7 +34,7 @@ data class UnsplashPhoto(
             val total_collections : Int,
             val total_photos : Int,
 
-    ) {
+            ) {
         val attributionUrl get() = "https://unsplash.com/$username?utm_source=ImageSearchApp&utm_medium=referral"
     }
 

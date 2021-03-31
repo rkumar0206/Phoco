@@ -3,6 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id "androidx.navigation.safeargs.kotlin"
+    id 'dagger.hilt.android.plugin'
 }
 
 android {
@@ -17,7 +18,10 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "UNSPLASH_CLIENT_ID", MyUnsplashApiKey)
     }
+
 
     buildTypes {
         release {
@@ -37,6 +41,7 @@ android {
 
         viewBinding true
     }
+
 }
 
 dependencies {

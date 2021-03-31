@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.data
+package com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
