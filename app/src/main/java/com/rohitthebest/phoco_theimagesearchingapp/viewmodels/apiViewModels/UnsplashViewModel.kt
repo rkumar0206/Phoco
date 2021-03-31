@@ -3,7 +3,6 @@ package com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
-import com.rohitthebest.phoco_theimagesearchingapp.api.UnsplashResponse
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashRepository
@@ -29,7 +28,7 @@ class UnsplashViewModel @ViewModelInject constructor(
     //for getting image by id
     private val _unplashImageById = MutableLiveData<Resources<UnsplashPhoto>>()
 
-    val unplashImageById: LiveData<Resources<UnsplashPhoto>> get() = _unplashImageById
+    val unsplashImageById: LiveData<Resources<UnsplashPhoto>> get() = _unplashImageById
 
     fun getUnsplashImageByID(id: String) {
 
@@ -60,8 +59,8 @@ class UnsplashViewModel @ViewModelInject constructor(
 
     //for getting random images
 
-    private val _unsplashRandomImage = MutableLiveData<Resources<UnsplashResponse>>()
-    val unsplashRandomImage: LiveData<Resources<UnsplashResponse>> get() = _unsplashRandomImage
+    private val _unsplashRandomImage = MutableLiveData<Resources<ArrayList<UnsplashPhoto>>>()
+    val unsplashRandomImage: LiveData<Resources<ArrayList<UnsplashPhoto>>> get() = _unsplashRandomImage
 
     fun getRandomUnsplashImage(count: Int = 30) {
 

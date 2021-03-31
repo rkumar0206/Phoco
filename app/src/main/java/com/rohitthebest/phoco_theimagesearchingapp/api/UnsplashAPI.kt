@@ -45,7 +45,7 @@ interface UnsplashAPI {
     @GET("photos/random")
     suspend fun getRandomPhotos(
             @Query("count") count: Int = 30
-    ): Response<UnsplashResponse>
+    ): Response<ArrayList<UnsplashPhoto>>
 
 
 }

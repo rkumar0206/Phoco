@@ -10,29 +10,35 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-@Qualifier
-annotation class UnsplashImageAPI
+/*@Qualifier
+annotation class UnsplashImageAPI*/
 
 @Module
 @InstallIn(ApplicationComponent::class)
 object Module {
 
-    val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
-    @Provides
     @Singleton
-    @UnsplashImageAPI
-    fun provideUnsplashOkHttpClient(): OkHttpClient = OkHttpClient.Builder().addInterceptor(interceptor).build()
+    @Provides
+    fun provideUnsplashOkHttpClient(): OkHttpClient {
 
-    @Provides
+        val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+
+        return OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .readTimeout(25, TimeUnit.SECONDS)
+                .build()
+    }
+
     @Singleton
-    @UnsplashImageAPI
+    @Provides
     fun provideUnsplashRetrofit(
             okHttpClient: OkHttpClient
-    ) = Retrofit.Builder()
+    ): Retrofit = Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl(UNSPLASH_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -40,9 +46,8 @@ object Module {
 
     @Provides
     @Singleton
-    @UnsplashImageAPI
     fun provideUnsplashAPI(
             retrofit: Retrofit
-    ) = retrofit.create(UnsplashAPI::class.java)
+    ): UnsplashAPI = retrofit.create(UnsplashAPI::class.java)
 
 }

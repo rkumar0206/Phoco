@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.rohitthebest.phoco_theimagesearchingapp">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:name=".PhocoApplication"
         android:allowBackup="true"
