@@ -19,7 +19,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:background="#B3B3B3" />
+            android:background="#B3B3B3"
+            android:contentDescription="@string/imageview" />
 
         <View
             android:id="@+id/view"
@@ -55,7 +56,8 @@
             app:layout_constraintBottom_toBottomOf="@id/view"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/view"
-            app:srcCompat="@drawable/ic_outline_account_circle_24" />
+            app:srcCompat="@drawable/ic_outline_account_circle_24"
+            android:contentDescription="@string/imageview" />
 
         <ImageView
             android:id="@+id/showMoreBtn"
@@ -66,7 +68,8 @@
             app:layout_constraintBottom_toBottomOf="@id/view"
             app:layout_constraintEnd_toEndOf="@+id/view"
             app:layout_constraintTop_toTopOf="@+id/view"
-            app:srcCompat="@drawable/ic_outline_read_more_24" />
+            app:srcCompat="@drawable/ic_outline_read_more_24"
+            android:contentDescription="@string/imageview" />
 
         <ImageView
             android:id="@+id/addToFavouritesBtn"
@@ -77,7 +80,8 @@
             app:layout_constraintBottom_toBottomOf="@id/view"
             app:layout_constraintEnd_toStartOf="@+id/showMoreBtn"
             app:layout_constraintTop_toTopOf="@+id/view"
-            app:srcCompat="@drawable/ic_baseline_favorite_border_24" />
+            app:srcCompat="@drawable/ic_baseline_favorite_border_24"
+            android:contentDescription="@string/imageview" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

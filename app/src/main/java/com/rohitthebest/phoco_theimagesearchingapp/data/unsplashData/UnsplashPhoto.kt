@@ -1,15 +1,20 @@
 package com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+//making this as an entity class for saving the list which is displayed in the HomeFragment
+@Entity(tableName = "unsplash_image_table")
 data class UnsplashPhoto(
-        val id: String,
+        @PrimaryKey val id: String,
         val width: Int,
         val height: Int,
         val color: String,
         val alt_description: String? = null,
         val urls: UnsplashPhotoUrls,
         val links: Links,
-        val user: UnsplashUser
-
+        val user: UnsplashUser,
+        var isImageSaved : Boolean = false
 ) {
 
     data class UnsplashPhotoUrls(
