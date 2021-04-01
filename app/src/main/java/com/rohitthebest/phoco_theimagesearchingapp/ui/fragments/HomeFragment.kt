@@ -70,10 +70,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                     if (lastDateSaved == getCurrentDate()) {
 
+                        if (!requireContext().isInternetAvailable()) {
+
+                            requireContext().showNoInternetMessage()
+                        }
+
                         setUpRecyclerView(it)
                     } else {
 
-                        //todo : clear the cache before getting the new list
+                        //clearing the app cache
+                        requireContext().clearAppCache()
 
                         unsplashViewModel.getRandomUnsplashImage()
                         observeRandomImages()

@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.NO_INTERNET_MESSAGE
 import es.dmoral.toasty.Toasty
 import java.text.SimpleDateFormat
 import java.util.*
@@ -96,6 +97,17 @@ fun Context.isInternetAvailable(): Boolean {
     return CheckNetworkConnection().isInternetAvailable(this)
 }
 
+
+fun Context.showNoInternetMessage() {
+
+    showToasty(this, NO_INTERNET_MESSAGE, ToastyType.ERROR)
+}
+
+fun Context.clearAppCache() {
+
+    this.cacheDir.deleteRecursively()
+    Log.i(TAG, "clearAppCache: Cleared Successfully")
+}
 
 @SuppressLint("SimpleDateFormat")
 fun getCurrentDate(): String {
