@@ -1,22 +1,23 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentHomeBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.HomeRVAdapter
-import com.rohitthebest.phoco_theimagesearchingapp.utils.ToastyType
-import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
-import com.rohitthebest.phoco_theimagesearchingapp.utils.show
-import com.rohitthebest.phoco_theimagesearchingapp.utils.showToasty
+import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -31,6 +32,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private var isRefreshEnabled = true
 
+    private var lastDateSaved: String? = ""
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -40,10 +43,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         binding.homeShimmerLayout.startShimmer()
 
+        loadUnplashPhotoSavedDate()
+
         getSavedUnsplashPhoto()
 
-        unsplashViewModel.getRandomUnsplashImage()
-        observeRandomImages()
     }
 
     private fun getSavedUnsplashPhoto() {
@@ -52,15 +55,26 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
             if (isRefreshEnabled) {
 
-                if (it.isEmpty()) {
+                if (it.isEmpty() || lastDateSaved == "") {
 
                     //call the api
+
+                    unsplashViewModel.getRandomUnsplashImage()
+                    observeRandomImages()
                 } else {
 
                     //check for the date
                     //if the date(which is saved in the datastore) is Today then send this list to adapter
                     // else call the api and delete all the data and insert the new list received by the api
 
+                    if (lastDateSaved == getCurrentDate()) {
+
+                        setUpRecyclerView(it)
+                    } else {
+
+                        unsplashViewModel.getRandomUnsplashImage()
+                        observeRandomImages()
+                    }
                 }
 
                 isRefreshEnabled = false
@@ -84,6 +98,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     binding.homeShimmerLayout.stopShimmer()
                     binding.homeShimmerLayoutNSV.hide()
 
+                    saveTheListToDatabase(it.data)
+
                     setUpRecyclerView(it.data)
                 }
 
@@ -101,6 +117,26 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
         })
     }
+
+    private fun saveTheListToDatabase(data: ArrayList<UnsplashPhoto>?) {
+
+        try {
+
+            data?.let {
+
+                unsplashPhotoViewModel.deleteAllUnsplashPhoto()
+
+                unsplashPhotoViewModel.insertUnsplashPhotoList(data)
+            }
+
+            saveUnsplashPhotoDate()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
 
     private fun setUpRecyclerView(listOfImages: List<UnsplashPhoto>?) {
 
@@ -125,6 +161,30 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             e.printStackTrace()
         }
 
+    }
+
+    private fun saveUnsplashPhotoDate() {
+
+        val sharedPreference = requireActivity().getSharedPreferences(
+            UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME,
+            Context.MODE_PRIVATE
+        )
+
+        val edit = sharedPreference.edit()
+
+        edit.putString(UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY, getCurrentDate())
+
+        edit.apply()
+    }
+
+    private fun loadUnplashPhotoSavedDate() {
+
+        val sharedPreference = requireActivity().getSharedPreferences(
+            UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME,
+            Context.MODE_PRIVATE
+        )
+
+        lastDateSaved = sharedPreference.getString(UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY, "")
     }
 
     override fun onDestroyView() {

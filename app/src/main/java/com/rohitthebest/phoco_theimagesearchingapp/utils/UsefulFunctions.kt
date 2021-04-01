@@ -1,11 +1,13 @@
 package com.rohitthebest.phoco_theimagesearchingapp.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import es.dmoral.toasty.Toasty
-import java.lang.IllegalStateException
+import java.text.SimpleDateFormat
+import java.util.*
 
 private const val TAG = "UsefulFunctions"
 
@@ -84,8 +86,15 @@ fun View.invisible() {
 
         this.visibility = View.INVISIBLE
 
-    }catch (e : IllegalStateException) {
+    } catch (e: IllegalStateException) {
         e.printStackTrace()
     }
+}
+
+@SuppressLint("SimpleDateFormat")
+fun getCurrentDate(): String {
+
+    val sdf = SimpleDateFormat("dd/MM/yyyy")
+    return sdf.format(Date())
 }
 
