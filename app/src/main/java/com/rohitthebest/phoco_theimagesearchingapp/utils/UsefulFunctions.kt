@@ -2,8 +2,10 @@ package com.rohitthebest.phoco_theimagesearchingapp.utils
 
 import android.content.Context
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import es.dmoral.toasty.Toasty
+import java.lang.IllegalStateException
 
 private const val TAG = "UsefulFunctions"
 
@@ -52,6 +54,38 @@ fun showToasty(
             Toasty.normal(context, message, duration).show()
         }
 
+    }
+}
+
+fun View.hide() {
+
+    try {
+
+        this.visibility = View.GONE
+
+    }catch (e : IllegalStateException) {
+        e.printStackTrace()
+    }
+}
+fun View.show() {
+
+    try {
+
+        this.visibility = View.VISIBLE
+
+    }catch (e : IllegalStateException) {
+        e.printStackTrace()
+    }
+}
+
+fun View.invisible() {
+
+    try {
+
+        this.visibility = View.INVISIBLE
+
+    }catch (e : IllegalStateException) {
+        e.printStackTrace()
     }
 }
 

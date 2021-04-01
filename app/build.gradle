@@ -122,4 +122,7 @@ dependencies {
     //toasty
     implementation 'com.github.GrenderG:Toasty:1.5.0'
 
+    // dependancy for using facebook shimmer layout.
+    implementation "com.facebook.shimmer:shimmer:0.5.0"
+
 }

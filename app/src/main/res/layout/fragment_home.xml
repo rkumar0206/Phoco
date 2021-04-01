@@ -22,6 +22,56 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/homeShimmerLayoutNSV"
+        tools:visibility="visible"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/homeShimmerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:animationCache="true"
+            android:visibility="visible"
+            app:shimmer_repeat_mode="restart"
+            app:shimmer_shape="radial">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+                <include layout="@layout/adapter_home_recyclerview_shimmer_layout"/>
+
+            </LinearLayout>
+
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
@@ -29,6 +79,8 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         android:id="@+id/homeRV"
         tools:listitem="@layout/adapter_home_recyclerview"
+        tools:visibility="visible"
+        android:visibility="gone"
         />
 
 

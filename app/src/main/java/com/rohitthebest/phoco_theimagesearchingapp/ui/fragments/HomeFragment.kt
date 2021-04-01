@@ -11,7 +11,8 @@ import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPho
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentHomeBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.HomeRVAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.ToastyType
-import com.rohitthebest.phoco_theimagesearchingapp.utils.showToast
+import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
+import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 import com.rohitthebest.phoco_theimagesearchingapp.utils.showToasty
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -33,6 +34,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         homeAdapter = HomeRVAdapter()
 
+        binding.homeShimmerLayout.startShimmer()
+
         unsplashViewModel.getRandomUnsplashImage()
         observeRandomImages()
     }
@@ -45,14 +48,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                 is Resources.Loading -> {
 
-                    /*show loading spinner*/
-
-                    showToast(requireContext(), "Loading...")
+                    binding.homeShimmerLayout.startShimmer()
                 }
 
                 is Resources.Success -> {
 
-                    // hide loading spinner
+                    binding.homeShimmerLayout.stopShimmer()
+                    binding.homeShimmerLayoutNSV.hide()
 
                     setUpRecyclerView(it.data)
                 }
@@ -60,6 +62,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 else -> {
 
                     try {
+                        binding.homeShimmerLayout.stopShimmer()
+                        binding.homeShimmerLayoutNSV.hide()
 
                         showToasty(requireContext(), it.message.toString(), ToastyType.ERROR)
                     } catch (e: java.lang.Exception) {
@@ -73,6 +77,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun setUpRecyclerView(listOfImages: List<UnsplashPhoto>?) {
 
         try {
+
+            binding.homeRV.show()
 
             listOfImages?.let {
 
