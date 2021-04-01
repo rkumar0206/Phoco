@@ -6,6 +6,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.NO_INTERNET_MESSAGE
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.R
@@ -72,6 +73,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         setUpRecyclerView(it)
                     } else {
 
+                        //todo : clear the cache before getting the new list
+
                         unsplashViewModel.getRandomUnsplashImage()
                         observeRandomImages()
                     }
@@ -84,38 +87,44 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun observeRandomImages() {
 
-        unsplashViewModel.unsplashRandomImage.observe(viewLifecycleOwner, {
+        if (requireContext().isInternetAvailable()) {
 
-            when (it) {
+            unsplashViewModel.unsplashRandomImage.observe(viewLifecycleOwner, {
 
-                is Resources.Loading -> {
+                when (it) {
 
-                    binding.homeShimmerLayout.startShimmer()
-                }
+                    is Resources.Loading -> {
 
-                is Resources.Success -> {
+                        binding.homeShimmerLayout.startShimmer()
+                    }
 
-                    binding.homeShimmerLayout.stopShimmer()
-                    binding.homeShimmerLayoutNSV.hide()
+                    is Resources.Success -> {
 
-                    saveTheListToDatabase(it.data)
-
-                    setUpRecyclerView(it.data)
-                }
-
-                else -> {
-
-                    try {
                         binding.homeShimmerLayout.stopShimmer()
                         binding.homeShimmerLayoutNSV.hide()
 
-                        showToasty(requireContext(), it.message.toString(), ToastyType.ERROR)
-                    } catch (e: java.lang.Exception) {
-                        e.printStackTrace()
+                        saveTheListToDatabase(it.data)
+
+                        setUpRecyclerView(it.data)
+                    }
+
+                    else -> {
+
+                        try {
+                            binding.homeShimmerLayout.stopShimmer()
+                            binding.homeShimmerLayoutNSV.hide()
+
+                            showToasty(requireContext(), it.message.toString(), ToastyType.ERROR)
+                        } catch (e: java.lang.Exception) {
+                            e.printStackTrace()
+                        }
                     }
                 }
-            }
-        })
+            })
+        } else {
+
+            showToasty(requireContext(), NO_INTERNET_MESSAGE, ToastyType.ERROR)
+        }
     }
 
     private fun saveTheListToDatabase(data: ArrayList<UnsplashPhoto>?) {

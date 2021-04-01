@@ -91,6 +91,12 @@ fun View.invisible() {
     }
 }
 
+fun Context.isInternetAvailable(): Boolean {
+
+    return CheckNetworkConnection().isInternetAvailable(this)
+}
+
+
 @SuppressLint("SimpleDateFormat")
 fun getCurrentDate(): String {
 
