@@ -15,6 +15,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 import com.rohitthebest.phoco_theimagesearchingapp.utils.showToasty
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
+import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,8 +25,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val binding get() = _binding!!
 
     private val unsplashViewModel by viewModels<UnsplashViewModel>()
+    private val unsplashPhotoViewModel by viewModels<UnsplashPhotoViewModel>()
 
     private lateinit var homeAdapter: HomeRVAdapter
+
+    private var isRefreshEnabled = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,8 +40,32 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         binding.homeShimmerLayout.startShimmer()
 
+        getSavedUnsplashPhoto()
+
         unsplashViewModel.getRandomUnsplashImage()
         observeRandomImages()
+    }
+
+    private fun getSavedUnsplashPhoto() {
+
+        unsplashPhotoViewModel.getAllUnsplashPhoto().observe(viewLifecycleOwner, {
+
+            if (isRefreshEnabled) {
+
+                if (it.isEmpty()) {
+
+                    //call the api
+                } else {
+
+                    //check for the date
+                    //if the date(which is saved in the datastore) is Today then send this list to adapter
+                    // else call the api and delete all the data and insert the new list received by the api
+
+                }
+
+                isRefreshEnabled = false
+            }
+        })
     }
 
     private fun observeRandomImages() {
