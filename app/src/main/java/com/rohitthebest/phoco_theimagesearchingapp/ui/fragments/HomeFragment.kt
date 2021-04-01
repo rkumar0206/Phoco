@@ -48,6 +48,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         getSavedUnsplashPhoto()
 
+        binding.homeSwipeRefreshLayout.setOnRefreshListener {
+
+            binding.homeRV.hide()
+            binding.homeShimmerLayoutNSV.show()
+            makeNewAPIRequest()
+        }
     }
 
     private fun getSavedUnsplashPhoto() {
@@ -59,9 +65,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 if (it.isEmpty() || lastDateSaved == "") {
 
                     //call the api
-
-                    unsplashViewModel.getRandomUnsplashImage()
-                    observeRandomImages()
+                    makeNewAPIRequest()
                 } else {
 
                     //check for the date
@@ -78,17 +82,24 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         setUpRecyclerView(it)
                     } else {
 
-                        //clearing the app cache
-                        requireContext().clearAppCache()
-
-                        unsplashViewModel.getRandomUnsplashImage()
-                        observeRandomImages()
+                        //calling the api
+                        makeNewAPIRequest()
                     }
                 }
 
                 isRefreshEnabled = false
             }
         })
+    }
+
+    private fun makeNewAPIRequest() {
+
+        //clearing the app cache
+        requireContext().clearAppCache()
+
+        binding.homeSwipeRefreshLayout.isRefreshing = true
+        unsplashViewModel.getRandomUnsplashImage()
+        observeRandomImages()
     }
 
     private fun observeRandomImages() {
@@ -106,8 +117,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                     is Resources.Success -> {
 
-                        binding.homeShimmerLayout.stopShimmer()
-                        binding.homeShimmerLayoutNSV.hide()
+                        binding.homeSwipeRefreshLayout.isRefreshing = false
 
                         saveTheListToDatabase(it.data)
 
@@ -152,11 +162,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     }
 
-
     private fun setUpRecyclerView(listOfImages: List<UnsplashPhoto>?) {
 
         try {
 
+            binding.homeShimmerLayout.stopShimmer()
+            binding.homeShimmerLayoutNSV.hide()
+
+            binding.homeSwipeRefreshLayout.show()
             binding.homeRV.show()
 
             listOfImages?.let {
