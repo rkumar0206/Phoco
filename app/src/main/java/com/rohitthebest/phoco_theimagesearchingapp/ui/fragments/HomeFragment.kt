@@ -2,11 +2,11 @@ package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.rohitthebest.phoco_theimagesearchingapp.Constants.NO_INTERNET_MESSAGE
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.R
@@ -19,6 +19,8 @@ import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.Unsp
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+
+private const val TAG = "HomeFragment"
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -50,9 +52,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
 
-            binding.homeRV.hide()
-            binding.homeShimmerLayoutNSV.show()
-            makeNewAPIRequest()
+            if(requireContext().isInternetAvailable()){
+
+                binding.homeRV.hide()
+                binding.homeShimmerLayoutNSV.show()
+                makeNewAPIRequest()
+            }else {
+
+                binding.homeSwipeRefreshLayout.isRefreshing = false
+                isRefreshEnabled = true
+                getSavedUnsplashPhoto()
+            }
+
         }
     }
 
@@ -94,53 +105,56 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun makeNewAPIRequest() {
 
-        //clearing the app cache
-        requireContext().clearAppCache()
+        if (requireContext().isInternetAvailable()) {
 
-        binding.homeSwipeRefreshLayout.isRefreshing = true
-        unsplashViewModel.getRandomUnsplashImage()
-        observeRandomImages()
+            Log.d(TAG, "makeNewAPIRequest: making new request")
+
+            //clearing the app cache
+            requireContext().clearAppCache()
+
+            binding.homeSwipeRefreshLayout.isRefreshing = true
+            unsplashViewModel.getRandomUnsplashImage()
+            observeRandomImages()
+        } else {
+
+            requireContext().showNoInternetMessage()
+        }
     }
 
     private fun observeRandomImages() {
 
-        if (requireContext().isInternetAvailable()) {
+        unsplashViewModel.unsplashRandomImage.observe(viewLifecycleOwner, {
 
-            unsplashViewModel.unsplashRandomImage.observe(viewLifecycleOwner, {
+            when (it) {
 
-                when (it) {
+                is Resources.Loading -> {
 
-                    is Resources.Loading -> {
+                    binding.homeShimmerLayout.startShimmer()
+                }
 
-                        binding.homeShimmerLayout.startShimmer()
-                    }
+                is Resources.Success -> {
 
-                    is Resources.Success -> {
+                    binding.homeSwipeRefreshLayout.isRefreshing = false
 
-                        binding.homeSwipeRefreshLayout.isRefreshing = false
+                    saveTheListToDatabase(it.data)
 
-                        saveTheListToDatabase(it.data)
+                    setUpRecyclerView(it.data)
+                }
 
-                        setUpRecyclerView(it.data)
-                    }
+                else -> {
 
-                    else -> {
+                    try {
+                        binding.homeShimmerLayout.stopShimmer()
+                        binding.homeShimmerLayoutNSV.hide()
 
-                        try {
-                            binding.homeShimmerLayout.stopShimmer()
-                            binding.homeShimmerLayoutNSV.hide()
-
-                            showToasty(requireContext(), it.message.toString(), ToastyType.ERROR)
-                        } catch (e: java.lang.Exception) {
-                            e.printStackTrace()
-                        }
+                        showToasty(requireContext(), it.message.toString(), ToastyType.ERROR)
+                    } catch (e: java.lang.Exception) {
+                        e.printStackTrace()
                     }
                 }
-            })
-        } else {
+            }
+        })
 
-            showToasty(requireContext(), NO_INTERNET_MESSAGE, ToastyType.ERROR)
-        }
     }
 
     private fun saveTheListToDatabase(data: ArrayList<UnsplashPhoto>?) {
