@@ -1,20 +1,24 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentHomeBinding
+import com.rohitthebest.phoco_theimagesearchingapp.ui.activities.PreviewImageActivity
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.HomeRVAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
+import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertImageDownloadLinksAndInfoToString
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -109,9 +113,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
             Log.d(TAG, "makeNewAPIRequest: making new request")
 
-            //clearing the app cache
-            requireContext().clearAppCache()
-
             binding.homeSwipeRefreshLayout.isRefreshing = true
             unsplashViewModel.getRandomUnsplashImage()
             observeRandomImages()
@@ -133,6 +134,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                 }
 
                 is Resources.Success -> {
+
+                    //clearing the app cache
+                    requireContext().clearAppCache()
 
                     binding.homeSwipeRefreshLayout.isRefreshing = false
 
@@ -207,21 +211,38 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
     }
 
+    //[START OF CLICK LISTENERS]
+
     override fun onImageClicked(unsplashPhoto: UnsplashPhoto) {
 
-        Log.d(TAG, "onImageClicked: ${unsplashPhoto.urls.regular}")
-        //TODO("Not yet implemented")
+        Log.d(TAG, "onImageClicked: Download : ${unsplashPhoto.links.download}")
+
+        val intent = Intent(requireContext(), PreviewImageActivity::class.java)
+
+        val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
+                ImageDownloadLinksAndInfo.ImageUrls(
+                        unsplashPhoto.urls.small,
+                        unsplashPhoto.urls.regular,
+                        unsplashPhoto.links.download
+                ),
+                unsplashPhoto.alt_description ?: ""
+        )
+
+        intent.putExtra(PREVIEW_IMAGE_MESSAGE_KEY,
+                convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo))
+
+        startActivity(intent)
     }
 
     override fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto) {
 
-        Log.d(TAG, "onAddToFavouriteBtnClicked: ")
+        Log.d(TAG, "onAddToFavouriteBtnClicked: Download : ${unsplashPhoto.links.download}")
         //TODO("Not yet implemented")
     }
 
     override fun onShowMoreOptionsBtnClicked(unsplashPhoto: UnsplashPhoto) {
 
-        Log.d(TAG, "onShowMoreOptionsBtnClicked: ")
+        Log.d(TAG, "onShowMoreOptionsBtnClicked: raw : ${unsplashPhoto.urls.raw}")
         //TODO("Not yet implemented")
     }
 
@@ -236,6 +257,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         Log.d(TAG, "onAddToFavouriteLongClicked: ")
         //TODO("Not yet implemented")
     }
+
+    //[END OF CLICK LISTENERS]
 
     private fun saveUnsplashPhotoDate() {
 
