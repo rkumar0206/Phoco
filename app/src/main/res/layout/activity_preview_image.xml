@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    tools:context=".ui.activities.PreviewImageActivity">
+
+    <ImageView
+        android:id="@+id/priviewImageIV"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/downloadImageFAB"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:tooltipText="Download Image"
+            app:srcCompat="@drawable/ic_outline_arrow_circle_down_24"
+            tools:targetApi="o"
+            android:focusable="true"
+            android:contentDescription="@string/fabbutton" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/setImageAsHomescreenFAB"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:tooltipText="Home screen wallpaper"
+            android:contentDescription="@string/fabbutton"
+            app:srcCompat="@drawable/ic_baseline_wallpaper_24"
+            android:focusable="true"
+            tools:targetApi="o" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/extractImageColorsFAB"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:tooltipText="Extract colors"
+            android:contentDescription="@string/fabbutton"
+            app:srcCompat="@drawable/ic_baseline_color_lens_24"
+            android:focusable="true"
+            tools:targetApi="o" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
