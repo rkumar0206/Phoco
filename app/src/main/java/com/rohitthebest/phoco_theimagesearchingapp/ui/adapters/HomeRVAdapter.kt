@@ -1,5 +1,6 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.adapters
 
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,10 +8,16 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.AdapterHomeRecyclerviewBinding
+import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
+import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 
 class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>(DiffUtilCallback()) {
 
@@ -24,13 +31,10 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
 
                 binding.apply {
 
-                    Glide.with(binding.view)
-                            .load(unsplashPhoto.urls.regular)
-                            .centerCrop()
-                            .transition(DrawableTransitionOptions.withCrossFade())
-                            .error(R.drawable.ic_outline_error_outline_24)
-                            .into(image)
+                    //displaying the actual image
+                    setUpAndShowImageInImageView(unsplashPhoto)
 
+                    //displaying the user image
                     Glide.with(binding.view)
                             .load(unsplashPhoto.user.profile_image.small)
                             .centerInside()
@@ -42,6 +46,46 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
             }
         }
 
+        //displaying the actual image
+        private fun setUpAndShowImageInImageView(unsplashPhoto: UnsplashPhoto) {
+
+            Glide.with(binding.view)
+                    .load(unsplashPhoto.urls.regular)
+                    .apply {
+                        this.error(R.drawable.ic_outline_error_outline_24)
+                        this.centerCrop()
+                    }
+                    .listener(object : RequestListener<Drawable> {
+
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
+
+                            showReloadBtn()
+                            return false
+                        }
+
+                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            //TODO("Not yet implemented")
+                            return false
+                        }
+
+                    })
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(binding.image)
+
+        }
+
+        private fun showReloadBtn() {
+
+            binding.reloadBackground.show()
+            binding.reloadFAB.visibility = View.VISIBLE
+        }
+
+        private fun hideReloadBtn() {
+
+            binding.reloadBackground.hide()
+            binding.reloadFAB.visibility = View.GONE
+        }
+
         init {
 
             binding.image.setOnClickListener(this)
@@ -49,6 +93,8 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
             binding.addToFavouritesBtn.setOnLongClickListener(this)
             binding.showMoreBtn.setOnClickListener(this)
             binding.imageUserNameTV.setOnClickListener(this)
+
+            binding.reloadFAB.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
@@ -76,6 +122,12 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
 
                         mListener!!.onImageUserNameClicked(getItem(absoluteAdapterPosition))
                     }
+
+                    binding.reloadFAB.id -> {
+
+                        hideReloadBtn()
+                        setUpAndShowImageInImageView(getItem(absoluteAdapterPosition))
+                    }
                 }
             }
         }
@@ -90,7 +142,7 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
             return true
         }
 
-        fun checkForNullability(): Boolean {
+        private fun checkForNullability(): Boolean {
 
             return absoluteAdapterPosition != RecyclerView.NO_POSITION && mListener != null
         }
@@ -113,7 +165,8 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeRVViewHolder {
 
-        val binding = AdapterHomeRecyclerviewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = AdapterHomeRecyclerviewBinding
+                .inflate(LayoutInflater.from(parent.context), parent, false)
 
         return HomeRVViewHolder(binding)
     }

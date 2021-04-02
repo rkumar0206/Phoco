@@ -13,7 +13,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        tools:srcCompat="@tools:sample/backgrounds/scenic"
+        android:contentDescription="@string/imageview" />
 
     <View
         android:id="@+id/view"
@@ -49,7 +50,8 @@
         app:layout_constraintBottom_toBottomOf="@id/view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view"
-        app:srcCompat="@drawable/ic_outline_account_circle_24" />
+        app:srcCompat="@drawable/ic_outline_account_circle_24"
+        android:contentDescription="@string/imageview" />
 
     <ImageView
         android:id="@+id/showMoreBtn"
@@ -60,7 +62,8 @@
         app:layout_constraintBottom_toBottomOf="@id/view"
         app:layout_constraintEnd_toEndOf="@+id/view"
         app:layout_constraintTop_toTopOf="@+id/view"
-        app:srcCompat="@drawable/ic_outline_read_more_24" />
+        app:srcCompat="@drawable/ic_outline_read_more_24"
+        android:contentDescription="@string/imageview" />
 
     <ImageView
         android:id="@+id/addToFavouritesBtn"
@@ -71,5 +74,36 @@
         app:layout_constraintBottom_toBottomOf="@id/view"
         app:layout_constraintEnd_toStartOf="@+id/showMoreBtn"
         app:layout_constraintTop_toTopOf="@+id/view"
-        app:srcCompat="@drawable/ic_outline_bookmark_border_24" />
+        app:srcCompat="@drawable/ic_outline_bookmark_border_24"
+        android:contentDescription="@string/imageview" />
+
+    <View
+        android:id="@+id/reloadBackground"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="#A1262432"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/image"
+        tools:visibility="visible" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/reloadFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:contentDescription="@string/fabbutton"
+        android:focusable="true"
+        android:visibility="gone"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="@id/reloadBackground"
+        app:layout_constraintEnd_toEndOf="@id/reloadBackground"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@id/reloadBackground"
+        app:layout_constraintTop_toTopOf="@id/reloadBackground"
+        app:srcCompat="@drawable/ic_baseline_refresh_24"
+        tools:visibility="visible" />
 </androidx.constraintlayout.widget.ConstraintLayout>
