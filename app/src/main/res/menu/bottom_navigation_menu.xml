@@ -4,7 +4,7 @@
     <item
         android:id="@+id/homeFragment"
         android:icon="@drawable/ic_home"
-        android:title="Home" />
+        android:title="@string/home" />
     <item
         android:id="@+id/searchFragment"
         android:icon="@drawable/ic_baseline_search_24"
@@ -12,10 +12,10 @@
         />
     <item
         android:id="@+id/favouritesFragment"
-        android:icon="@drawable/ic_baseline_favorite_border_24"
-        android:title="Favourites" />
+        android:icon="@drawable/ic_outline_bookmark_border_24"
+        android:title="@string/saved" />
     <item
         android:id="@+id/profileFragment"
         android:icon="@drawable/ic_outline_account_circle_24"
-        android:title="Profile" />
+        android:title="@string/profile" />
 </menu>

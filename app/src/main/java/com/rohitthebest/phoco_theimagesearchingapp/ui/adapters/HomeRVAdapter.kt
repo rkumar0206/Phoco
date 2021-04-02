@@ -1,6 +1,7 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -13,7 +14,9 @@ import com.rohitthebest.phoco_theimagesearchingapp.databinding.AdapterHomeRecycl
 
 class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>(DiffUtilCallback()) {
 
-    inner class HomeRVViewHolder(val binding: AdapterHomeRecyclerviewBinding) : RecyclerView.ViewHolder(binding.root) {
+    private var mListener: OnClickListener? = null
+
+    inner class HomeRVViewHolder(val binding: AdapterHomeRecyclerviewBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
 
         fun setData(unsplashPhoto: UnsplashPhoto?) {
 
@@ -37,6 +40,59 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
                     imageUserNameTV.text = it.user.username
                 }
             }
+        }
+
+        init {
+
+            binding.image.setOnClickListener(this)
+            binding.addToFavouritesBtn.setOnClickListener(this)
+            binding.addToFavouritesBtn.setOnLongClickListener(this)
+            binding.showMoreBtn.setOnClickListener(this)
+            binding.imageUserNameTV.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+
+            if (checkForNullability()) {
+
+                when (v?.id) {
+
+                    binding.image.id -> {
+
+                        mListener!!.onImageClicked(getItem(absoluteAdapterPosition))
+                    }
+
+                    binding.addToFavouritesBtn.id -> {
+
+                        mListener!!.onAddToFavouriteBtnClicked(getItem(absoluteAdapterPosition))
+                    }
+
+                    binding.showMoreBtn.id -> {
+
+                        mListener!!.onShowMoreOptionsBtnClicked(getItem(absoluteAdapterPosition))
+                    }
+
+                    binding.imageUserNameTV.id -> {
+
+                        mListener!!.onImageUserNameClicked(getItem(absoluteAdapterPosition))
+                    }
+                }
+            }
+        }
+
+        override fun onLongClick(v: View?): Boolean {
+
+            if (v?.id == binding.addToFavouritesBtn.id) {
+
+                mListener!!.onAddToFavouriteLongClicked(getItem(absoluteAdapterPosition))
+            }
+
+            return true
+        }
+
+        fun checkForNullability(): Boolean {
+
+            return absoluteAdapterPosition != RecyclerView.NO_POSITION && mListener != null
         }
     }
 
@@ -67,5 +123,19 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
         holder.setData(getItem(position))
     }
 
+    interface OnClickListener {
+
+        fun onImageClicked(unsplashPhoto: UnsplashPhoto)
+        fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto)
+        fun onShowMoreOptionsBtnClicked(unsplashPhoto: UnsplashPhoto)
+        fun onImageUserNameClicked(unsplashPhoto: UnsplashPhoto)
+
+        fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto)
+    }
+
+    fun setOnClickListener(listener: OnClickListener) {
+
+        mListener = listener
+    }
 
 }

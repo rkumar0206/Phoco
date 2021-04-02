@@ -23,7 +23,7 @@ import java.util.*
 private const val TAG = "HomeFragment"
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.fragment_home) {
+class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -197,6 +197,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     adapter = homeAdapter
                 }
 
+                homeAdapter.setOnClickListener(this)
+
             }
 
         } catch (e: Exception) {
@@ -205,11 +207,41 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     }
 
+    override fun onImageClicked(unsplashPhoto: UnsplashPhoto) {
+
+        Log.d(TAG, "onImageClicked: ${unsplashPhoto.urls.regular}")
+        //TODO("Not yet implemented")
+    }
+
+    override fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto) {
+
+        Log.d(TAG, "onAddToFavouriteBtnClicked: ")
+        //TODO("Not yet implemented")
+    }
+
+    override fun onShowMoreOptionsBtnClicked(unsplashPhoto: UnsplashPhoto) {
+
+        Log.d(TAG, "onShowMoreOptionsBtnClicked: ")
+        //TODO("Not yet implemented")
+    }
+
+    override fun onImageUserNameClicked(unsplashPhoto: UnsplashPhoto) {
+
+        Log.d(TAG, "onImageUserNameClicked: ")
+        //TODO("Not yet implemented")
+    }
+
+    override fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto) {
+
+        Log.d(TAG, "onAddToFavouriteLongClicked: ")
+        //TODO("Not yet implemented")
+    }
+
     private fun saveUnsplashPhotoDate() {
 
         val sharedPreference = requireActivity().getSharedPreferences(
-            UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME,
-            Context.MODE_PRIVATE
+                UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME,
+                Context.MODE_PRIVATE
         )
 
         val edit = sharedPreference.edit()
