@@ -7,8 +7,8 @@
     android:background="@color/background_color"
     tools:context=".ui.activities.PreviewImageActivity">
 
-    <ImageView
-        android:id="@+id/priviewImageIV"
+    <com.github.chrisbanes.photoview.PhotoView
+        android:id="@+id/previewImageIV"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
@@ -24,11 +24,11 @@
         android:layout_height="0dp"
         android:background="#A1262432"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/priviewImageIV"
-        app:layout_constraintEnd_toEndOf="@id/priviewImageIV"
+        app:layout_constraintBottom_toBottomOf="@+id/previewImageIV"
+        app:layout_constraintEnd_toEndOf="@id/previewImageIV"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@id/priviewImageIV"
-        app:layout_constraintTop_toTopOf="@+id/priviewImageIV"
+        app:layout_constraintStart_toStartOf="@id/previewImageIV"
+        app:layout_constraintTop_toTopOf="@+id/previewImageIV"
         tools:visibility="visible" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

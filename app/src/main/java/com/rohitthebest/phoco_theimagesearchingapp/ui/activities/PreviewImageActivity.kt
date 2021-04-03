@@ -141,7 +141,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
                 })
                 .transition(DrawableTransitionOptions.withCrossFade())
-                .into(binding.priviewImageIV)
+                .into(binding.previewImageIV)
 
 
     }
