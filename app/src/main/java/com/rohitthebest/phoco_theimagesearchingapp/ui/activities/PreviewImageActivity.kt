@@ -1,15 +1,20 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.activities
 
+import android.app.WallpaperManager
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
+import com.bumptech.glide.request.transition.Transition
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ActivityPreviewImageBinding
@@ -17,14 +22,15 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.DownloadFile
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToImageDownloadLinksAndInfo
 import com.rohitthebest.phoco_theimagesearchingapp.utils.ImageDownloadLinksAndInfo
 import com.rohitthebest.phoco_theimagesearchingapp.utils.showToast
+import java.io.IOException
 
 private const val TAG = "PreviewImageActivity"
 
-class PreviewImageActivity : AppCompatActivity() {
+class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityPreviewImageBinding
     private lateinit var imageDownloadLinksAndInfo: ImageDownloadLinksAndInfo
-
+    private lateinit var wallpaperManager: WallpaperManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -35,20 +41,74 @@ class PreviewImageActivity : AppCompatActivity() {
 
         setImageInImageView()
 
-        binding.downloadImageFAB.setOnClickListener {
+        initListeners()
 
-            showToast(this, "Downloading Image")
+        wallpaperManager = WallpaperManager.getInstance(applicationContext)
 
-            //todo : Show confirmation message with an option to choose quality of image
+    }
 
-            DownloadFile().downloadFile(
-                    this,
-                    imageDownloadLinksAndInfo.imageUrls.original,
-                    if (imageDownloadLinksAndInfo.imageName != "" && !imageDownloadLinksAndInfo.imageName.contains("/"))
-                        "${imageDownloadLinksAndInfo.imageName}.jpg"
-                    else "${System.currentTimeMillis()}.jpg"
-            )
+    private fun initListeners() {
+
+        binding.downloadImageFAB.setOnClickListener(this)
+        binding.setImageAsHomescreenFAB.setOnClickListener(this)
+        binding.extractImageColorsFAB.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+
+        when (v?.id) {
+
+            binding.downloadImageFAB.id -> {
+
+                showToast(this, "Downloading Image")
+
+                //todo : Show confirmation message with an option to choose quality of image
+
+                DownloadFile().downloadFile(
+                        this,
+                        imageDownloadLinksAndInfo.imageUrls.original,
+                        if (imageDownloadLinksAndInfo.imageName != "" && !imageDownloadLinksAndInfo.imageName.contains("/"))
+                            "${imageDownloadLinksAndInfo.imageName}.jpg"
+                        else "${System.currentTimeMillis()}.jpg"
+                )
+            }
+
+            binding.setImageAsHomescreenFAB.id -> {
+
+                setImageAsHomeScreenWallpaper()
+            }
+
+            binding.extractImageColorsFAB.id -> {
+
+                //todo : extract image colors
+            }
         }
+    }
+
+    private fun setImageAsHomeScreenWallpaper() {
+
+        Glide.with(this)
+                .asBitmap()
+                .load(imageDownloadLinksAndInfo.imageUrls.medium)
+                .into(object : CustomTarget<Bitmap>() {
+
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+
+                        try {
+
+                            wallpaperManager.setBitmap(resource)
+                            showToast(applicationContext, "Image set as Home screen wallpaper")
+
+                        } catch (e: IOException) {
+
+                            e.printStackTrace()
+                        }
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                    }
+                })
+
     }
 
     private fun setImageInImageView() {
@@ -78,4 +138,5 @@ class PreviewImageActivity : AppCompatActivity() {
 
 
     }
+
 }
