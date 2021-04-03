@@ -12,6 +12,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ActivityPreviewImageBinding
@@ -68,8 +69,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             binding.downloadImageFAB.id -> {
 
-                //todo : Show confirmation message with an option to choose quality of image
-
                 if (!isDownloadOptionsVisible) {
 
                     showDownloadOptions()
@@ -82,15 +81,30 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             binding.setImageAsHomescreenFAB.id -> {
 
-                CoroutineScope(Dispatchers.Main).launch {
+                MaterialAlertDialogBuilder(this)
+                    .setTitle("Home Screen wallpaper")
+                    .setMessage("Set this image as Home screen wallpaper?")
+                    .setPositiveButton("Yes") { dialog, _ ->
 
-                    Log.d(TAG, "onClick: Setting image as Home screen wallpaper")
+                        CoroutineScope(Dispatchers.Main).launch {
 
-                    setImageAsHomeScreenWallpaperFromImageUrl(
-                        applicationContext,
-                        imageDownloadLinksAndInfo.imageUrls.original
-                    )
-                }
+                            Log.d(TAG, "onClick: Setting image as Home screen wallpaper")
+
+                            setImageAsHomeScreenWallpaperFromImageUrl(
+                                applicationContext,
+                                imageDownloadLinksAndInfo.imageUrls.original
+                            )
+                        }
+
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("Cancel") { dialog, _ ->
+
+                        dialog.dismiss()
+                    }
+                    .create()
+                    .show()
+
             }
 
             binding.extractImageColorsFAB.id -> {
