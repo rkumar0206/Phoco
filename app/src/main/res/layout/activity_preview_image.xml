@@ -100,4 +100,72 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/imageDownloadOptionsLL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:alpha="0"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="@+id/previewImageIV"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout"
+        tools:alpha="1">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/smallDownloadCV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5dp"
+                android:paddingStart="5dp"
+                android:paddingEnd="25dp"
+                android:text="@string/small"
+                android:textColor="#212121"
+                android:textSize="16sp" />
+
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/mediumDownloadCV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/medium"
+                android:textColor="#212121"
+                android:textSize="16sp" />
+
+        </androidx.cardview.widget.CardView>
+
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/originalDownloadCV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5dp"
+                android:text="@string/original"
+                android:textColor="#212121"
+                android:textSize="16sp" />
+
+        </androidx.cardview.widget.CardView>
+
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

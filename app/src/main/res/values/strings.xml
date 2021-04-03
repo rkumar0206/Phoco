@@ -8,4 +8,7 @@
     <string name="fabbutton">fabButton</string>
     <string name="unable_to_open_file">Unable to open the file</string>
     <string name="downloading_file">downloading file</string>
+    <string name="small">Small</string>
+    <string name="medium">Medium</string>
+    <string name="original">Original</string>
 </resources>

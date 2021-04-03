@@ -29,13 +29,17 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var binding: ActivityPreviewImageBinding
     private lateinit var imageDownloadLinksAndInfo: ImageDownloadLinksAndInfo
     private lateinit var wallpaperManager: WallpaperManager
+
+    private var isDownloadOptionsVisible = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityPreviewImageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_MESSAGE_KEY)?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
+        imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_MESSAGE_KEY)
+            ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
 
         setImageInImageView()
 
@@ -51,6 +55,10 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         binding.setImageAsHomescreenFAB.setOnClickListener(this)
         binding.extractImageColorsFAB.setOnClickListener(this)
         binding.reloadFAB.setOnClickListener(this)
+
+        binding.smallDownloadCV.setOnClickListener(this)
+        binding.mediumDownloadCV.setOnClickListener(this)
+        binding.originalDownloadCV.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -59,17 +67,16 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             binding.downloadImageFAB.id -> {
 
-                showToast(this, "Downloading Image")
-
                 //todo : Show confirmation message with an option to choose quality of image
 
-                DownloadFile().downloadFile(
-                        this,
-                        imageDownloadLinksAndInfo.imageUrls.original,
-                        if (imageDownloadLinksAndInfo.imageName != "" && !imageDownloadLinksAndInfo.imageName.contains("/"))
-                            "${imageDownloadLinksAndInfo.imageName}.jpg"
-                        else "${System.currentTimeMillis()}.jpg"
-                )
+                if (!isDownloadOptionsVisible) {
+
+                    showDownloadOptions()
+                } else {
+
+                    hideDownloadOptions()
+                }
+
             }
 
             binding.setImageAsHomescreenFAB.id -> {
@@ -87,32 +94,91 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 hideReloadBtn()
                 setImageInImageView()
             }
+
+            binding.smallDownloadCV.id -> {
+
+                downloadTheImage(imageDownloadLinksAndInfo.imageUrls.small)
+                hideDownloadOptions()
+            }
+
+            binding.mediumDownloadCV.id -> {
+
+                downloadTheImage(imageDownloadLinksAndInfo.imageUrls.medium)
+                hideDownloadOptions()
+            }
+
+            binding.originalDownloadCV.id -> {
+
+                downloadTheImage(imageDownloadLinksAndInfo.imageUrls.original)
+                hideDownloadOptions()
+            }
         }
+    }
+
+    private fun showDownloadOptions() {
+
+        isDownloadOptionsVisible = !isDownloadOptionsVisible
+
+        binding.imageDownloadOptionsLL.animate().alpha(1f).setDuration(600).start()
+        enableOrDisableDownloadOptions(true)
+
+    }
+
+    private fun hideDownloadOptions() {
+
+        isDownloadOptionsVisible = !isDownloadOptionsVisible
+
+        binding.imageDownloadOptionsLL.animate().alpha(0f).setDuration(600).start()
+        enableOrDisableDownloadOptions(false)
+    }
+
+    private fun enableOrDisableDownloadOptions(isEnable: Boolean) {
+
+        binding.smallDownloadCV.isEnabled = isEnable
+        binding.mediumDownloadCV.isEnabled = isEnable
+        binding.originalDownloadCV.isEnabled = isEnable
+    }
+
+    private fun downloadTheImage(imageUrl: String) {
+
+        showToast(this, "Downloading Image")
+
+        DownloadFile().downloadFile(
+            this,
+            imageUrl,
+            if (imageDownloadLinksAndInfo.imageName != "" && !imageDownloadLinksAndInfo.imageName.contains(
+                    "/"
+                )
+            )
+                "${imageDownloadLinksAndInfo.imageName}.jpg"
+            else "${System.currentTimeMillis()}.jpg"
+        )
+
     }
 
     private fun setImageAsHomeScreenWallpaper() {
 
         Glide.with(this)
-                .asBitmap()
-                .load(imageDownloadLinksAndInfo.imageUrls.medium)
-                .into(object : CustomTarget<Bitmap>() {
+            .asBitmap()
+            .load(imageDownloadLinksAndInfo.imageUrls.medium)
+            .into(object : CustomTarget<Bitmap>() {
 
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
 
-                        try {
+                    try {
 
-                            wallpaperManager.setBitmap(resource)
-                            showToast(applicationContext, "Image set as Home screen wallpaper")
+                        wallpaperManager.setBitmap(resource)
+                        showToast(applicationContext, "Image set as Home screen wallpaper")
 
-                        } catch (e: IOException) {
+                    } catch (e: IOException) {
 
-                            e.printStackTrace()
-                        }
+                        e.printStackTrace()
                     }
+                }
 
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                    }
-                })
+                override fun onLoadCleared(placeholder: Drawable?) {
+                }
+            })
 
     }
 
