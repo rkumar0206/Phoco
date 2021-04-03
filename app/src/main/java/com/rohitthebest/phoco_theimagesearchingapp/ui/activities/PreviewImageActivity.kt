@@ -18,10 +18,8 @@ import com.bumptech.glide.request.transition.Transition
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ActivityPreviewImageBinding
-import com.rohitthebest.phoco_theimagesearchingapp.utils.DownloadFile
+import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToImageDownloadLinksAndInfo
-import com.rohitthebest.phoco_theimagesearchingapp.utils.ImageDownloadLinksAndInfo
-import com.rohitthebest.phoco_theimagesearchingapp.utils.showToast
 import java.io.IOException
 
 private const val TAG = "PreviewImageActivity"
@@ -52,6 +50,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         binding.downloadImageFAB.setOnClickListener(this)
         binding.setImageAsHomescreenFAB.setOnClickListener(this)
         binding.extractImageColorsFAB.setOnClickListener(this)
+        binding.reloadFAB.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -81,6 +80,12 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             binding.extractImageColorsFAB.id -> {
 
                 //todo : extract image colors
+            }
+
+            binding.reloadFAB.id -> {
+
+                hideReloadBtn()
+                setImageInImageView()
             }
         }
     }
@@ -123,12 +128,14 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 }
                 .listener(object : RequestListener<Drawable> {
                     override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                        //TODO("Not yet implemented")
+
+                        showReloadBtn()
                         return false
                     }
 
                     override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                        //TODO("Not yet implemented")
+
+                        hideReloadBtn()
                         return false
                     }
 
@@ -138,5 +145,18 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
 
     }
+
+    private fun showReloadBtn() {
+
+        binding.reloadBackground.show()
+        binding.reloadFAB.visibility = View.VISIBLE
+    }
+
+    private fun hideReloadBtn() {
+
+        binding.reloadBackground.hide()
+        binding.reloadFAB.visibility = View.GONE
+    }
+
 
 }
