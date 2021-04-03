@@ -20,6 +20,9 @@ import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ActivityPreviewImageBinding
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToImageDownloadLinksAndInfo
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.IOException
 
 private const val TAG = "PreviewImageActivity"
@@ -59,6 +62,8 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         binding.smallDownloadCV.setOnClickListener(this)
         binding.mediumDownloadCV.setOnClickListener(this)
         binding.originalDownloadCV.setOnClickListener(this)
+
+        binding.previewImageIV.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -81,7 +86,15 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             binding.setImageAsHomescreenFAB.id -> {
 
-                setImageAsHomeScreenWallpaper()
+                CoroutineScope(Dispatchers.Main).launch {
+
+                    Log.d(TAG, "onClick: Setting image as Home screen wallpaper")
+
+                    setImageAsHomeScreenWallpaperFromImageUrl(
+                        applicationContext,
+                        imageDownloadLinksAndInfo.imageUrls.original
+                    )
+                }
             }
 
             binding.extractImageColorsFAB.id -> {
@@ -111,6 +124,14 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
                 downloadTheImage(imageDownloadLinksAndInfo.imageUrls.original)
                 hideDownloadOptions()
+            }
+
+            binding.previewImageIV.id -> {
+
+                if (isDownloadOptionsVisible) {
+
+                    hideDownloadOptions()
+                }
             }
         }
     }
@@ -153,32 +174,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 "${imageDownloadLinksAndInfo.imageName}.jpg"
             else "${System.currentTimeMillis()}.jpg"
         )
-
-    }
-
-    private fun setImageAsHomeScreenWallpaper() {
-
-        Glide.with(this)
-            .asBitmap()
-            .load(imageDownloadLinksAndInfo.imageUrls.medium)
-            .into(object : CustomTarget<Bitmap>() {
-
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-
-                    try {
-
-                        wallpaperManager.setBitmap(resource)
-                        showToast(applicationContext, "Image set as Home screen wallpaper")
-
-                    } catch (e: IOException) {
-
-                        e.printStackTrace()
-                    }
-                }
-
-                override fun onLoadCleared(placeholder: Drawable?) {
-                }
-            })
 
     }
 

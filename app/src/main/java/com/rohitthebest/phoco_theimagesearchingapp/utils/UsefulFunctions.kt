@@ -1,12 +1,21 @@
 package com.rohitthebest.phoco_theimagesearchingapp.utils
 
 import android.annotation.SuppressLint
+import android.app.WallpaperManager
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.NO_INTERNET_MESSAGE
 import es.dmoral.toasty.Toasty
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -25,6 +34,7 @@ fun showToast(context: Context, message: String, duration: Int = Toast.LENGTH_SH
 
     try {
         Log.d(TAG, message)
+        Log.d(TAG, "showToast: $message")
         Toast.makeText(context, message, duration).show()
     } catch (e: java.lang.Exception) {
         e.printStackTrace()
@@ -114,5 +124,36 @@ fun getCurrentDate(): String {
 
     val sdf = SimpleDateFormat("dd/MM/yyyy")
     return sdf.format(Date())
+}
+
+suspend fun setImageAsHomeScreenWallpaperFromImageUrl(context: Context, imageUrl: String) {
+
+    val wallpaperManager = WallpaperManager.getInstance(context)
+
+    withContext(Dispatchers.IO) {
+
+        Glide.with(context)
+            .asBitmap()
+            .load(imageUrl)
+            .into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+
+                    try {
+
+                        wallpaperManager.setBitmap(resource)
+                        showToast(context, "Image set as Home screen wallpaper")
+                    } catch (e: IOException) {
+
+                        e.printStackTrace()
+                    }
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                    //TODO("Not yet implemented")
+                }
+
+            })
+    }
+
 }
 
