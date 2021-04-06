@@ -18,11 +18,10 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/searchWithUnsplashMCV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardCornerRadius="10dp"
-            app:strokeColor="@color/background_color"
-            app:strokeWidth="0.4dp">
+            app:cardCornerRadius="10dp">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -32,7 +31,7 @@
                     android:id="@+id/imageView2bdfb"
                     android:layout_width="0dp"
                     android:layout_height="80dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -73,6 +72,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/searchWithPixabayMCV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:cardCornerRadius="10dp"
@@ -87,7 +87,7 @@
                     android:id="@+id/imageView2"
                     android:layout_width="0dp"
                     android:layout_height="80dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -119,7 +119,7 @@
         android:layout_width="140dp"
         android:layout_height="140dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:padding="5dp"
         app:cardCornerRadius="10dp"
         app:layout_constraintEnd_toStartOf="@+id/cardView4"
@@ -128,6 +128,7 @@
         app:layout_constraintTop_toBottomOf="@+id/cardView">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/searchWithPexelsMCV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:cardCornerRadius="10dp"
@@ -142,7 +143,7 @@
                     android:id="@+id/imageViewdscsc2"
                     android:layout_width="0dp"
                     android:layout_height="80dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
@@ -173,7 +174,7 @@
         android:id="@+id/cardView4"
         android:layout_width="140dp"
         android:layout_height="140dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:padding="5dp"
         app:cardCornerRadius="10dp"
@@ -183,6 +184,7 @@
         app:layout_constraintTop_toBottomOf="@+id/cardView2">
 
         <com.google.android.material.card.MaterialCardView
+            android:id="@+id/searchWithWebMCV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:cardCornerRadius="10dp"
@@ -197,12 +199,12 @@
                     android:id="@+id/imageViewc2"
                     android:layout_width="0dp"
                     android:layout_height="80dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/ic_baseline_web_24" />
+                    app:srcCompat="@drawable/ic_baseline_language_24" />
 
                 <TextView
                     android:id="@+id/textViesw3"
