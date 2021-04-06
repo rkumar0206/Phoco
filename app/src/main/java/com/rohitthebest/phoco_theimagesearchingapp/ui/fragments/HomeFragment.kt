@@ -52,6 +52,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         loadUnplashPhotoSavedDate()
 
+        isRefreshEnabled = true
         getSavedUnsplashPhoto()
 
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
@@ -76,6 +77,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         unsplashPhotoViewModel.getAllUnsplashPhoto().observe(viewLifecycleOwner, {
 
             if (isRefreshEnabled) {
+
+                Log.d(TAG, "getSavedUnsplashPhoto: ")
 
                 if (it.isEmpty() || lastDateSaved == "") {
 
@@ -123,6 +126,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
     }
 
     private fun observeRandomImages() {
+
+        Log.d(TAG, "observeRandomImages: ")
 
         unsplashViewModel.unsplashRandomImage.observe(viewLifecycleOwner, {
 
@@ -181,6 +186,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
     }
 
     private fun setUpRecyclerView(listOfImages: List<UnsplashPhoto>?) {
+
+        Log.d(TAG, "setUpRecyclerView: ")
 
         try {
 

@@ -10,6 +10,7 @@
 
     <color name="background_color">#262432</color>
     <color name="text_color">#f1f1f1</color>
+    <color name="text_color_black">#212121</color>
     <color name="color_pink">#e8799d</color>
     <color name="button_color">#779dfe</color>
 </resources>

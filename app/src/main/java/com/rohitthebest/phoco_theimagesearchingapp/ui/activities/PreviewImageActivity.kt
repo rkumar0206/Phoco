@@ -82,40 +82,44 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             binding.setImageAsHomescreenFAB.id -> {
 
                 MaterialAlertDialogBuilder(this)
-                    .setTitle("Home Screen wallpaper")
-                    .setMessage("Set this image as Home screen wallpaper?")
-                    .setPositiveButton("Yes") { dialog, _ ->
+                        .setTitle("Home Screen wallpaper")
+                        .setMessage("Set this image as Home screen wallpaper?")
+                        .setPositiveButton("Yes") { dialog, _ ->
 
-                        CoroutineScope(Dispatchers.Main).launch {
+                            CoroutineScope(Dispatchers.Main).launch {
 
-                            Log.d(TAG, "onClick: Setting image as Home screen wallpaper")
+                                Log.d(TAG, "onClick: Setting image as Home screen wallpaper")
 
-                            setImageAsHomeScreenWallpaperFromImageUrl(
-                                applicationContext,
-                                imageDownloadLinksAndInfo.imageUrls.original
-                            )
+                                setImageAsHomeScreenWallpaperFromImageUrl(
+                                        applicationContext,
+                                        imageDownloadLinksAndInfo.imageUrls.original
+                                )
+                            }
+
+                            dialog.dismiss()
                         }
+                        .setNegativeButton("Cancel") { dialog, _ ->
 
-                        dialog.dismiss()
-                    }
-                    .setNegativeButton("Cancel") { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .create()
+                        .show()
 
-                        dialog.dismiss()
-                    }
-                    .create()
-                    .show()
-
+                hideDownloadOptions()
             }
 
             binding.extractImageColorsFAB.id -> {
 
                 //todo : extract image colors
+                hideDownloadOptions()
             }
 
             binding.reloadFAB.id -> {
 
                 hideReloadBtn()
                 setImageInImageView()
+
+                hideDownloadOptions()
             }
 
             binding.smallDownloadCV.id -> {
@@ -138,10 +142,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             binding.previewImageIV.id -> {
 
-                if (isDownloadOptionsVisible) {
-
-                    hideDownloadOptions()
-                }
+                hideDownloadOptions()
             }
         }
     }
@@ -157,10 +158,13 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun hideDownloadOptions() {
 
-        isDownloadOptionsVisible = !isDownloadOptionsVisible
+        if (isDownloadOptionsVisible) {
 
-        binding.imageDownloadOptionsLL.animate().alpha(0f).setDuration(600).start()
-        enableOrDisableDownloadOptions(false)
+            isDownloadOptionsVisible = !isDownloadOptionsVisible
+
+            binding.imageDownloadOptionsLL.animate().alpha(0f).setDuration(600).start()
+            enableOrDisableDownloadOptions(false)
+        }
     }
 
     private fun enableOrDisableDownloadOptions(isEnable: Boolean) {
