@@ -13,4 +13,5 @@
     <color name="text_color_black">#212121</color>
     <color name="color_pink">#e8799d</color>
     <color name="button_color">#779dfe</color>
+    <color name="mcv_ripple_color">#A7E8799D</color>
 </resources>

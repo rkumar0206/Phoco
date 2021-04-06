@@ -11,4 +11,8 @@
     <string name="small">Small</string>
     <string name="medium">Medium</string>
     <string name="original">Original</string>
+    <string name="unsplash">Unsplash</string>
+    <string name="pixabay">Pixabay</string>
+    <string name="pexels">Pexels</string>
+    <string name="web">Web</string>
 </resources>

@@ -21,7 +21,8 @@
             android:id="@+id/searchWithUnsplashMCV"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:cardCornerRadius="10dp">
+            app:cardCornerRadius="10dp"
+            app:rippleColor="@color/mcv_ripple_color">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -36,6 +37,7 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/imageview"
                     app:srcCompat="@drawable/logo_unsplash" />
 
                 <TextView
@@ -46,7 +48,7 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:padding="5dp"
-                    android:text="Unsplash"
+                    android:text="@string/unsplash"
                     android:textColor="@color/text_color_black"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -76,8 +78,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:cardCornerRadius="10dp"
-            app:strokeColor="@color/background_color"
-            app:strokeWidth="0.4dp">
+            app:rippleColor="@color/mcv_ripple_color">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -92,6 +93,7 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/imageview"
                     app:srcCompat="@drawable/logo_pixabay_square" />
 
                 <TextView
@@ -102,7 +104,7 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:padding="5dp"
-                    android:text="Pixabay"
+                    android:text="@string/pixabay"
                     android:textColor="@color/text_color_black"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -132,8 +134,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:cardCornerRadius="10dp"
-            app:strokeColor="@color/background_color"
-            app:strokeWidth="0.4dp">
+            app:rippleColor="@color/mcv_ripple_color">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -148,6 +149,7 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/imageview"
                     app:srcCompat="@drawable/logo_pexels" />
 
                 <TextView
@@ -158,7 +160,7 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:padding="5dp"
-                    android:text="Pexels"
+                    android:text="@string/pexels"
                     android:textColor="@color/text_color_black"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -188,8 +190,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:cardCornerRadius="10dp"
-            app:strokeColor="@color/background_color"
-            app:strokeWidth="0.4dp">
+            app:rippleColor="@color/mcv_ripple_color">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -204,6 +205,7 @@
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/imageview"
                     app:srcCompat="@drawable/ic_baseline_language_24" />
 
                 <TextView
@@ -214,7 +216,7 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:padding="5dp"
-                    android:text="Web"
+                    android:text="@string/web"
                     android:textColor="@color/text_color_black"
                     android:textSize="16sp"
                     app:layout_constraintBottom_toBottomOf="parent"
