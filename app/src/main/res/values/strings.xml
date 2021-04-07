@@ -15,4 +15,6 @@
     <string name="pixabay">Pixabay</string>
     <string name="pexels">Pexels</string>
     <string name="web">Web</string>
+    <string name="retry">Retry</string>
+    <string name="results_could_not_be_loaded">Results could not be loaded</string>
 </resources>
