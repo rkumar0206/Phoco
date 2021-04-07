@@ -57,12 +57,12 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
 
-            if(requireContext().isInternetAvailable()){
+            if (requireContext().isInternetAvailable()) {
 
                 binding.homeRV.hide()
                 binding.homeShimmerLayoutNSV.show()
                 makeNewAPIRequest()
-            }else {
+            } else {
 
                 binding.homeSwipeRefreshLayout.isRefreshing = false
                 isRefreshEnabled = true
@@ -70,6 +70,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
             }
 
         }
+
+        setUpRecyclerView()
     }
 
     private fun getSavedUnsplashPhoto() {
@@ -97,7 +99,10 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                             requireContext().showNoInternetMessage()
                         }
 
-                        setUpRecyclerView(it)
+                        homeAdapter.submitList(it)
+
+                        hideShimmerAndShowRecyclerView()
+
                     } else {
 
                         //calling the api
@@ -147,7 +152,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
                     saveTheListToDatabase(it.data)
 
-                    setUpRecyclerView(it.data)
+                    homeAdapter.submitList(it.data)
+
+                    hideShimmerAndShowRecyclerView()
                 }
 
                 else -> {
@@ -185,32 +192,19 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
     }
 
-    private fun setUpRecyclerView(listOfImages: List<UnsplashPhoto>?) {
+    private fun setUpRecyclerView() {
 
         Log.d(TAG, "setUpRecyclerView: ")
 
         try {
 
-            binding.homeShimmerLayout.stopShimmer()
-            binding.homeShimmerLayoutNSV.hide()
-
-            binding.homeSwipeRefreshLayout.show()
-            binding.homeRV.show()
-
-            listOfImages?.let {
-
-                homeAdapter.submitList(it)
-
-                binding.homeRV.apply {
-
-                    setHasFixedSize(true)
-                    layoutManager = LinearLayoutManager(requireContext())
-                    adapter = homeAdapter
-                }
-
-                homeAdapter.setOnClickListener(this)
-
+            binding.homeRV.apply {
+                setHasFixedSize(true)
+                layoutManager = LinearLayoutManager(requireContext())
+                adapter = homeAdapter
             }
+
+            homeAdapter.setOnClickListener(this)
 
         } catch (e: Exception) {
             e.printStackTrace()
@@ -284,11 +278,21 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
     private fun loadUnplashPhotoSavedDate() {
 
         val sharedPreference = requireActivity().getSharedPreferences(
-            UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME,
-            Context.MODE_PRIVATE
+                UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME,
+                Context.MODE_PRIVATE
         )
 
         lastDateSaved = sharedPreference.getString(UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY, "")
+    }
+
+    private fun hideShimmerAndShowRecyclerView() {
+
+        binding.homeShimmerLayout.stopShimmer()
+        binding.homeShimmerLayoutNSV.hide()
+
+        binding.homeSwipeRefreshLayout.show()
+        binding.homeRV.show()
+
     }
 
     override fun onDestroyView() {
