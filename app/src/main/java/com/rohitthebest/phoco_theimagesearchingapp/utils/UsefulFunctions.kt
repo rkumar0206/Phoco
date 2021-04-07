@@ -1,12 +1,14 @@
 package com.rohitthebest.phoco_theimagesearchingapp.utils
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.WallpaperManager
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
@@ -14,6 +16,8 @@ import com.bumptech.glide.request.transition.Transition
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.NO_INTERNET_MESSAGE
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -154,6 +158,48 @@ suspend fun setImageAsHomeScreenWallpaperFromImageUrl(context: Context, imageUrl
 
             })
     }
-
 }
+
+fun String.validateString(): Boolean {
+
+    return this.trim().isNotEmpty() && this.trim() != "" && this.trim() != "null"
+}
+
+fun hideKeyBoard(activity: Activity) {
+
+    try {
+
+        GlobalScope.launch {
+
+            closeKeyboard(activity)
+        }
+
+    } catch (e: Exception) {
+
+        e.printStackTrace()
+    }
+}
+
+suspend fun closeKeyboard(activity: Activity) {
+    try {
+        withContext(Dispatchers.IO) {
+
+            val view = activity.currentFocus
+
+            if (view != null) {
+
+                val inputMethodManager =
+                        activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+                inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+            }
+
+        }
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace()
+    }
+}
+
+
+
 
