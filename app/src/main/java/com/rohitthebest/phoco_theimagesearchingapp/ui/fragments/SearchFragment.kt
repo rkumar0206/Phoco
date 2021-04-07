@@ -9,7 +9,6 @@ import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentSearchBin
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.SpinnerSearchIconAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.APIName
 import com.rohitthebest.phoco_theimagesearchingapp.utils.APIsInfo
-import com.rohitthebest.phoco_theimagesearchingapp.utils.showToast
 
 
 class SearchFragment : Fragment(R.layout.fragment_search) {
@@ -42,7 +41,14 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
                 val clickedItem = parent?.getItemAtPosition(position) as APIsInfo
 
-                showToast(requireContext(), clickedItem.toString())
+                when (clickedItem.apiName) {
+
+                    APIName.UNSPLASH -> binding.searchBoxACT.hint = "Search on ${getString(R.string.unsplash)}"
+                    APIName.PIXABAY -> binding.searchBoxACT.hint = "Search on ${getString(R.string.pixabay)}"
+                    APIName.PEXELS -> binding.searchBoxACT.hint = "Search on ${getString(R.string.pexels)}"
+                    APIName.WEB -> binding.searchBoxACT.hint = "Search on ${getString(R.string.web)}"
+
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
