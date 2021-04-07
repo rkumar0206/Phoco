@@ -7,9 +7,10 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import com.rohitthebest.phoco_theimagesearchingapp.R
+import com.rohitthebest.phoco_theimagesearchingapp.utils.APIsInfo
 
-class SpinnerSearchIconAdapter(context: Context, websiteImageList: ArrayList<Int>)
-    : ArrayAdapter<Int>(context, 0, websiteImageList) {
+class SpinnerSearchIconAdapter(context: Context, websiteImageList: ArrayList<APIsInfo>)
+    : ArrayAdapter<APIsInfo>(context, 0, websiteImageList) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         return initView(position, convertView, parent)
@@ -34,7 +35,7 @@ class SpinnerSearchIconAdapter(context: Context, websiteImageList: ArrayList<Int
 
         currentItem?.let {
 
-            imageView?.setImageResource(currentItem)
+            imageView?.setImageResource(currentItem.apiImage)
         }
 
         return view!!

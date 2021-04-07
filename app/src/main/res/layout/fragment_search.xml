@@ -21,7 +21,7 @@
                 android:layout_height="match_parent">
 
                 <Spinner
-                    android:id="@+id/spinner"
+                    android:id="@+id/searchWithWebsiteSpinner"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_marginEnd="5dp"
@@ -38,7 +38,7 @@
                     android:layout_marginBottom="10dp"
                     app:cardCornerRadius="100dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/spinner"
+                    app:layout_constraintEnd_toStartOf="@+id/searchWithWebsiteSpinner"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -85,7 +85,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
+    <!--<androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
@@ -94,6 +94,12 @@
             android:id="@+id/include"
             layout="@layout/search_fragment_layout" />
 
-    </androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>-->
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchRV"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
