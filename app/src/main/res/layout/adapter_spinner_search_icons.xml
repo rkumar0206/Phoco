@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="45dp"
+    android:layout_height="45dp"
+    android:layout_margin="2dp"
+    app:cardCornerRadius="100dp">
+
+    <ImageView
+        android:id="@+id/spinner_imageView"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_gravity="center"
+        android:layout_margin="2dp"
+        android:contentDescription="@string/imageview"
+        tools:layout_editor_absoluteX="3dp"
+        tools:layout_editor_absoluteY="18dp"
+        tools:srcCompat="@drawable/logo_unsplash" />
+</androidx.cardview.widget.CardView>
