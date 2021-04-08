@@ -14,10 +14,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentSearchBin
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.LoadingStateAdapterForPaging
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.SpinnerSearchIconAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.UnsplashSearchResultsAdapter
-import com.rohitthebest.phoco_theimagesearchingapp.utils.APIName
-import com.rohitthebest.phoco_theimagesearchingapp.utils.APIsInfo
-import com.rohitthebest.phoco_theimagesearchingapp.utils.hideKeyBoard
-import com.rohitthebest.phoco_theimagesearchingapp.utils.validateString
+import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -118,8 +115,12 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
                     hideKeyBoard(requireActivity())
 
-                    searchWithCorrectAPI(binding.searchBoxACT.text.toString().trim())
+                    if (requireContext().isInternetAvailable()) {
 
+                        searchWithCorrectAPI(binding.searchBoxACT.text.toString().trim())
+                    } else {
+                        requireContext().showNoInternetMessage()
+                    }
                 }
             }
             true

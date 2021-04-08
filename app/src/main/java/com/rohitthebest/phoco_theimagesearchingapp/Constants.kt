@@ -6,6 +6,6 @@ object Constants {
     const val UNSPLASH_PHOTO_DATABASE_NAME = "unsplashPhoto.db"
     const val UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME = "UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME"
     const val UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY = "UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY"
-    const val NO_INTERNET_MESSAGE = "Please check your connection!!!"
+    const val NO_INTERNET_MESSAGE = "Please check your internet connection!!!"
     const val PREVIEW_IMAGE_MESSAGE_KEY = "PREVIEW_IMAGE_MESSAGE_KEYnvsjnjsnjnnv"
 }

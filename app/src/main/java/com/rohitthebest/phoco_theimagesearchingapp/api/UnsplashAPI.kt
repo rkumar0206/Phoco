@@ -29,23 +29,30 @@ interface UnsplashAPI {
     ): Response<UnsplashPhoto>
 
 
-    //getting photos related to search query
-    @Headers("Accept-Version: v1", "Authorization: Client-ID $UNSPLASH_CLIENT_ID")
-    @GET("search/photos")
-    suspend fun searchPhoto(
-            @Query("query") query: String,
-            @Query("page") page: Int,
-            @Query("per_page") perPage: Int,
-            @Query("order_by") orderBy: String = "latest"
-    ): UnsplashResponse
+ //getting photos related to search query
+ @Headers("Accept-Version: v1", "Authorization: Client-ID $UNSPLASH_CLIENT_ID")
+ @GET("search/photos")
+ suspend fun searchPhoto(
+         @Query("query") query: String,
+         @Query("page") page: Int,
+         @Query("per_page") perPage: Int
+ ): UnsplashResponse
 
 
-    //getting random photos
-    @Headers("Accept-Version: v1", "Authorization: Client-ID $UNSPLASH_CLIENT_ID")
-    @GET("photos/random")
-    suspend fun getRandomPhotos(
-            @Query("count") count: Int = 30
-    ): Response<ArrayList<UnsplashPhoto>>
+ //getting random photos
+ @Headers("Accept-Version: v1", "Authorization: Client-ID $UNSPLASH_CLIENT_ID")
+ @GET("photos/random")
+ suspend fun getRandomPhotos(
+         @Query("count") count: Int = 30
+ ): Response<ArrayList<UnsplashPhoto>>
 
+ //get user's photos
+ @Headers("Accept-Version: v1", "Authorization: Client-ID $UNSPLASH_CLIENT_ID")
+ @GET("/users/{username}/photos")
+ suspend fun getUsersPhotos(
+         @Path("username") username: String,
+         @Query("page") page: Int,
+         @Query("per_page") perPage: Int
+ ): UnsplashResponse
 
 }
