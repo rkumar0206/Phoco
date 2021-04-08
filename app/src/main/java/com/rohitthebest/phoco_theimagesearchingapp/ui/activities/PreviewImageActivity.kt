@@ -1,10 +1,12 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.activities
 
+import android.annotation.SuppressLint
 import android.app.WallpaperManager
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -13,17 +15,22 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.HOME_FRAGMENT_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.R
+import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ActivityPreviewImageBinding
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToImageDownloadLinksAndInfo
+import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private const val TAG = "PreviewImageActivity"
 
+@AndroidEntryPoint
 class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityPreviewImageBinding
@@ -32,14 +39,23 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private var isDownloadOptionsVisible = false
 
+    private val unsplashPhotoViewModel by viewModels<UnsplashPhotoViewModel>()
+
+    private lateinit var homeImageList: List<UnsplashPhoto>
+
+    private var currentImageIndex: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityPreviewImageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        getImageList()
+
         imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_MESSAGE_KEY)
-            ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
+                ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
+
 
         setImageInImageView()
 
@@ -47,6 +63,30 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         wallpaperManager = WallpaperManager.getInstance(applicationContext)
 
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateTheImageIndexNumberInTextView() {
+
+        binding.imageNumberTV.text = "${currentImageIndex + 1} / ${homeImageList.size}"
+    }
+
+    private fun getImageList() {
+
+        unsplashPhotoViewModel.getAllUnsplashPhoto().observe(this, {
+
+            homeImageList = it
+
+            if (imageDownloadLinksAndInfo.tag == HOME_FRAGMENT_TAG) {
+
+                val currentImage = homeImageList.filter { image -> image.id == imageDownloadLinksAndInfo.imageId }
+
+                currentImageIndex = homeImageList.indexOf(currentImage[0])
+
+                updateTheImageIndexNumberInTextView()
+            }
+
+        })
     }
 
     private fun initListeners() {
@@ -59,6 +99,9 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         binding.smallDownloadCV.setOnClickListener(this)
         binding.mediumDownloadCV.setOnClickListener(this)
         binding.originalDownloadCV.setOnClickListener(this)
+
+        binding.nextPreviewImageBtn.setOnClickListener(this)
+        binding.previousPreviewImageBtn.setOnClickListener(this)
 
         binding.previewImageIV.setOnClickListener(this)
     }
@@ -144,7 +187,52 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
                 hideDownloadOptions()
             }
+
+            binding.nextPreviewImageBtn.id -> {
+
+                if (currentImageIndex < homeImageList.size - 1) {
+
+                    currentImageIndex++
+                    updateTheImageIndexNumberInTextView()
+                    updateImageDownloadInfo()
+
+                } else {
+
+                    currentImageIndex = 0
+                    updateTheImageIndexNumberInTextView()
+                    updateImageDownloadInfo()
+                }
+            }
+
+            binding.previousPreviewImageBtn.id -> {
+
+                if (currentImageIndex > 0) {
+
+                    currentImageIndex--
+
+                    updateTheImageIndexNumberInTextView()
+                    updateImageDownloadInfo()
+                } else {
+
+                    currentImageIndex = homeImageList.size - 1
+                    updateTheImageIndexNumberInTextView()
+                    updateImageDownloadInfo()
+                }
+            }
         }
+    }
+
+    private fun updateImageDownloadInfo() {
+
+        val currentImage = homeImageList[currentImageIndex]
+
+        imageDownloadLinksAndInfo.imageUrls = ImageDownloadLinksAndInfo
+                .ImageUrls(currentImage.urls.small, currentImage.urls.regular, currentImage.links.download)
+
+        imageDownloadLinksAndInfo.imageName = currentImage.alt_description ?: ""
+        imageDownloadLinksAndInfo.imageId = currentImage.id
+
+        setImageInImageView()
     }
 
     private fun showDownloadOptions() {
@@ -179,14 +267,14 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         showToast(this, "Downloading Image")
 
         DownloadFile().downloadFile(
-            this,
-            imageUrl,
-            if (imageDownloadLinksAndInfo.imageName != "" && !imageDownloadLinksAndInfo.imageName.contains(
-                    "/"
+                this,
+                imageUrl,
+                if (imageDownloadLinksAndInfo.imageName != "" && !imageDownloadLinksAndInfo.imageName.contains(
+                                "/"
+                        )
                 )
-            )
-                "${imageDownloadLinksAndInfo.imageName}.jpg"
-            else "${System.currentTimeMillis()}.jpg"
+                    "${imageDownloadLinksAndInfo.imageName}.jpg"
+                else "${System.currentTimeMillis()}.jpg"
         )
 
     }
@@ -217,7 +305,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 })
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(binding.previewImageIV)
-
 
     }
 

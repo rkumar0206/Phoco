@@ -8,6 +8,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.HOME_FRAGMENT_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME
@@ -33,7 +34,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
     private val binding get() = _binding!!
 
     private val unsplashViewModel by viewModels<UnsplashViewModel>()
-    private val unsplashPhotoViewModel by viewModels<UnsplashPhotoViewModel>()
+    private val unsplashPhotoViewModel by viewModels<UnsplashPhotoViewModel>()  //room database methods
 
     private lateinit var homeAdapter: HomeRVAdapter
 
@@ -216,7 +217,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
     override fun onImageClicked(unsplashPhoto: UnsplashPhoto) {
 
-        Log.d(TAG, "onImageClicked: Download : ${unsplashPhoto.links.download}")
+        Log.d(TAG, "onImageClicked: Download : ${unsplashPhoto.id}")
 
         val intent = Intent(requireContext(), PreviewImageActivity::class.java)
 
@@ -226,7 +227,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                         unsplashPhoto.urls.regular,
                         unsplashPhoto.links.download
                 ),
-                unsplashPhoto.alt_description ?: ""
+                unsplashPhoto.alt_description ?: "",
+                HOME_FRAGMENT_TAG,
+                unsplashPhoto.id
         )
 
         intent.putExtra(PREVIEW_IMAGE_MESSAGE_KEY,

@@ -168,4 +168,40 @@
 
     </LinearLayout>
 
+    <ImageButton
+        android:id="@+id/nextPreviewImageBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_right_24" />
+
+    <ImageButton
+        android:id="@+id/previousPreviewImageBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="@android:color/transparent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_left_24" />
+
+    <TextView
+        android:id="@+id/imageNumberTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/nextPreviewImageBtn"
+        app:layout_constraintEnd_toStartOf="@+id/nextPreviewImageBtn"
+        app:layout_constraintStart_toEndOf="@+id/previousPreviewImageBtn"
+        app:layout_constraintTop_toTopOf="@+id/nextPreviewImageBtn"
+        tools:text="01/30" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
