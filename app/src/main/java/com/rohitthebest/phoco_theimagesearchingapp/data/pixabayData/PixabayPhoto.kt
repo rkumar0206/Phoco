@@ -1,6 +1,6 @@
 package com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData
 
-data class PixabayData(
+data class PixabayPhoto(
         val comments: Int,
         val downloads: Int,
         val favorites: Int,
