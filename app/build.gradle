@@ -20,6 +20,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "UNSPLASH_CLIENT_ID", MyUnsplashApiKey)
+        buildConfigField("String", "PIXABAY_API_KEY", MYPixabayAPIKey)
     }
 
 
