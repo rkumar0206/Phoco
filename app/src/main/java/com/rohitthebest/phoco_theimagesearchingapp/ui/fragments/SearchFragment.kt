@@ -15,6 +15,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.LoadingStateAdapt
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.SpinnerSearchIconAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.UnsplashSearchResultsAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
+import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PixabayViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,6 +26,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private val binding get() = _binding!!
 
     private val unsplashViewModel by viewModels<UnsplashViewModel>()
+    private val pixabayViewModel by viewModels<PixabayViewModel>()
 
     private lateinit var spinnerAdapter: SpinnerSearchIconAdapter
     private lateinit var spinnerList: ArrayList<APIsInfo>
@@ -53,7 +55,17 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
         observeUnsplashSearchResult()
 
+        observePixabayResult()
+
         setUpRecyclerView()
+    }
+
+    private fun observePixabayResult() {
+
+        pixabayViewModel.pixabaySearchResult.observe(viewLifecycleOwner, {
+
+            //todo : submit the list with the pixabay adapter
+        })
     }
 
     private fun observeUnsplashSearchResult() {
@@ -135,6 +147,12 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
                 unsplashViewModel.searchImage(searchString)
             }
+
+            APIName.PIXABAY -> {
+
+                pixabayViewModel.searchWithPixabay(searchString)
+            }
+
             else -> {
                 unsplashViewModel.searchImage(searchString)
             }
@@ -151,12 +169,33 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
                 currentAPI = parent?.getItemAtPosition(position) as APIsInfo
 
+                if (binding.searchBoxACT.text.toString().validateString()) {
+
+                    searchWithCorrectAPI(binding.searchBoxACT.text.toString())
+                }
+
                 when (currentAPI.apiName) {
 
-                    APIName.UNSPLASH -> binding.searchBoxACT.hint = "Search on ${getString(R.string.unsplash)}"
-                    APIName.PIXABAY -> binding.searchBoxACT.hint = "Search on ${getString(R.string.pixabay)}"
-                    APIName.PEXELS -> binding.searchBoxACT.hint = "Search on ${getString(R.string.pexels)}"
-                    APIName.WEB -> binding.searchBoxACT.hint = "Search on ${getString(R.string.web)}"
+                    APIName.UNSPLASH -> {
+
+                        binding.searchBoxACT.hint = "Search on ${getString(R.string.unsplash)}"
+
+                    }
+
+                    APIName.PIXABAY -> {
+
+                        binding.searchBoxACT.hint = "Search on ${getString(R.string.pixabay)}"
+                    }
+
+                    APIName.PEXELS -> {
+
+                        binding.searchBoxACT.hint = "Search on ${getString(R.string.pexels)}"
+                    }
+
+                    APIName.WEB -> {
+
+                        binding.searchBoxACT.hint = "Search on ${getString(R.string.web)}"
+                    }
 
                 }
             }

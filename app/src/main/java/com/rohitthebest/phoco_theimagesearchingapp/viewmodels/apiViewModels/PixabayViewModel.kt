@@ -13,7 +13,7 @@ class PixabayViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     //for searching image
-    val currentQuery = MutableLiveData<String>()
+    private val currentQuery = MutableLiveData<String>()
 
     fun searchWithPixabay(searchQuery: String) {
 
