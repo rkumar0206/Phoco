@@ -215,36 +215,42 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
                 setUpRecyclerView()
 
-                when (currentAPI.apiName) {
-
-                    APIName.UNSPLASH -> {
-
-                        binding.searchBoxACT.hint = "Search on ${getString(R.string.unsplash)}"
-
-                    }
-
-                    APIName.PIXABAY -> {
-
-                        binding.searchBoxACT.hint = "Search on ${getString(R.string.pixabay)}"
-                    }
-
-                    APIName.PEXELS -> {
-
-                        binding.searchBoxACT.hint = "Search on ${getString(R.string.pexels)}"
-                    }
-
-                    APIName.WEB -> {
-
-                        binding.searchBoxACT.hint = "Search on ${getString(R.string.web)}"
-                    }
-
-                }
+                updateHintOnTheSearchACT()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 //TODO("Not yet implemented")
             }
         }
+    }
+
+    private fun updateHintOnTheSearchACT() {
+
+        when (currentAPI.apiName) {
+
+            APIName.UNSPLASH -> {
+
+                binding.searchBoxACT.hint = "Search on ${getString(R.string.unsplash)}"
+
+            }
+
+            APIName.PIXABAY -> {
+
+                binding.searchBoxACT.hint = "Search on ${getString(R.string.pixabay)}"
+            }
+
+            APIName.PEXELS -> {
+
+                binding.searchBoxACT.hint = "Search on ${getString(R.string.pexels)}"
+            }
+
+            APIName.WEB -> {
+
+                binding.searchBoxACT.hint = "Search on ${getString(R.string.web)}"
+            }
+
+        }
+
     }
 
     private fun initSpinnerList() {
