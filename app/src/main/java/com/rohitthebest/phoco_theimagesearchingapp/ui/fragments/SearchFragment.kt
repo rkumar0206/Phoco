@@ -1,6 +1,7 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.AdapterView
@@ -11,6 +12,8 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rohitthebest.phoco_theimagesearchingapp.R
+import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentSearchBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.LoadingStateAdapterForPaging
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.PixabaySearchResultsAdapter
@@ -21,8 +24,10 @@ import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.Pixa
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+private const val TAG = "SearchFragment"
+
 @AndroidEntryPoint
-class SearchFragment : Fragment(R.layout.fragment_search) {
+class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResultsAdapter.OnClickListener, PixabaySearchResultsAdapter.OnClickListener {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
@@ -112,6 +117,9 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext())
         }
+
+        unsplashSearchAdapter.setOnClickListener(this)
+        pixabaySearchAdapter.setOnClickListener(this)
     }
 
     private fun setUpLoadStateListener() {
@@ -268,5 +276,53 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         _binding = null
     }
 
+
+    //----------------------------- Unsplash adapter click listeners ------------------------------
+    override fun onImageClicked(unsplashPhoto: UnsplashPhoto) {
+
+        Log.d(TAG, "onImageClicked: clicked by unsplash")
+    }
+
+    override fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onShowMoreOptionsBtnClicked(unsplashPhoto: UnsplashPhoto) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onImageUserNameClicked(unsplashPhoto: UnsplashPhoto) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto) {
+        //TODO("Not yet implemented")
+    }
+    //-------------------------------------------------------------------------------------------
+
+
+    //----------------------------- Pixabay adapter click listeners ------------------------------
+    override fun onImageClicked(pixabayPhoto: PixabayPhoto) {
+
+        Log.d(TAG, "onImageClicked: clicked by pixabay")
+
+    }
+
+    override fun onAddToFavouriteBtnClicked(pixabayPhoto: PixabayPhoto) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onShowMoreOptionsBtnClicked(pixabayPhoto: PixabayPhoto) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onImageUserNameClicked(pixabayPhoto: PixabayPhoto) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onAddToFavouriteLongClicked(pixabayPhoto: PixabayPhoto) {
+        //TODO("Not yet implemented")
+    }
+    //---------------------------------------------------------------------------------------------
 
 }
