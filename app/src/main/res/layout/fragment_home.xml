@@ -87,7 +87,7 @@
             android:layout_height="match_parent"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
             android:id="@+id/homeRV"
-            tools:listitem="@layout/adapter_home_recyclerview"
+            tools:listitem="@layout/photo_item_for_rv"
             />
 
 

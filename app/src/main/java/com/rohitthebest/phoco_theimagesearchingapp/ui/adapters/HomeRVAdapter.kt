@@ -15,7 +15,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
-import com.rohitthebest.phoco_theimagesearchingapp.databinding.AdapterHomeRecyclerviewBinding
+import com.rohitthebest.phoco_theimagesearchingapp.databinding.PhotoItemForRvBinding
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 
@@ -23,7 +23,7 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
 
     private var mListener: OnClickListener? = null
 
-    inner class HomeRVViewHolder(val binding: AdapterHomeRecyclerviewBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
+    inner class HomeRVViewHolder(val binding: PhotoItemForRvBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
 
         fun setData(unsplashPhoto: UnsplashPhoto?) {
 
@@ -165,7 +165,7 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeRVViewHolder {
 
-        val binding = AdapterHomeRecyclerviewBinding
+        val binding = PhotoItemForRvBinding
                 .inflate(LayoutInflater.from(parent.context), parent, false)
 
         return HomeRVViewHolder(binding)

@@ -4,8 +4,8 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -14,45 +14,43 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.rohitthebest.phoco_theimagesearchingapp.R
-import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.PhotoItemForRvBinding
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 
-class UnsplashSearchResultsAdapter :
-        PagingDataAdapter<UnsplashPhoto, UnsplashSearchResultsAdapter.UnsplashSearchViewHolder>(DiffUtilCallback()) {
+class PixabaySearchResultsAdapter :
+        ListAdapter<PixabayPhoto, PixabaySearchResultsAdapter.PixabayViewHolder>(DiffUtilCallback()) {
 
     private var mListener: OnClickListener? = null
 
-    inner class UnsplashSearchViewHolder(val binding: PhotoItemForRvBinding)
-        : RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
+    inner class PixabayViewHolder(val binding: PhotoItemForRvBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
 
-        fun setData(unsplashPhoto: UnsplashPhoto?) {
+        fun setData(pixabayPhoto: PixabayPhoto?) {
 
-            unsplashPhoto?.let {
+            pixabayPhoto?.let {
 
                 binding.apply {
 
                     //displaying the actual image
-                    setUpAndShowImageInImageView(unsplashPhoto)
+                    setUpAndShowImageInImageView(it)
 
                     //displaying the user image
                     Glide.with(binding.view)
-                            .load(unsplashPhoto.user.profile_image.small)
+                            .load(pixabayPhoto.userImageURL)
                             .centerInside()
                             .error(R.drawable.ic_outline_account_circle_24)
                             .into(imageUserImage)
 
-                    imageUserNameTV.text = it.user.username
+                    imageUserNameTV.text = it.user
                 }
             }
         }
 
-        //displaying the actual image
-        private fun setUpAndShowImageInImageView(unsplashPhoto: UnsplashPhoto) {
+        private fun setUpAndShowImageInImageView(pixabayPhoto: PixabayPhoto) {
 
             Glide.with(binding.view)
-                    .load(unsplashPhoto.urls.regular)
+                    .load(pixabayPhoto.webformatURL)
                     .apply {
                         this.error(R.drawable.ic_outline_error_outline_24)
                         this.centerCrop()
@@ -87,6 +85,7 @@ class UnsplashSearchResultsAdapter :
             binding.reloadBackground.hide()
             binding.reloadFAB.visibility = View.GONE
         }
+
 
         init {
 
@@ -153,40 +152,43 @@ class UnsplashSearchResultsAdapter :
 
     companion object {
 
-        class DiffUtilCallback : DiffUtil.ItemCallback<UnsplashPhoto>() {
-            override fun areItemsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto): Boolean =
-                    oldItem.urls == newItem.urls
+        class DiffUtilCallback : DiffUtil.ItemCallback<PixabayPhoto>() {
 
-            override fun areContentsTheSame(oldItem: UnsplashPhoto, newItem: UnsplashPhoto): Boolean =
-                    oldItem == newItem
+            override fun areItemsTheSame(oldItem: PixabayPhoto, newItem: PixabayPhoto): Boolean {
+
+                return oldItem.largeImageURL == newItem.largeImageURL
+            }
+
+            override fun areContentsTheSame(oldItem: PixabayPhoto, newItem: PixabayPhoto): Boolean {
+
+                return oldItem == newItem
+            }
         }
     }
 
-    override fun onBindViewHolder(holder: UnsplashSearchViewHolder, position: Int) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PixabayViewHolder {
+
+        val binding = PhotoItemForRvBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+
+        return PixabayViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: PixabayViewHolder, position: Int) {
 
         holder.setData(getItem(position))
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UnsplashSearchViewHolder {
-
-        val binding = PhotoItemForRvBinding
-                .inflate(LayoutInflater.from(parent.context), parent, false)
-
-        return UnsplashSearchViewHolder(binding)
-    }
-
     interface OnClickListener {
 
-        fun onImageClicked(unsplashPhoto: UnsplashPhoto)
-        fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto)
-        fun onShowMoreOptionsBtnClicked(unsplashPhoto: UnsplashPhoto)
-        fun onImageUserNameClicked(unsplashPhoto: UnsplashPhoto)
+        fun onImageClicked(pixabayPhoto: PixabayPhoto)
+        fun onAddToFavouriteBtnClicked(pixabayPhoto: PixabayPhoto)
+        fun onShowMoreOptionsBtnClicked(pixabayPhoto: PixabayPhoto)
+        fun onImageUserNameClicked(pixabayPhoto: PixabayPhoto)
 
-        fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto)
+        fun onAddToFavouriteLongClicked(pixabayPhoto: PixabayPhoto)
     }
 
     fun setOnClickListener(listener: OnClickListener) {
-
         mListener = listener
     }
 }
