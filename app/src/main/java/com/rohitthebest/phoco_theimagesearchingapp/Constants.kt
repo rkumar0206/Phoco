@@ -12,5 +12,5 @@ object Constants {
     const val PREVIEW_IMAGE_MESSAGE_KEY = "PREVIEW_IMAGE_MESSAGE_KEYnvsjnjsnjnnv"
     const val HOME_FRAGMENT_TAG = "HomeFragment"
 
-    const val PIXABAY_BASE_URL = "https://pixabay.com/api/"
+    const val PIXABAY_BASE_URL = "https://pixabay.com"
 }

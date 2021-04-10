@@ -9,7 +9,7 @@ import retrofit2.http.Query
 interface PixabayAPI {
 
     //search photos
-    @GET
+    @GET("/api/")
     suspend fun searchWithPixabay(
 
             @Query("key") key: String = BuildConfig.PIXABAY_API_KEY,
@@ -19,7 +19,7 @@ interface PixabayAPI {
     ): PixabayResponse
 
     //get photo by id
-    @GET
+    @GET("/api/")
     suspend fun getPhotoById(
 
         @Query("key") key: String = BuildConfig.PIXABAY_API_KEY,

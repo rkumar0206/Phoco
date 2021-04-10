@@ -7,11 +7,13 @@ import android.widget.AdapterView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentSearchBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.LoadingStateAdapterForPaging
+import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.PixabaySearchResultsAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.SpinnerSearchIconAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.UnsplashSearchResultsAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
@@ -32,6 +34,7 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
     private lateinit var spinnerList: ArrayList<APIsInfo>
 
     private lateinit var unsplashSearchAdapter: UnsplashSearchResultsAdapter
+    private lateinit var pixabaySearchAdapter: PixabaySearchResultsAdapter
     private lateinit var currentAPI: APIsInfo
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -48,23 +51,23 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         setUpWebsiteSpinner()
 
         unsplashSearchAdapter = UnsplashSearchResultsAdapter()
+        pixabaySearchAdapter = PixabaySearchResultsAdapter()
 
         initSearchEditText()
 
-        setUpUnsplashLoadStateListener()
+        setUpLoadStateListener()
 
         observeUnsplashSearchResult()
-
         observePixabayResult()
 
-        setUpRecyclerView()
+        //setUpRecyclerView()
     }
 
     private fun observePixabayResult() {
 
         pixabayViewModel.pixabaySearchResult.observe(viewLifecycleOwner, {
 
-            //todo : submit the list with the pixabay adapter
+            pixabaySearchAdapter.submitData(viewLifecycleOwner.lifecycle, it)
         })
     }
 
@@ -80,41 +83,75 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
 
         binding.searchRV.apply {
 
-            adapter = unsplashSearchAdapter.withLoadStateHeaderAndFooter(
-                    header = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() },
-                    footer = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() }
-            )
+            adapter = when (currentAPI.apiName) {
+
+                APIName.UNSPLASH -> {
+                    unsplashSearchAdapter.withLoadStateHeaderAndFooter(
+                            header = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() },
+                            footer = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() }
+                    )
+                }
+
+                APIName.PIXABAY -> {
+
+                    pixabaySearchAdapter.withLoadStateHeaderAndFooter(
+                            header = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() },
+                            footer = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() }
+                    )
+                }
+
+                else -> {
+
+                    unsplashSearchAdapter.withLoadStateHeaderAndFooter(
+                            header = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() },
+                            footer = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() }
+                    )
+                }
+            }
 
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
-    private fun setUpUnsplashLoadStateListener() {
+    private fun setUpLoadStateListener() {
 
         unsplashSearchAdapter.addLoadStateListener { loadState ->
 
-            binding.apply {
+            applyChangesAccordingToLoadState(loadState)
 
-                progressBar.isVisible = loadState.source.refresh is LoadState.Loading
-                searchRV.isVisible = loadState.source.refresh is LoadState.NotLoading
-                /*               buttonRetry.isVisible = loadState.source.refresh is LoadState.Error
-                               textViewError.isVisible = loadState.source.refresh is LoadState.Error
-
-                               if (
-                                       loadState.source.refresh is LoadState.NotLoading
-                                       && loadState.append.endOfPaginationReached
-                                       && mAdapter.itemCount < 1
-                               ) {
-
-                                   recyclerView.isVisible = false
-                                   textViewEmpty.isVisible = true
-                               } else {
-
-                                   textViewEmpty.isVisible = false
-                               }*/
-            }
         }
+
+        pixabaySearchAdapter.addLoadStateListener {
+
+            applyChangesAccordingToLoadState(it)
+        }
+
+    }
+
+    private fun applyChangesAccordingToLoadState(loadState: CombinedLoadStates) {
+
+        binding.apply {
+
+            progressBar.isVisible = loadState.source.refresh is LoadState.Loading
+            searchRV.isVisible = loadState.source.refresh is LoadState.NotLoading
+            /*               buttonRetry.isVisible = loadState.source.refresh is LoadState.Error
+                           textViewError.isVisible = loadState.source.refresh is LoadState.Error
+
+                           if (
+                                   loadState.source.refresh is LoadState.NotLoading
+                                   && loadState.append.endOfPaginationReached
+                                   && mAdapter.itemCount < 1
+                           ) {
+
+                               recyclerView.isVisible = false
+                               textViewEmpty.isVisible = true
+                           } else {
+
+                               textViewEmpty.isVisible = false
+                           }*/
+        }
+
     }
 
     private fun initSearchEditText() {
@@ -167,12 +204,16 @@ class SearchFragment : Fragment(R.layout.fragment_search) {
         binding.searchWithWebsiteSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
+                val api = if (::currentAPI.isInitialized) currentAPI else parent?.getItemAtPosition(position) as APIsInfo
+
                 currentAPI = parent?.getItemAtPosition(position) as APIsInfo
 
-                if (binding.searchBoxACT.text.toString().validateString()) {
+                if (binding.searchBoxACT.text.toString().validateString() && currentAPI != api) {
 
                     searchWithCorrectAPI(binding.searchBoxACT.text.toString())
                 }
+
+                setUpRecyclerView()
 
                 when (currentAPI.apiName) {
 

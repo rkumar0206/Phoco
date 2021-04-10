@@ -4,8 +4,8 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
@@ -20,7 +20,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 
 class PixabaySearchResultsAdapter :
-        ListAdapter<PixabayPhoto, PixabaySearchResultsAdapter.PixabayViewHolder>(DiffUtilCallback()) {
+        PagingDataAdapter<PixabayPhoto, PixabaySearchResultsAdapter.PixabayViewHolder>(DiffUtilCallback()) {
 
     private var mListener: OnClickListener? = null
 
