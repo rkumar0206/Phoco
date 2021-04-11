@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.roomDatabase
+package com.rohitthebest.phoco_theimagesearchingapp.database
 
 import androidx.room.TypeConverter
 import com.google.gson.Gson

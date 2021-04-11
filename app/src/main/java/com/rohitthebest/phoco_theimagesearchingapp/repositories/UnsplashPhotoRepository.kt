@@ -1,7 +1,7 @@
 package com.rohitthebest.phoco_theimagesearchingapp.repositories
 
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
-import com.rohitthebest.phoco_theimagesearchingapp.roomDatabase.dao.UnsplashPhotoDao
+import com.rohitthebest.phoco_theimagesearchingapp.database.dao.UnsplashPhotoDao
 import javax.inject.Inject
 
 class UnsplashPhotoRepository @Inject constructor(

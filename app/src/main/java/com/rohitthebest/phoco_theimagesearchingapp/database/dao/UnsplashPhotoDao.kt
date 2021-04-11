@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.roomDatabase.dao
+package com.rohitthebest.phoco_theimagesearchingapp.database.dao
 
 import androidx.room.*
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto

@@ -7,7 +7,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATABASE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.api.PixabayAPI
 import com.rohitthebest.phoco_theimagesearchingapp.api.UnsplashAPI
-import com.rohitthebest.phoco_theimagesearchingapp.roomDatabase.database.UnsplashPhotoDatabase
+import com.rohitthebest.phoco_theimagesearchingapp.database.database.UnsplashPhotoDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
