@@ -16,6 +16,9 @@ interface SavedImageDao {
     @Delete
     suspend fun deleteImage(savedImage: SavedImage)
 
+    @Query("DELETE FROM saved_image_table WHERE imageId = :imageId")
+    suspend fun deleteImageByImageId(imageId: String)
+
     @Query("DELETE FROM saved_image_table")
     suspend fun deleteAllImage()
 

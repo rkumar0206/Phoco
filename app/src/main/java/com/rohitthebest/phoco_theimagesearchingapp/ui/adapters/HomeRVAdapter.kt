@@ -42,6 +42,14 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
                             .into(imageUserImage)
 
                     imageUserNameTV.text = it.user.username
+
+                    if (unsplashPhoto.isImageSavedInCollection) {
+
+                        addToFavouritesBtn.setImageResource(R.drawable.ic_baseline_bookmark_24)
+                    } else {
+
+                        addToFavouritesBtn.setImageResource(R.drawable.ic_outline_bookmark_border_24)
+                    }
                 }
             }
         }
@@ -110,7 +118,7 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
 
                     binding.addToFavouritesBtn.id -> {
 
-                        mListener!!.onAddToFavouriteBtnClicked(getItem(absoluteAdapterPosition))
+                        mListener!!.onAddToFavouriteBtnClicked(getItem(absoluteAdapterPosition), absoluteAdapterPosition)
                     }
 
                     binding.downloadImageBtn.id -> {
@@ -136,7 +144,7 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
 
             if (v?.id == binding.addToFavouritesBtn.id) {
 
-                mListener!!.onAddToFavouriteLongClicked(getItem(absoluteAdapterPosition))
+                mListener!!.onAddToFavouriteLongClicked(getItem(absoluteAdapterPosition), absoluteAdapterPosition)
             }
 
             return true
@@ -179,11 +187,11 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
     interface OnClickListener {
 
         fun onImageClicked(unsplashPhoto: UnsplashPhoto)
-        fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto)
+        fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto, position: Int)
         fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto)
         fun onImageUserNameClicked(unsplashPhoto: UnsplashPhoto)
 
-        fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto)
+        fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto, position: Int)
     }
 
     fun setOnClickListener(listener: OnClickListener) {

@@ -9,7 +9,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.repositories.SavedImageReposi
 import kotlinx.coroutines.launch
 
 class SavedImageViewModel @ViewModelInject constructor(
-        val repository: SavedImageRepository
+        private val repository: SavedImageRepository
 ) : ViewModel() {
 
     fun insertImage(savedImage: SavedImage) = viewModelScope.launch {
@@ -26,6 +26,11 @@ class SavedImageViewModel @ViewModelInject constructor(
     fun deleteImage(savedImage: SavedImage) = viewModelScope.launch {
 
         repository.deleteImage(savedImage)
+    }
+
+    fun deleteImageByImageId(imageId: String) = viewModelScope.launch {
+
+        repository.deleteImageByImageId(imageId)
     }
 
     fun deleteAllImage() = viewModelScope.launch {

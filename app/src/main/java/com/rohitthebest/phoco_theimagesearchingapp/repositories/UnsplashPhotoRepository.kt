@@ -12,6 +12,8 @@ class UnsplashPhotoRepository @Inject constructor(
 
     suspend fun insertUnsplashPhotoList(unsplashPhotoList: List<UnsplashPhoto>) = dao.insertUnsplashPhotoList(unsplashPhotoList)
 
+    suspend fun updateUnsplashPhoto(unsplashPhoto: UnsplashPhoto) = dao.updateUnsplashPhoto(unsplashPhoto)
+
     suspend fun deleteUNsplashPhoto(unsplashPhoto: UnsplashPhoto) = dao.deleteUNsplashPhoto(unsplashPhoto)
 
     suspend fun deleteAllUnsplashPhoto() = dao.deleteAllUnsplashPhoto()

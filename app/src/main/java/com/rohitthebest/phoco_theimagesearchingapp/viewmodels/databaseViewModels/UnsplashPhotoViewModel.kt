@@ -22,6 +22,11 @@ class UnsplashPhotoViewModel @ViewModelInject constructor(
         repository.insertUnsplashPhotoList(unsplashPhotoList)
     }
 
+    fun updateUnsplashPhoto(unsplashPhoto: UnsplashPhoto) = viewModelScope.launch {
+
+        repository.updateUnsplashPhoto(unsplashPhoto)
+    }
+
     fun deleteUNsplashPhoto(unsplashPhoto: UnsplashPhoto) = viewModelScope.launch {
 
         repository.deleteUNsplashPhoto(unsplashPhoto)

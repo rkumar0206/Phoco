@@ -15,12 +15,15 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.UserInfo
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentHomeBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.activities.PreviewImageActivity
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.HomeRVAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertImageDownloadLinksAndInfoToString
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
+import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -35,10 +38,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
     private val unsplashViewModel by viewModels<UnsplashViewModel>()
     private val unsplashPhotoViewModel by viewModels<UnsplashPhotoViewModel>()  //room database methods
+    private val savedImageViewModel by viewModels<SavedImageViewModel>()
 
     private lateinit var homeAdapter: HomeRVAdapter
-
-    private var isRefreshEnabled = true
 
     private var lastDateSaved: String? = ""
 
@@ -53,7 +55,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         loadUnplashPhotoSavedDate()
 
-        isRefreshEnabled = true
         getSavedUnsplashPhoto()
 
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
@@ -66,7 +67,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
             } else {
 
                 binding.homeSwipeRefreshLayout.isRefreshing = false
-                isRefreshEnabled = true
                 getSavedUnsplashPhoto()
             }
 
@@ -79,7 +79,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         unsplashPhotoViewModel.getAllUnsplashPhoto().observe(viewLifecycleOwner, {
 
-            if (isRefreshEnabled) {
 
                 Log.d(TAG, "getSavedUnsplashPhoto: ")
 
@@ -111,8 +110,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                     }
                 }
 
-                isRefreshEnabled = false
-            }
         })
     }
 
@@ -238,10 +235,52 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         startActivity(intent)
     }
 
-    override fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto) {
+    override fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto, position: Int) {
 
         Log.d(TAG, "onAddToFavouriteBtnClicked: Download : ${unsplashPhoto.links.download}")
-        //TODO("Not yet implemented")
+
+        if (!unsplashPhoto.isImageSavedInCollection) {
+
+            val savedImage = SavedImage(
+                    key = generateKey(),
+                    collectionKey = "",
+                    timeStamp = System.currentTimeMillis(),
+                    apiInfo = APIsInfo(APIName.UNSPLASH, R.drawable.logo_unsplash),
+                    imageName = unsplashPhoto.alt_description ?: generateKey(),
+                    imageId = unsplashPhoto.id,
+                    imageUrls = ImageDownloadLinksAndInfo.ImageUrls(unsplashPhoto.urls.small, unsplashPhoto.urls.regular, unsplashPhoto.links.download),
+                    userInfo = UserInfo(
+                            unsplashPhoto.user.name,
+                            unsplashPhoto.user.id,
+                            unsplashPhoto.user.profile_image.medium
+                    ),
+                    uid = ""
+            )
+
+            savedImageViewModel.insertImage(savedImage)
+
+            unsplashPhoto.isImageSavedInCollection = true
+
+            unsplashPhotoViewModel.updateUnsplashPhoto(unsplashPhoto)
+
+            homeAdapter.notifyItemChanged(position)
+
+            showToasty(requireContext(), "Image saved", ToastyType.SUCCESS)
+
+            //todo : upload to firestore if cloud support is available in future
+        } else {
+
+            savedImageViewModel.deleteImageByImageId(unsplashPhoto.id)
+
+            unsplashPhoto.isImageSavedInCollection = false
+
+            unsplashPhotoViewModel.updateUnsplashPhoto(unsplashPhoto)
+
+            homeAdapter.notifyItemChanged(position)
+
+            showToasty(requireContext(), "Image removed", ToastyType.INFO)
+        }
+
     }
 
     override fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto) {
@@ -256,7 +295,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         //TODO("Not yet implemented")
     }
 
-    override fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto) {
+    override fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto, position: Int) {
 
         Log.d(TAG, "onAddToFavouriteLongClicked: ")
         //TODO("Not yet implemented")

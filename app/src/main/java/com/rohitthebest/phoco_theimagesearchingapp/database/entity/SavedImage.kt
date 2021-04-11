@@ -10,7 +10,7 @@ data class SavedImage(
         @PrimaryKey(autoGenerate = false) var key: String,
         var collectionKey: String = "",
         val timeStamp: Long = System.currentTimeMillis(),
-        var apiName: APIsInfo,
+        var apiInfo: APIsInfo,
         var imageName: String,
         var imageId: String = "",  //this is the image id given by the API
         var imageUrls: ImageDownloadLinksAndInfo.ImageUrls,

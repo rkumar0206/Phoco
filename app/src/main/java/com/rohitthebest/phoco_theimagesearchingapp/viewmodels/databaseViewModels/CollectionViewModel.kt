@@ -2,6 +2,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModel
 
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.repositories.CollectionRepository
@@ -31,8 +32,8 @@ class CollectionViewModel @ViewModelInject constructor(
         repository.deleteAllCollection()
     }
 
-    fun getAllCollection() = repository.getAllCollection()
+    fun getAllCollection() = repository.getAllCollection().asLiveData()
 
-    fun getCollectionByKet(key: String) = repository.getCollectionByKey(key)
+    fun getCollectionByKet(key: String) = repository.getCollectionByKey(key).asLiveData()
 
 }

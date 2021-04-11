@@ -14,6 +14,8 @@ class SavedImageRepository @Inject constructor(
 
     suspend fun deleteImage(savedImage: SavedImage) = dao.deleteImage(savedImage)
 
+    suspend fun deleteImageByImageId(imageId: String) = dao.deleteImageByImageId(imageId)
+
     suspend fun deleteAllImage() = dao.deleteAllImage()
 
     fun getAllSavesImages() = dao.getAllSavesImages()

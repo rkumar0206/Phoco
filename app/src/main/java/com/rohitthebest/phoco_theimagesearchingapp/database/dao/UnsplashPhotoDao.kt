@@ -13,6 +13,9 @@ interface UnsplashPhotoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUnsplashPhotoList(unsplashPhotoList: List<UnsplashPhoto>)
 
+    @Update
+    suspend fun updateUnsplashPhoto(unsplashPhoto: UnsplashPhoto)
+
     @Delete
     suspend fun deleteUNsplashPhoto(unsplashPhoto: UnsplashPhoto)
 
