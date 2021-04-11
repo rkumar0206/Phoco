@@ -7,7 +7,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.ImageDownloadLinksAndIn
 
 @Entity(tableName = "saved_image_table")
 data class SavedImage(
-        @PrimaryKey(autoGenerate = true) var key: String,
+        @PrimaryKey(autoGenerate = false) var key: String,
         var collectionKey: String = "",
         val timeStamp: Long = System.currentTimeMillis(),
         var apiName: APIsInfo,
