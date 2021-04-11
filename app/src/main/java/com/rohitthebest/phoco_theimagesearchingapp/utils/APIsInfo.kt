@@ -12,4 +12,9 @@ data class APIsInfo(
         var apiName: APIName,
         var apiImage: Int
 ) {
+
+    constructor() : this(
+            APIName.UNSPLASH,
+            0
+    )
 }

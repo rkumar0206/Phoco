@@ -10,7 +10,7 @@ data class Collection(
         var collectionName: String,
         var collectionImageUrl: String = "",
         var collectionDescription: String = "",
-        var uid: String
+        var uid: String = ""
 ) {
 
     constructor() : this(

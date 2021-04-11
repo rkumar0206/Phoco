@@ -11,5 +11,11 @@ data class ImageDownloadLinksAndInfo(
             var small: String,
             var medium: String,
             var original: String
-    )
+    ) {
+        constructor() : this(
+                "",
+                "",
+                ""
+        )
+    }
 }
