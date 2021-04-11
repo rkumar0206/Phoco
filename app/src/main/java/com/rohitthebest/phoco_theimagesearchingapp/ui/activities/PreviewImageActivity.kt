@@ -51,11 +51,18 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         binding = ActivityPreviewImageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        getImageList()
-
         imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_MESSAGE_KEY)
                 ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
 
+        if (imageDownloadLinksAndInfo.tag == HOME_FRAGMENT_TAG) {
+
+            getImageList()
+        } else {
+
+            binding.nextPreviewImageBtn.hide()
+            binding.previousPreviewImageBtn.hide()
+            binding.imageNumberTV.hide()
+        }
 
         setImageInImageView()
 
@@ -77,14 +84,11 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             homeImageList = it
 
-            if (imageDownloadLinksAndInfo.tag == HOME_FRAGMENT_TAG) {
+            val currentImage = homeImageList.filter { image -> image.id == imageDownloadLinksAndInfo.imageId }
 
-                val currentImage = homeImageList.filter { image -> image.id == imageDownloadLinksAndInfo.imageId }
+            currentImageIndex = homeImageList.indexOf(currentImage[0])
 
-                currentImageIndex = homeImageList.indexOf(currentImage[0])
-
-                updateTheImageIndexNumberInTextView()
-            }
+            updateTheImageIndexNumberInTextView()
 
         })
     }
@@ -135,7 +139,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
                                 setImageAsHomeScreenWallpaperFromImageUrl(
                                         applicationContext,
-                                        imageDownloadLinksAndInfo.imageUrls.original
+                                        imageDownloadLinksAndInfo.imageUrls.medium
                                 )
                             }
 
@@ -165,6 +169,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 hideDownloadOptions()
             }
 
+            /*[START OF download quality options]*/
             binding.smallDownloadCV.id -> {
 
                 downloadTheImage(imageDownloadLinksAndInfo.imageUrls.small)
@@ -182,6 +187,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 downloadTheImage(imageDownloadLinksAndInfo.imageUrls.original)
                 hideDownloadOptions()
             }
+            /*[END OF download quality options]*/
 
             binding.previewImageIV.id -> {
 

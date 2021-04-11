@@ -1,5 +1,6 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -11,15 +12,20 @@ import androidx.fragment.app.viewModels
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_PIXABAY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNSPLASH
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentSearchBinding
+import com.rohitthebest.phoco_theimagesearchingapp.ui.activities.PreviewImageActivity
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.LoadingStateAdapterForPaging
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.PixabaySearchResultsAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.SpinnerSearchIconAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.UnsplashSearchResultsAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
+import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertImageDownloadLinksAndInfoToString
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PixabayViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -281,6 +287,25 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
     override fun onImageClicked(unsplashPhoto: UnsplashPhoto) {
 
         Log.d(TAG, "onImageClicked: clicked by unsplash")
+
+        val intent = Intent(requireContext(), PreviewImageActivity::class.java)
+
+        val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
+                ImageDownloadLinksAndInfo.ImageUrls(
+                        unsplashPhoto.urls.small,
+                        unsplashPhoto.urls.regular,
+                        unsplashPhoto.links.download
+                ),
+                unsplashPhoto.alt_description ?: System.currentTimeMillis().toString(16),
+                SEARCH_FRAGMENT_TAG_UNSPLASH,
+                unsplashPhoto.id
+        )
+
+        intent.putExtra(
+                PREVIEW_IMAGE_MESSAGE_KEY,
+                convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
+        )
+        startActivity(intent)
     }
 
     override fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto) {
@@ -306,6 +331,24 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
 
         Log.d(TAG, "onImageClicked: clicked by pixabay")
 
+        val intent = Intent(requireContext(), PreviewImageActivity::class.java)
+
+        val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
+                ImageDownloadLinksAndInfo.ImageUrls(
+                        pixabayPhoto.previewURL,
+                        pixabayPhoto.webformatURL,
+                        pixabayPhoto.largeImageURL
+                ),
+                System.currentTimeMillis().toString(16),
+                SEARCH_FRAGMENT_TAG_PIXABAY,
+                pixabayPhoto.id.toString()
+        )
+
+        intent.putExtra(
+                PREVIEW_IMAGE_MESSAGE_KEY,
+                convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
+        )
+        startActivity(intent)
     }
 
     override fun onAddToFavouriteBtnClicked(pixabayPhoto: PixabayPhoto) {
