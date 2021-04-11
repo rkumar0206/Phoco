@@ -60,7 +60,7 @@
             android:contentDescription="@string/imageview" />
 
         <ImageView
-            android:id="@+id/showMoreBtn"
+            android:id="@+id/downloadImageBtn"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:layout_marginEnd="5dp"
@@ -78,7 +78,7 @@
             android:layout_marginEnd="8dp"
             android:padding="3dp"
             app:layout_constraintBottom_toBottomOf="@id/view"
-            app:layout_constraintEnd_toStartOf="@+id/showMoreBtn"
+            app:layout_constraintEnd_toStartOf="@+id/downloadImageBtn"
             app:layout_constraintTop_toTopOf="@+id/view"
             app:srcCompat="@drawable/ic_outline_bookmark_border_24"
             android:contentDescription="@string/imageview" />

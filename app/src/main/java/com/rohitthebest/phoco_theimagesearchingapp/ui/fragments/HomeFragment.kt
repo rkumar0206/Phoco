@@ -244,7 +244,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         //TODO("Not yet implemented")
     }
 
-    override fun onShowMoreOptionsBtnClicked(unsplashPhoto: UnsplashPhoto) {
+    override fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto) {
 
         Log.d(TAG, "onShowMoreOptionsBtnClicked: raw : ${unsplashPhoto.urls.raw}")
         //TODO("Not yet implemented")

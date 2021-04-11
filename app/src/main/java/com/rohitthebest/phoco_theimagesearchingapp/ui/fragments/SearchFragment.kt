@@ -287,7 +287,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
         //TODO("Not yet implemented")
     }
 
-    override fun onShowMoreOptionsBtnClicked(unsplashPhoto: UnsplashPhoto) {
+    override fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto) {
         //TODO("Not yet implemented")
     }
 
@@ -312,7 +312,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
         //TODO("Not yet implemented")
     }
 
-    override fun onShowMoreOptionsBtnClicked(pixabayPhoto: PixabayPhoto) {
+    override fun ondownloadImageBtnClicked(pixabayPhoto: PixabayPhoto) {
         //TODO("Not yet implemented")
     }
 

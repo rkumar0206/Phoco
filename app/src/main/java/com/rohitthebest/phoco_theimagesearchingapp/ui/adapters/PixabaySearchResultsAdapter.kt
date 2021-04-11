@@ -92,7 +92,7 @@ class PixabaySearchResultsAdapter :
             binding.image.setOnClickListener(this)
             binding.addToFavouritesBtn.setOnClickListener(this)
             binding.addToFavouritesBtn.setOnLongClickListener(this)
-            binding.showMoreBtn.setOnClickListener(this)
+            binding.downloadImageBtn.setOnClickListener(this)
             binding.imageUserNameTV.setOnClickListener(this)
 
             binding.reloadFAB.setOnClickListener(this)
@@ -114,9 +114,9 @@ class PixabaySearchResultsAdapter :
                         getItem(absoluteAdapterPosition)?.let { mListener!!.onAddToFavouriteBtnClicked(it) }
                     }
 
-                    binding.showMoreBtn.id -> {
+                    binding.downloadImageBtn.id -> {
 
-                        getItem(absoluteAdapterPosition)?.let { mListener!!.onShowMoreOptionsBtnClicked(it) }
+                        getItem(absoluteAdapterPosition)?.let { mListener!!.ondownloadImageBtnClicked(it) }
                     }
 
                     binding.imageUserNameTV.id -> {
@@ -182,7 +182,7 @@ class PixabaySearchResultsAdapter :
 
         fun onImageClicked(pixabayPhoto: PixabayPhoto)
         fun onAddToFavouriteBtnClicked(pixabayPhoto: PixabayPhoto)
-        fun onShowMoreOptionsBtnClicked(pixabayPhoto: PixabayPhoto)
+        fun ondownloadImageBtnClicked(pixabayPhoto: PixabayPhoto)
         fun onImageUserNameClicked(pixabayPhoto: PixabayPhoto)
 
         fun onAddToFavouriteLongClicked(pixabayPhoto: PixabayPhoto)

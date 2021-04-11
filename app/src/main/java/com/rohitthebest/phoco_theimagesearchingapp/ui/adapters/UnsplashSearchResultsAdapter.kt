@@ -93,7 +93,7 @@ class UnsplashSearchResultsAdapter :
             binding.image.setOnClickListener(this)
             binding.addToFavouritesBtn.setOnClickListener(this)
             binding.addToFavouritesBtn.setOnLongClickListener(this)
-            binding.showMoreBtn.setOnClickListener(this)
+            binding.downloadImageBtn.setOnClickListener(this)
             binding.imageUserNameTV.setOnClickListener(this)
 
             binding.reloadFAB.setOnClickListener(this)
@@ -115,9 +115,9 @@ class UnsplashSearchResultsAdapter :
                         getItem(absoluteAdapterPosition)?.let { mListener!!.onAddToFavouriteBtnClicked(it) }
                     }
 
-                    binding.showMoreBtn.id -> {
+                    binding.downloadImageBtn.id -> {
 
-                        getItem(absoluteAdapterPosition)?.let { mListener!!.onShowMoreOptionsBtnClicked(it) }
+                        getItem(absoluteAdapterPosition)?.let { mListener!!.onDownloadImageBtnClicked(it) }
                     }
 
                     binding.imageUserNameTV.id -> {
@@ -179,7 +179,7 @@ class UnsplashSearchResultsAdapter :
 
         fun onImageClicked(unsplashPhoto: UnsplashPhoto)
         fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto)
-        fun onShowMoreOptionsBtnClicked(unsplashPhoto: UnsplashPhoto)
+        fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto)
         fun onImageUserNameClicked(unsplashPhoto: UnsplashPhoto)
 
         fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto)

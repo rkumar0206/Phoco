@@ -91,7 +91,7 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
             binding.image.setOnClickListener(this)
             binding.addToFavouritesBtn.setOnClickListener(this)
             binding.addToFavouritesBtn.setOnLongClickListener(this)
-            binding.showMoreBtn.setOnClickListener(this)
+            binding.downloadImageBtn.setOnClickListener(this)
             binding.imageUserNameTV.setOnClickListener(this)
 
             binding.reloadFAB.setOnClickListener(this)
@@ -113,9 +113,9 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
                         mListener!!.onAddToFavouriteBtnClicked(getItem(absoluteAdapterPosition))
                     }
 
-                    binding.showMoreBtn.id -> {
+                    binding.downloadImageBtn.id -> {
 
-                        mListener!!.onShowMoreOptionsBtnClicked(getItem(absoluteAdapterPosition))
+                        mListener!!.onDownloadImageBtnClicked(getItem(absoluteAdapterPosition))
                     }
 
                     binding.imageUserNameTV.id -> {
@@ -180,7 +180,7 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
 
         fun onImageClicked(unsplashPhoto: UnsplashPhoto)
         fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto)
-        fun onShowMoreOptionsBtnClicked(unsplashPhoto: UnsplashPhoto)
+        fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto)
         fun onImageUserNameClicked(unsplashPhoto: UnsplashPhoto)
 
         fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto)
