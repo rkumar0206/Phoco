@@ -2,11 +2,13 @@ package com.rohitthebest.phoco_theimagesearchingapp.module
 
 import android.content.Context
 import androidx.room.Room
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.COLLECTION_DATABASE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PIXABAY_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATABASE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.api.PixabayAPI
 import com.rohitthebest.phoco_theimagesearchingapp.api.UnsplashAPI
+import com.rohitthebest.phoco_theimagesearchingapp.database.database.CollectionDatabase
 import com.rohitthebest.phoco_theimagesearchingapp.database.database.UnsplashPhotoDatabase
 import dagger.Module
 import dagger.Provides
@@ -73,31 +75,7 @@ object Module {
     //----------------------------------------------------------------------------------------------
 
 
-//======================= Unsplash photo database ======================================
-
-    @Singleton
-    @Provides
-    fun provideUnsplashPhotoDatabase(
-            @ApplicationContext context: Context
-    ) = Room.databaseBuilder(
-            context,
-            UnsplashPhotoDatabase::class.java,
-            UNSPLASH_PHOTO_DATABASE_NAME
-    )
-            .fallbackToDestructiveMigration()
-            .build()
-
-    @Singleton
-    @Provides
-    fun providesUnsplashPhotoDao(
-            db: UnsplashPhotoDatabase
-    ) = db.getUnsplashPhotoDao()
-
-    //---------------------------------------------------------------------------------------------
-
-
     //================================ Pixabay API ====================================
-
 
     @PixabayImageOkHttpClient
     @Provides
@@ -130,4 +108,51 @@ object Module {
             @PixabayImageRetrofit retrofit: Retrofit
     ): PixabayAPI = retrofit.create(PixabayAPI::class.java)
 
+    //------------------------------------------------------------------------------------------
+
+
+    //======================= Unsplash photo database ======================================
+
+    @Singleton
+    @Provides
+    fun provideUnsplashPhotoDatabase(
+            @ApplicationContext context: Context
+    ) = Room.databaseBuilder(
+            context,
+            UnsplashPhotoDatabase::class.java,
+            UNSPLASH_PHOTO_DATABASE_NAME
+    )
+            .fallbackToDestructiveMigration()
+            .build()
+
+    @Singleton
+    @Provides
+    fun providesUnsplashPhotoDao(
+            db: UnsplashPhotoDatabase
+    ) = db.getUnsplashPhotoDao()
+
+    //---------------------------------------------------------------------------------------------
+
+
+    //================================ Collection database =====================================
+
+    @Singleton
+    @Provides
+    fun providesCollectionDatabase(
+            @ApplicationContext context: Context
+    ) = Room.databaseBuilder(
+            context,
+            CollectionDatabase::class.java,
+            COLLECTION_DATABASE_NAME
+    )
+            .fallbackToDestructiveMigration()
+            .build()
+
+    @Provides
+    @Singleton
+    fun providesCollectionDao(
+            db: CollectionDatabase
+    ) = db.getCollectionDao()
+
+    //---------------------------------------------------------------------------------------------
 }
