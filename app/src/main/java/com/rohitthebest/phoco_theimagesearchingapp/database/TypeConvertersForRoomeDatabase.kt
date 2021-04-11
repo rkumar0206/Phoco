@@ -4,6 +4,9 @@ import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.UserInfo
+import com.rohitthebest.phoco_theimagesearchingapp.utils.APIsInfo
+import com.rohitthebest.phoco_theimagesearchingapp.utils.ImageDownloadLinksAndInfo
 
 class TypeConvertersForRoomeDatabase {
 
@@ -48,5 +51,44 @@ class TypeConvertersForRoomeDatabase {
         return gson.fromJson(str, type)
     }
 
+
+    @TypeConverter
+    fun convertApiInfoToString(apIsInfo: APIsInfo): String {
+
+        return gson.toJson(apIsInfo)
+    }
+
+    @TypeConverter
+    fun convertStringToApiInfo(str: String): APIsInfo {
+
+        val type = object : TypeToken<APIsInfo>() {}.type
+        return gson.fromJson(str, type)
+    }
+
+    @TypeConverter
+    fun convertImageUrlToString(imageUrls: ImageDownloadLinksAndInfo.ImageUrls): String {
+
+        return gson.toJson(imageUrls)
+    }
+
+    @TypeConverter
+    fun convertStringToImageUrl(str: String): ImageDownloadLinksAndInfo.ImageUrls {
+
+        val type = object : TypeToken<ImageDownloadLinksAndInfo.ImageUrls>() {}.type
+        return gson.fromJson(str, type)
+    }
+
+    @TypeConverter
+    fun convertUserInfoToString(userInfo: UserInfo): String {
+
+        return gson.toJson(userInfo)
+    }
+
+    @TypeConverter
+    fun convertStringToUserInfo(str: String): UserInfo {
+
+        val type = object : TypeToken<UserInfo>() {}.type
+        return gson.fromJson(str, type)
+    }
 
 }
