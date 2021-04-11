@@ -4,6 +4,7 @@ object Constants {
 
     const val UNSPLASH_PHOTO_DATABASE_NAME = "unsplashPhoto.db"
     const val COLLECTION_DATABASE_NAME = "collection.db"
+    const val SAVED_IMAGE_DATABASE_NAME = "collection.db"
 
     const val UNSPLASH_BASE_URL = "https://api.unsplash.com/"
     const val PIXABAY_BASE_URL = "https://pixabay.com"

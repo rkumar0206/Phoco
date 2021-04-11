@@ -3,7 +3,6 @@ package com.rohitthebest.phoco_theimagesearchingapp.database.dao
 import androidx.room.*
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 import kotlinx.coroutines.flow.Flow
-import java.security.Key
 
 @Dao
 interface SavedImageDao {
@@ -24,5 +23,5 @@ interface SavedImageDao {
     fun getAllSavesImages(): Flow<List<SavedImage>>
 
     @Query("SELECT * FROM saved_image_table WHERE collectionKey = :collectionKey ORDER BY timeStamp DESC")
-    fun getSavedImagesByCollectionKey(collectionKey: Key): Flow<List<SavedImage>>
+    fun getSavedImagesByCollectionKey(collectionKey: String): Flow<List<SavedImage>>
 }
