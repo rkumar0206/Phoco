@@ -179,7 +179,25 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
                 unsplashPhotoViewModel.deleteAllUnsplashPhoto()
 
-                unsplashPhotoViewModel.insertUnsplashPhotoList(data)
+                savedImageViewModel.getAllSavesImages().observe(viewLifecycleOwner, {
+
+                    val idList = it.map { s ->
+
+                        s.imageId
+                    }
+
+                    data.forEach { unsplashPhoto ->
+
+                        if (idList.contains(unsplashPhoto.id)) {
+
+                            unsplashPhoto.isImageSavedInCollection = true
+                        }
+
+                        unsplashPhotoViewModel.insertUnsplashPhoto(unsplashPhoto)
+                    }
+                })
+
+                //unsplashPhotoViewModel.insertUnsplashPhotoList(data)
             }
 
             saveUnsplashPhotoDate()
