@@ -14,4 +14,6 @@
     <color name="color_pink">#e8799d</color>
     <color name="button_color">#779dfe</color>
     <color name="mcv_ripple_color">#A7E8799D</color>
+    <color name="black_transparent_background_color">#86262432</color>
+    <color name="no_image_in_imageView_color">#AAA9A9</color>
 </resources>
