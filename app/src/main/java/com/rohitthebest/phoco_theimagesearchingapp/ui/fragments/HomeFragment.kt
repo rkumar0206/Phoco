@@ -52,9 +52,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         homeAdapter = HomeRVAdapter()
 
-        binding.homeShimmerLayout.startShimmer()
-
-        loadUnplashPhotoSavedDate()
+       loadUnplashPhotoSavedDate()
 
         isRefreshEnabled = true
         getSavedUnsplashPhoto()
@@ -63,8 +61,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
             if (requireContext().isInternetAvailable()) {
 
-                binding.homeRV.hide()
-                binding.homeShimmerLayoutNSV.show()
                 makeNewAPIRequest()
             } else {
 
@@ -104,8 +100,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
                         homeAdapter.submitList(it)
 
-                        hideShimmerAndShowRecyclerView()
-
                     } else {
 
                         //calling the api
@@ -144,7 +138,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
                 is Resources.Loading -> {
 
-                    binding.homeShimmerLayout.startShimmer()
+                    binding.homeSwipeRefreshLayout.isRefreshing = true
                 }
 
                 is Resources.Success -> {
@@ -158,15 +152,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
                     homeAdapter.submitList(it.data)
 
-                    hideShimmerAndShowRecyclerView()
                 }
 
                 else -> {
 
                     try {
-                        binding.homeShimmerLayout.stopShimmer()
-                        binding.homeShimmerLayoutNSV.hide()
-
                         showToasty(requireContext(), it.message.toString(), ToastyType.ERROR)
                     } catch (e: java.lang.Exception) {
                         e.printStackTrace()
@@ -351,16 +341,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         )
 
         lastDateSaved = sharedPreference.getString(UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY, "")
-    }
-
-    private fun hideShimmerAndShowRecyclerView() {
-
-        binding.homeShimmerLayout.stopShimmer()
-        binding.homeShimmerLayoutNSV.hide()
-
-        binding.homeSwipeRefreshLayout.show()
-        binding.homeRV.show()
-
     }
 
     override fun onDestroyView() {
