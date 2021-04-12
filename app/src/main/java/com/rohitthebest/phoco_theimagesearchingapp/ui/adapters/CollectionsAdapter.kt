@@ -25,7 +25,7 @@ class CollectionsAdapter(private val savedImageList: List<SavedImage>) : ListAda
 
                 binding.apply {
 
-                    val imageViewList = listOf(allSavedIV1, allSavedIV2, allSavedIV3, allSavedIV4)
+                    val imageViewList = listOf(savedIV1, savedIV2, savedIV3, savedIV4)
 
                     collectionName.text = it.collectionName
 

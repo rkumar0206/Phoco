@@ -20,7 +20,7 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/allSavedIV1"
+                android:id="@+id/savedIV1"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:background="@color/no_image_in_imageView_color"
@@ -34,45 +34,45 @@
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
             <ImageView
-                android:id="@+id/allSavedIV2"
+                android:id="@+id/savedIV2"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:background="@color/no_image_in_imageView_color"
                 android:contentDescription="@string/imageview"
                 android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="@+id/allSavedIV1"
-                app:layout_constraintEnd_toStartOf="@+id/allSavedIV3"
+                app:layout_constraintBottom_toBottomOf="@+id/savedIV1"
+                app:layout_constraintEnd_toStartOf="@+id/savedIV3"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/allSavedIV1"
-                app:layout_constraintTop_toTopOf="@+id/allSavedIV1"
+                app:layout_constraintStart_toEndOf="@+id/savedIV1"
+                app:layout_constraintTop_toTopOf="@+id/savedIV1"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
             <ImageView
-                android:id="@+id/allSavedIV3"
+                android:id="@+id/savedIV3"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:background="@color/no_image_in_imageView_color"
                 android:contentDescription="@string/imageview"
                 android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="@+id/allSavedIV2"
-                app:layout_constraintEnd_toStartOf="@+id/allSavedIV4"
+                app:layout_constraintBottom_toBottomOf="@+id/savedIV2"
+                app:layout_constraintEnd_toStartOf="@+id/savedIV4"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/allSavedIV2"
-                app:layout_constraintTop_toTopOf="@+id/allSavedIV2"
+                app:layout_constraintStart_toEndOf="@+id/savedIV2"
+                app:layout_constraintTop_toTopOf="@+id/savedIV2"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
             <ImageView
-                android:id="@+id/allSavedIV4"
+                android:id="@+id/savedIV4"
                 android:layout_width="100dp"
                 android:layout_height="match_parent"
                 android:background="@color/no_image_in_imageView_color"
                 android:contentDescription="@string/imageview"
                 android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="@+id/allSavedIV3"
+                app:layout_constraintBottom_toBottomOf="@+id/savedIV3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toEndOf="@+id/allSavedIV3"
-                app:layout_constraintTop_toTopOf="@+id/allSavedIV3"
+                app:layout_constraintStart_toEndOf="@+id/savedIV3"
+                app:layout_constraintTop_toTopOf="@+id/savedIV3"
                 tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
             <View
