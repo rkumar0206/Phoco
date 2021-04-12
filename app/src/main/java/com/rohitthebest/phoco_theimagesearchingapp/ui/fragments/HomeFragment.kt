@@ -40,6 +40,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
     private val unsplashPhotoViewModel by viewModels<UnsplashPhotoViewModel>()  //room database methods
     private val savedImageViewModel by viewModels<SavedImageViewModel>()
 
+    private var isRefreshEnabled = true
     private lateinit var homeAdapter: HomeRVAdapter
 
     private var lastDateSaved: String? = ""
@@ -55,6 +56,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         loadUnplashPhotoSavedDate()
 
+        isRefreshEnabled = true
         getSavedUnsplashPhoto()
 
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
@@ -79,6 +81,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         unsplashPhotoViewModel.getAllUnsplashPhoto().observe(viewLifecycleOwner, {
 
+            if (isRefreshEnabled) {
 
                 Log.d(TAG, "getSavedUnsplashPhoto: ")
 
@@ -109,6 +112,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                         makeNewAPIRequest()
                     }
                 }
+
+                isRefreshEnabled = false
+            }
 
         })
     }
@@ -192,9 +198,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
                             unsplashPhoto.isImageSavedInCollection = true
                         }
-
-                        unsplashPhotoViewModel.insertUnsplashPhoto(unsplashPhoto)
                     }
+
+                    unsplashPhotoViewModel.insertUnsplashPhotoList(data)
                 })
 
                 //unsplashPhotoViewModel.insertUnsplashPhotoList(data)
@@ -296,7 +302,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
             homeAdapter.notifyItemChanged(position)
 
-            showToasty(requireContext(), "Image removed", ToastyType.INFO)
+            showToasty(requireContext(), "Image unsaved", ToastyType.INFO)
         }
 
     }
@@ -316,7 +322,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
     override fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto, position: Int) {
 
         Log.d(TAG, "onAddToFavouriteLongClicked: ")
-        //TODO("Not yet implemented")
+
+        //todo : open the bottom sheet and show the list of collections and when user clicks on any of the collection
+        // save the image to that collection
     }
 
     //[END OF CLICK LISTENERS]
