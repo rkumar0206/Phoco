@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/app_navigation"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_navigation"
     app:startDestination="@id/homeFragment">
 
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.HomeFragment"
-        android:label="HomeFragment" />
+        android:label="HomeFragment"
+        tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/favouritesFragment"
         android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.FavouritesFragment"
-        android:label="FavouritesFragment" />
+        android:label="FavouritesFragment"
+        tools:layout="@layout/fragment_favourite">
+        <action
+            android:id="@+id/action_favouritesFragment_to_addCollectionFragment"
+            app:destination="@id/addCollectionFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.ProfileFragment"
-        android:label="ProfileFragment" />
+        android:label="ProfileFragment"
+        tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.SearchFragment"
-        android:label="SearchFragment" />
+        android:label="SearchFragment"
+        tools:layout="@layout/fragment_search" />
+    <dialog
+        android:id="@+id/addCollectionFragment"
+        android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.dialogFragments.AddCollectionFragment"
+        android:label="AddCollectionFragment"
+        tools:layout="@layout/fragment_add_collection" />
 </navigation>

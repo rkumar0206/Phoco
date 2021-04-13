@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.rohitthebest.phoco_theimagesearchingapp.R
@@ -25,6 +26,11 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
         _binding = FragmentFavouriteBinding.bind(view)
 
         getAllSavedPhotosList()
+
+        binding.addMoreCollectionsFAB.setOnClickListener {
+
+            findNavController().navigate(R.id.action_favouritesFragment_to_addCollectionFragment)
+        }
     }
 
     private fun getAllSavedPhotosList() {
