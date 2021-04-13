@@ -1,16 +1,23 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentFavouriteBinding
+import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.CollectionsAdapter
+import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
+
+private const val TAG = "FavouritesFragment"
 
 @AndroidEntryPoint
 class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
@@ -19,6 +26,9 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
     private val binding get() = _binding!!
 
     private val savedImageViewModel by viewModels<SavedImageViewModel>()
+    private val collectionViewModel by viewModels<CollectionViewModel>()
+
+    private lateinit var collectionAdapter: CollectionsAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -26,6 +36,15 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
         _binding = FragmentFavouriteBinding.bind(view)
 
         getAllSavedPhotosList()
+
+        GlobalScope.launch {
+            delay(250)
+
+            withContext(Dispatchers.Main) {
+
+                getAllCollections()
+            }
+        }
 
         binding.addMoreCollectionsFAB.setOnClickListener {
 
@@ -39,7 +58,16 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
 
             if (it.isNotEmpty()) {
 
-                val imageViewList = listOf(binding.allSavedIV1, binding.allSavedIV2, binding.allSavedIV3, binding.allSavedIV4)
+                collectionAdapter = CollectionsAdapter(it)
+
+                setUpCollectionsRecyclerView()
+
+                val imageViewList = listOf(
+                        binding.allSavedIV1,
+                        binding.allSavedIV2,
+                        binding.allSavedIV3,
+                        binding.allSavedIV4
+                )
 
                 try {
 
@@ -57,6 +85,34 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
                 } catch (e: IndexOutOfBoundsException) {
                     e.printStackTrace()
                 }
+            }
+        })
+    }
+
+    private fun setUpCollectionsRecyclerView() {
+
+        try {
+
+            binding.collectionRV.apply {
+
+                setHasFixedSize(true)
+                adapter = collectionAdapter
+                layoutManager = LinearLayoutManager(requireContext())
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun getAllCollections() {
+
+        collectionViewModel.getAllCollection().observe(viewLifecycleOwner, {
+
+            Log.d(TAG, "getAllCollections: ")
+
+            if (it.isNotEmpty()) {
+
+                collectionAdapter.submitList(it)
             }
         })
     }

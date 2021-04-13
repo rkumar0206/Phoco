@@ -34,6 +34,6 @@ class CollectionViewModel @ViewModelInject constructor(
 
     fun getAllCollection() = repository.getAllCollection().asLiveData()
 
-    fun getCollectionByKet(key: String) = repository.getCollectionByKey(key).asLiveData()
+    fun getCollectionByKey(key: String) = repository.getCollectionByKey(key).asLiveData()
 
 }
