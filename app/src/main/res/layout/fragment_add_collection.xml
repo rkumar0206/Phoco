@@ -68,9 +68,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:allowUndo="true"
+            android:fontFamily="serif"
             android:hint="@string/description_optional"
-            android:inputType="textMultiLine"
-            android:maxLines="1" />
+            android:inputType="textMultiLine" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <View

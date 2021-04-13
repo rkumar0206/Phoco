@@ -16,6 +16,7 @@ object Constants {
 
 
     const val NO_INTERNET_MESSAGE = "Please check your internet connection!!!"
+    const val EDIT_TEXT_EMPTY_MESSAGE = "* Mandatory field"
     const val PREVIEW_IMAGE_MESSAGE_KEY = "PREVIEW_IMAGE_MESSAGE_KEYnvsjnjsnjnnv"
     const val HOME_FRAGMENT_TAG = "HomeFragment"
     const val SEARCH_FRAGMENT_TAG_UNSPLASH = "sEARCHfRAGEMNTWITHUNSPLAsHtaG"
