@@ -2,6 +2,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.ui.adapters
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -18,7 +19,7 @@ class CollectionsAdapter(private val savedImageList: List<SavedImage>) : ListAda
 
     private var mListener: OnClickListener? = null
 
-    inner class CollectionViewHolder(val binding: AdapterCollectionsBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class CollectionViewHolder(val binding: AdapterCollectionsBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
         fun setData(collection: Collection?) {
 
             collection?.let {
@@ -38,13 +39,15 @@ class CollectionsAdapter(private val savedImageList: List<SavedImage>) : ListAda
 
                         try {
 
-                            for (i in 0..3) {
+                            for (i in savedImageList.indices) {
 
-                                Glide.with(binding.root)
-                                        .load(savedImage[i].imageUrls.small)
-                                        .transition(DrawableTransitionOptions.withCrossFade())
-                                        .into(imageViewList[i])
+                                if (i < 4) {
 
+                                    Glide.with(binding.root)
+                                            .load(savedImage[i].imageUrls.small)
+                                            .transition(DrawableTransitionOptions.withCrossFade())
+                                            .into(imageViewList[i])
+                                }
                             }
 
                         } catch (e: IndexOutOfBoundsException) {
@@ -59,6 +62,27 @@ class CollectionsAdapter(private val savedImageList: List<SavedImage>) : ListAda
         init {
 
             Log.i(TAG, "CollectionViewHolder: ")
+
+            binding.root.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+
+            when (v?.id) {
+
+                binding.root.id -> {
+
+                    if (checkForNullability()) {
+
+                        mListener!!.onItemClick(getItem(absoluteAdapterPosition))
+                    }
+                }
+            }
+        }
+
+        private fun checkForNullability(): Boolean {
+
+            return absoluteAdapterPosition != RecyclerView.NO_POSITION && mListener != null
         }
 
     }

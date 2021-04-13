@@ -37,12 +37,15 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
 
                 try {
 
-                    for (i in 0..3) {
+                    for (i in imageViewList.indices) {
 
-                        Glide.with(requireContext())
-                                .load(it[i].imageUrls.small)
-                                .transition(DrawableTransitionOptions.withCrossFade())
-                                .into(imageViewList[i])
+                        if (i < 4) {
+
+                            Glide.with(requireContext())
+                                    .load(it[i].imageUrls.small)
+                                    .transition(DrawableTransitionOptions.withCrossFade())
+                                    .into(imageViewList[i])
+                        }
                     }
 
                 } catch (e: IndexOutOfBoundsException) {
