@@ -18,4 +18,7 @@
     <string name="retry">Retry</string>
     <string name="results_could_not_be_loaded">Results could not be loaded</string>
     <string name="all_photos">All photos</string>
+    <string name="submit">Submit</string>
+    <string name="collection_name">Collection name</string>
+    <string name="description_optional">Description (Optional)</string>
 </resources>

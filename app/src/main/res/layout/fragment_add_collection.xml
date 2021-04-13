@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:allowUndo="true"
-            android:hint="Collection name"
+            android:hint="@string/collection_name"
             android:inputType="textPersonName"
             android:maxLength="20"
 
@@ -68,7 +68,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:allowUndo="true"
-            android:hint="Description (Optional)"
+            android:hint="@string/description_optional"
             android:inputType="textMultiLine"
             android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -77,11 +77,41 @@
         android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="5dp"
+        android:background="?android:attr/listDivider"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/collectionDescriptionET" />
+
+    <Button
+        android:id="@+id/cancelBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+        android:text="@android:string/cancel"
+        app:layout_constraintEnd_toStartOf="@+id/submitBtn"
+        app:layout_constraintTop_toBottomOf="@+id/divider" />
+
+    <Button
+        android:id="@+id/submitBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/submit"
+        app:layout_constraintEnd_toEndOf="@+id/collectionDescriptionET"
+        app:layout_constraintTop_toTopOf="@+id/cancelBtn" />
+
+    <View
+        android:id="@+id/divider2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="10dp"
         android:background="?android:attr/listDivider"
         android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/collectionDescriptionET" />
+        app:layout_constraintTop_toBottomOf="@+id/cancelBtn" />
 </androidx.constraintlayout.widget.ConstraintLayout>

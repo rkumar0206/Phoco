@@ -7,13 +7,14 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentAddCollectionBinding
+import com.rohitthebest.phoco_theimagesearchingapp.utils.showToasty
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddCollectionFragment : BottomSheetDialogFragment() {
+class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener {
 
     private var _binding: FragmentAddCollectionBinding? = null
-    private val binding get() = _binding
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,6 +31,36 @@ class AddCollectionFragment : BottomSheetDialogFragment() {
 
         _binding = FragmentAddCollectionBinding.bind(view)
 
+        textWatcher()
+
+        initListeners()
+    }
+
+    private fun initListeners() {
+
+        binding.cancelBtn.setOnClickListener(this)
+        binding.submitBtn.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+
+        when (v?.id) {
+
+            binding.submitBtn.id -> {
+
+                showToasty(requireContext(), "Collection Added")
+            }
+
+            binding.cancelBtn.id -> {
+
+                dismiss()
+            }
+        }
+    }
+
+    private fun textWatcher() {
+
+
     }
 
     override fun onDestroyView() {
@@ -37,4 +68,5 @@ class AddCollectionFragment : BottomSheetDialogFragment() {
 
         _binding = null
     }
+
 }
