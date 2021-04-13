@@ -2,15 +2,11 @@ package com.rohitthebest.phoco_theimagesearchingapp.module
 
 import android.content.Context
 import androidx.room.Room
-import com.rohitthebest.phoco_theimagesearchingapp.Constants.COLLECTION_DATABASE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PIXABAY_BASE_URL
-import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_DATABASE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATABASE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.api.PixabayAPI
 import com.rohitthebest.phoco_theimagesearchingapp.api.UnsplashAPI
-import com.rohitthebest.phoco_theimagesearchingapp.database.database.CollectionDatabase
-import com.rohitthebest.phoco_theimagesearchingapp.database.database.SavedImageDatabase
 import com.rohitthebest.phoco_theimagesearchingapp.database.database.UnsplashPhotoDatabase
 import dagger.Module
 import dagger.Provides
@@ -135,48 +131,4 @@ object Module {
 
     //---------------------------------------------------------------------------------------------
 
-
-    //================================ Collection database =====================================
-
-    @Singleton
-    @Provides
-    fun providesCollectionDatabase(
-            @ApplicationContext context: Context
-    ) = Room.databaseBuilder(
-            context,
-            CollectionDatabase::class.java,
-            COLLECTION_DATABASE_NAME
-    )
-            .fallbackToDestructiveMigration()
-            .build()
-
-    @Provides
-    @Singleton
-    fun providesCollectionDao(
-            db: CollectionDatabase
-    ) = db.getCollectionDao()
-
-    //---------------------------------------------------------------------------------------------
-
-    //================================ Saved Image database =====================================
-
-    @Singleton
-    @Provides
-    fun providesSavedImageDatabase(
-            @ApplicationContext context: Context
-    ) = Room.databaseBuilder(
-            context,
-            SavedImageDatabase::class.java,
-            SAVED_IMAGE_DATABASE_NAME
-    )
-            .fallbackToDestructiveMigration()
-            .build()
-
-    @Provides
-    @Singleton
-    fun providesSavedImageDao(
-            db: SavedImageDatabase
-    ) = db.getSavedImageDao()
-
-    //---------------------------------------------------------------------------------------------
 }

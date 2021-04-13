@@ -16,15 +16,12 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
-import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
-import com.rohitthebest.phoco_theimagesearchingapp.database.entity.UserInfo
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentHomeBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.activities.PreviewImageActivity
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.HomeRVAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertImageDownloadLinksAndInfoToString
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
-import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
@@ -39,7 +36,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
     private val unsplashViewModel by viewModels<UnsplashViewModel>()
     private val unsplashPhotoViewModel by viewModels<UnsplashPhotoViewModel>()  //room database methods
-    private val savedImageViewModel by viewModels<SavedImageViewModel>()
 
     private var isRefreshEnabled = true
     private lateinit var homeAdapter: HomeRVAdapter
@@ -176,6 +172,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
                 unsplashPhotoViewModel.deleteAllUnsplashPhoto()
 
+                unsplashPhotoViewModel.insertUnsplashPhotoList(data)
+
+/*
                 savedImageViewModel.getAllSavesImages().observe(viewLifecycleOwner, {
 
                     val idList = it.map { s ->
@@ -193,6 +192,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
                     unsplashPhotoViewModel.insertUnsplashPhotoList(data)
                 })
+*/
 
                 //unsplashPhotoViewModel.insertUnsplashPhotoList(data)
             }
@@ -254,7 +254,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         Log.d(TAG, "onAddToFavouriteBtnClicked: Download : ${unsplashPhoto.links.download}")
 
-        if (!unsplashPhoto.isImageSavedInCollection) {
+        /*if (!unsplashPhoto.isImageSavedInCollection) {
 
             val savedImage = SavedImage(
                     key = generateKey(),
@@ -294,7 +294,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
             homeAdapter.notifyItemChanged(position)
 
             showToasty(requireContext(), "Image unsaved", ToastyType.INFO)
-        }
+        }*/
 
     }
 

@@ -3,20 +3,15 @@ package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.dialogFragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.EDIT_TEXT_EMPTY_MESSAGE
 import com.rohitthebest.phoco_theimagesearchingapp.R
-import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentAddCollectionBinding
-import com.rohitthebest.phoco_theimagesearchingapp.utils.generateKey
 import com.rohitthebest.phoco_theimagesearchingapp.utils.showToasty
 import com.rohitthebest.phoco_theimagesearchingapp.utils.validateString
-import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "AddCollectionFragment"
@@ -27,7 +22,6 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
     private var _binding: FragmentAddCollectionBinding? = null
     private val binding get() = _binding!!
 
-    private val collectionViewModel by viewModels<CollectionViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,7 +58,7 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
                 if (validateForm()) {
 
                     showToasty(requireContext(), "Collection Added")
-                    insertNewCollectionToDatabase()
+                    //insertNewCollectionToDatabase()
                 }
             }
 
@@ -75,6 +69,7 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
         }
     }
 
+/*
     private fun insertNewCollectionToDatabase() {
 
         Log.d(TAG, "insertNewCollectionToDatabase: ")
@@ -94,6 +89,7 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
 
         dismiss()
     }
+*/
 
     private fun validateForm(): Boolean {
 
