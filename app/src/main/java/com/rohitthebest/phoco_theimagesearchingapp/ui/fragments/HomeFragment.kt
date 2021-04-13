@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.HOME_FRAGMENT_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
@@ -315,6 +316,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         //todo : open the bottom sheet and show the list of collections and when user clicks on any of the collection
         // save the image to that collection
+
+        findNavController().navigate(R.id.action_homeFragment_to_chooseFromCollectionsFragment)
     }
 
     //[END OF CLICK LISTENERS]
