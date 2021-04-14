@@ -17,7 +17,6 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
     private var _binding: FragmentFavouriteBinding? = null
     private val binding get() = _binding!!
 
-
     private lateinit var collectionAdapter: CollectionsAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
