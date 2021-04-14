@@ -11,7 +11,7 @@ interface SavedImagesDao {
     suspend fun insertImage(savedImage: SavedImage)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun inserImages(savedImages: List<SavedImage>)
+    suspend fun insertImages(savedImages: List<SavedImage>)
 
     @Delete
     suspend fun delete(savedImage: SavedImage)
