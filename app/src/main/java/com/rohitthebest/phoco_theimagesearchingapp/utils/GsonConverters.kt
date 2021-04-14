@@ -2,6 +2,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.utils
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 
 class GsonConverters {
 
@@ -17,6 +18,17 @@ class GsonConverters {
         fun convertStringToImageDownloadLinksAndInfo(str: String): ImageDownloadLinksAndInfo {
 
             val type = object : TypeToken<ImageDownloadLinksAndInfo>() {}.type
+            return gson.fromJson(str, type)
+        }
+
+        fun convertSavedImageToString(savedImage: SavedImage): String {
+
+            return gson.toJson(savedImage)
+        }
+
+        fun convertStringToSavedImage(str: String): SavedImage {
+
+            val type = object : TypeToken<SavedImage>() {}.type
             return gson.fromJson(str, type)
         }
 

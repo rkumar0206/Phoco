@@ -24,4 +24,7 @@ interface UnsplashPhotoDao {
 
     @Query("SELECT * FROM unsplash_image_table")
     fun getAllUnsplashPhoto(): Flow<List<UnsplashPhoto>>
+
+    @Query("SELECT * FROM unsplash_image_table WHERE id = :id")
+    fun getPhotoById(id: String): Flow<UnsplashPhoto>
 }

@@ -50,5 +50,9 @@
         <action
             android:id="@+id/action_chooseFromCollectionsFragment_to_addCollectionFragment"
             app:destination="@id/addCollectionFragment" />
+        <argument
+            android:name="imageToSave"
+            app:argType="string"
+            app:nullable="true" />
     </dialog>
 </navigation>

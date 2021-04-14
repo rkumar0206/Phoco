@@ -13,7 +13,10 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.EDIT_TEXT_EMPTY_MES
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentAddCollectionBinding
-import com.rohitthebest.phoco_theimagesearchingapp.utils.*
+import com.rohitthebest.phoco_theimagesearchingapp.utils.ToastyType
+import com.rohitthebest.phoco_theimagesearchingapp.utils.generateKey
+import com.rohitthebest.phoco_theimagesearchingapp.utils.showToasty
+import com.rohitthebest.phoco_theimagesearchingapp.utils.validateString
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -132,7 +135,7 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
 
         collectionViewModel.insertCollection(collection)
 
-        showSnackBar(binding.root, "Collection added")
+        showToasty(requireContext(), "Collection added")
 
         dismiss()
     }

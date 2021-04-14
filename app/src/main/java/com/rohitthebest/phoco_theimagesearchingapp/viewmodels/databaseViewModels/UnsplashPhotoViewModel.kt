@@ -38,4 +38,6 @@ class UnsplashPhotoViewModel @ViewModelInject constructor(
     }
 
     fun getAllUnsplashPhoto() = repository.getAllUnsplashPhoto().asLiveData()
+
+    fun getPhotoById(id: String) = repository.getPhotoById(id).asLiveData()
 }

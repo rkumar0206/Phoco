@@ -43,6 +43,22 @@ class ChooseCollectionAdapter(private val savedImageList: List<SavedImage>) :
             }
         }
 
+        init {
+
+            binding.root.setOnClickListener {
+
+                if (checkForNullability()) {
+
+                    mListener!!.onCollectionClicked(getItem(absoluteAdapterPosition))
+                }
+            }
+        }
+
+        private fun checkForNullability(): Boolean {
+
+            return mListener != null && absoluteAdapterPosition != RecyclerView.NO_POSITION
+        }
+
 
     }
 
@@ -67,7 +83,7 @@ class ChooseCollectionAdapter(private val savedImageList: List<SavedImage>) :
 
     interface OnClickListener {
 
-        fun onItemClick(collection: Collection)
+        fun onCollectionClicked(collection: Collection)
     }
 
     fun setOnClickListener(listener: OnClickListener) {

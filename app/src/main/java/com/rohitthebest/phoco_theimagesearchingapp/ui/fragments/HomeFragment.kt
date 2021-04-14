@@ -23,6 +23,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.ui.activities.PreviewImageAct
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.HomeRVAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertImageDownloadLinksAndInfoToString
+import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertSavedImageToString
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
@@ -256,21 +257,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         if (!unsplashPhoto.isImageSavedInCollection) {
 
-            val savedImage = SavedImage(
-                    key = generateKey(),
-                    collectionKey = "",
-                    timeStamp = System.currentTimeMillis(),
-                    apiInfo = APIsInfo(APIName.UNSPLASH, R.drawable.logo_unsplash),
-                    imageName = unsplashPhoto.alt_description ?: generateKey(),
-                    imageId = unsplashPhoto.id,
-                    imageUrls = ImageDownloadLinksAndInfo.ImageUrls(unsplashPhoto.urls.small, unsplashPhoto.urls.regular, unsplashPhoto.links.download),
-                    userInfo = UserInfo(
-                            unsplashPhoto.user.name,
-                            unsplashPhoto.user.id,
-                            unsplashPhoto.user.profile_image.medium
-                    ),
-                    uid = ""
-            )
+            val savedImage = getSavedImage(unsplashPhoto)
 
             savedImageViewModel.insertImage(savedImage)
 
@@ -298,6 +285,26 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
     }
 
+    private fun getSavedImage(unsplashPhoto: UnsplashPhoto): SavedImage {
+
+        return SavedImage(
+                key = generateKey(),
+                collectionKey = "",
+                timeStamp = System.currentTimeMillis(),
+                apiInfo = APIsInfo(APIName.UNSPLASH, R.drawable.logo_unsplash),
+                imageName = unsplashPhoto.alt_description ?: generateKey(),
+                imageId = unsplashPhoto.id,
+                imageUrls = ImageDownloadLinksAndInfo.ImageUrls(unsplashPhoto.urls.small, unsplashPhoto.urls.regular, unsplashPhoto.links.download),
+                userInfo = UserInfo(
+                        unsplashPhoto.user.name,
+                        unsplashPhoto.user.id,
+                        unsplashPhoto.user.profile_image.medium
+                ),
+                uid = ""
+        )
+    }
+
+
     override fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto) {
 
         Log.d(TAG, "onShowMoreOptionsBtnClicked: raw : ${unsplashPhoto.urls.raw}")
@@ -317,10 +324,17 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         //todo : open the bottom sheet and show the list of collections and when user clicks on any of the collection
         // save the image to that collection
 
-        findNavController().navigate(R.id.action_homeFragment_to_chooseFromCollectionsFragment)
+        val savedImage = getSavedImage(unsplashPhoto)
+
+        val action = HomeFragmentDirections.actionHomeFragmentToChooseFromCollectionsFragment(
+                convertSavedImageToString(savedImage)
+        )
+
+        findNavController().navigate(action)
     }
 
     //[END OF CLICK LISTENERS]
+
 
     private fun saveUnsplashPhotoDate() {
 

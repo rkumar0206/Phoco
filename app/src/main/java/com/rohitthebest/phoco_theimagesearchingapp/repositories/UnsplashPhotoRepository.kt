@@ -19,4 +19,6 @@ class UnsplashPhotoRepository @Inject constructor(
     suspend fun deleteAllUnsplashPhoto() = dao.deleteAllUnsplashPhoto()
 
     fun getAllUnsplashPhoto() = dao.getAllUnsplashPhoto()
+
+    fun getPhotoById(id: String) = dao.getPhotoById(id)
 }
