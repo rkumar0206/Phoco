@@ -17,7 +17,6 @@ private const val TAG = "CollectionsAdapter"
 
 class CollectionsAdapter(private val savedImageList: List<SavedImage>) : ListAdapter<Collection, CollectionsAdapter.CollectionViewHolder>(DiffUtilCallback()) {
 
-
     private var mListener: OnClickListener? = null
 
     inner class CollectionViewHolder(val binding: AdapterCollectionsBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {

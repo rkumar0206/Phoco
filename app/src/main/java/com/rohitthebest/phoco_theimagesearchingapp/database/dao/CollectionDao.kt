@@ -24,4 +24,7 @@ interface CollectionDao {
 
     @Query("SELECT * FROM collection_table WHERE `key` =:key")
     fun getCollectionByKey(key: String): Flow<Collection>
+
+    @Query("SELECT * FROM collection_table WHERE collectionName = :collectionName")
+    fun getCollectionByName(collectionName: String): Flow<Collection>
 }

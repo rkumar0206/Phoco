@@ -13,6 +13,7 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.google.android.material.snackbar.Snackbar
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.NO_INTERNET_MESSAGE
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.Dispatchers
@@ -77,13 +78,22 @@ fun showToasty(
     }
 }
 
+fun showSnackBar(
+        view: View,
+        message: String = "",
+        duration: Int = Snackbar.LENGTH_SHORT
+) {
+
+    Snackbar.make(view, message, duration).show()
+}
+
 fun View.hide() {
 
     try {
 
         this.visibility = View.GONE
 
-    }catch (e : IllegalStateException) {
+    } catch (e: IllegalStateException) {
         e.printStackTrace()
     }
 }

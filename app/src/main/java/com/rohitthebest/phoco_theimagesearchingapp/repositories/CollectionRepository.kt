@@ -19,4 +19,6 @@ class CollectionRepository @Inject constructor(
     fun getAllCollection() = dao.getAllCollections()
 
     fun getCollectionByKey(key: String) = dao.getCollectionByKey(key)
+
+    fun getCollectionByName(collectionName: String) = dao.getCollectionByName(collectionName)
 }

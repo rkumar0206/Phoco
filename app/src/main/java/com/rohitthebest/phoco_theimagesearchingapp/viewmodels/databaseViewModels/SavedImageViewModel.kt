@@ -33,7 +33,12 @@ class SavedImageViewModel @ViewModelInject constructor(
         repository.deleteAllImage()
     }
 
-    fun getAllSavesImages() = repository.getAllSavesImages().asLiveData()
+    fun deleteImageByImageId(imageId: String) = viewModelScope.launch {
+
+        repository.deleteImageByImageId(imageId)
+    }
+
+    fun getAllSavedImages() = repository.getAllSavesImages().asLiveData()
 
     fun getSavedImagesByCollectionKey(collectionKey: String) =
             repository.getSavedImagesByCollectionKey(collectionKey).asLiveData()

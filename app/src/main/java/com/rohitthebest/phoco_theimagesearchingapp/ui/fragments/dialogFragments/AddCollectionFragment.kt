@@ -3,15 +3,18 @@ package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.dialogFragments
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.EDIT_TEXT_EMPTY_MESSAGE
 import com.rohitthebest.phoco_theimagesearchingapp.R
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentAddCollectionBinding
-import com.rohitthebest.phoco_theimagesearchingapp.utils.showToasty
-import com.rohitthebest.phoco_theimagesearchingapp.utils.validateString
+import com.rohitthebest.phoco_theimagesearchingapp.utils.*
+import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "AddCollectionFragment"
@@ -22,6 +25,7 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
     private var _binding: FragmentAddCollectionBinding? = null
     private val binding get() = _binding!!
 
+    private val collectionViewModel by viewModels<CollectionViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,6 +53,8 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
         binding.submitBtn.setOnClickListener(this)
     }
 
+    private var isRefreshEnabled = false
+
     override fun onClick(v: View?) {
 
         when (v?.id) {
@@ -57,8 +63,9 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
 
                 if (validateForm()) {
 
-                    showToasty(requireContext(), "Collection Added")
-                    //insertNewCollectionToDatabase()
+                    isRefreshEnabled = true
+
+                    checkForDuplicatesAndInsertNewCollection()
                 }
             }
 
@@ -69,27 +76,66 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
         }
     }
 
-/*
+
+    private fun checkForDuplicatesAndInsertNewCollection() {
+
+        var isDuplicateExist = false
+
+        collectionViewModel.getAllCollection().observe(viewLifecycleOwner, {
+
+            if (isRefreshEnabled) {
+
+                if (it.isNotEmpty()) {
+
+                    for (i in it) {
+
+                        if (i.collectionName.equals(
+                                        binding.collectionNameET.editText?.text?.trim().toString(),
+                                        ignoreCase = true)
+                        ) {
+
+                            isDuplicateExist = true
+                            break
+                        }
+                    }
+
+                    if (isDuplicateExist) {
+
+                        showToasty(requireContext(), "Collection already exists", ToastyType.ERROR)
+                    } else {
+
+                        insertNewCollectionToDatabase()
+                    }
+
+                } else {
+
+                    insertNewCollectionToDatabase()
+                }
+
+                isRefreshEnabled = false
+            }
+        })
+    }
+
     private fun insertNewCollectionToDatabase() {
 
         Log.d(TAG, "insertNewCollectionToDatabase: ")
 
         val collection = Collection(
-            key = generateKey(),
-            collectionName = binding.collectionNameET.editText?.text?.trim().toString(),
-            collectionDescription = binding.collectionDescriptionET.editText?.text?.trim()
-                .toString(),
-            collectionImageUrl = "",
-            uid = ""
+                key = generateKey(),
+                collectionName = binding.collectionNameET.editText?.text?.trim().toString(),
+                collectionDescription = binding.collectionDescriptionET.editText?.text?.trim()
+                        .toString(),
+                collectionImageUrl = "",
+                uid = ""
         )
 
         collectionViewModel.insertCollection(collection)
 
-        showToasty(requireContext(), "Collection added")
+        showSnackBar(binding.root, "Collection added")
 
         dismiss()
     }
-*/
 
     private fun validateForm(): Boolean {
 
