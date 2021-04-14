@@ -3,10 +3,12 @@ package com.rohitthebest.phoco_theimagesearchingapp.module
 import android.content.Context
 import androidx.room.Room
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PIXABAY_BASE_URL
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_DATABASE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATABASE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.api.PixabayAPI
 import com.rohitthebest.phoco_theimagesearchingapp.api.UnsplashAPI
+import com.rohitthebest.phoco_theimagesearchingapp.database.database.SavedImagesDatabase
 import com.rohitthebest.phoco_theimagesearchingapp.database.database.UnsplashPhotoDatabase
 import dagger.Module
 import dagger.Provides
@@ -131,4 +133,24 @@ object Module {
 
     //---------------------------------------------------------------------------------------------
 
+
+    //======================= Saved image database ======================================
+
+    @Singleton
+    @Provides
+    fun provideSavedImageDatabase(
+            @ApplicationContext context: Context
+    ) = Room.databaseBuilder(
+            context,
+            SavedImagesDatabase::class.java,
+            SAVED_IMAGE_DATABASE_NAME
+    )
+            .fallbackToDestructiveMigration()
+            .build()
+
+    @Singleton
+    @Provides
+    fun providesSavedImageDao(
+            db: SavedImagesDatabase
+    ) = db.getSavedImageDao()
 }
