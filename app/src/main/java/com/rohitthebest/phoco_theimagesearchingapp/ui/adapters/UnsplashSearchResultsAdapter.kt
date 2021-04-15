@@ -19,10 +19,15 @@ import com.rohitthebest.phoco_theimagesearchingapp.databinding.PhotoItemForRvBin
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 
-class UnsplashSearchResultsAdapter(val savedImageIdList: List<String> = emptyList()) :
+class UnsplashSearchResultsAdapter(var savedImageIdList: List<String> = emptyList()) :
         PagingDataAdapter<UnsplashPhoto, UnsplashSearchResultsAdapter.UnsplashSearchViewHolder>(DiffUtilCallback()) {
 
     private var mListener: OnClickListener? = null
+
+    fun updateSavedImageListIds(list: List<String>) {
+
+        this.savedImageIdList = list
+    }
 
     inner class UnsplashSearchViewHolder(val binding: PhotoItemForRvBinding)
         : RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
@@ -123,7 +128,7 @@ class UnsplashSearchResultsAdapter(val savedImageIdList: List<String> = emptyLis
 
                     binding.addToFavouritesBtn.id -> {
 
-                        getItem(absoluteAdapterPosition)?.let { mListener!!.onAddToFavouriteBtnClicked(it) }
+                        getItem(absoluteAdapterPosition)?.let { mListener!!.onAddToFavouriteBtnClicked(it, absoluteAdapterPosition) }
                     }
 
                     binding.downloadImageBtn.id -> {
@@ -149,7 +154,7 @@ class UnsplashSearchResultsAdapter(val savedImageIdList: List<String> = emptyLis
 
             if (v?.id == binding.addToFavouritesBtn.id) {
 
-                getItem(absoluteAdapterPosition)?.let { mListener!!.onAddToFavouriteLongClicked(it) }
+                getItem(absoluteAdapterPosition)?.let { mListener!!.onAddToFavouriteLongClicked(it, absoluteAdapterPosition) }
             }
 
             return true
@@ -189,11 +194,11 @@ class UnsplashSearchResultsAdapter(val savedImageIdList: List<String> = emptyLis
     interface OnClickListener {
 
         fun onImageClicked(unsplashPhoto: UnsplashPhoto)
-        fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto)
+        fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto, position: Int)
         fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto)
         fun onImageUserNameClicked(unsplashPhoto: UnsplashPhoto)
 
-        fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto)
+        fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto, position: Int)
     }
 
     fun setOnClickListener(listener: OnClickListener) {

@@ -270,7 +270,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
             homeAdapter.notifyItemChanged(position)
 
-            showToasty(requireContext(), "Image saved", ToastyType.SUCCESS)
+            showSnackBar(binding.root, "Image saved")
 
             //todo : upload to firestore if cloud support is available in future
         } else {

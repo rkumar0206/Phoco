@@ -30,6 +30,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.Pixa
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
 
 private const val TAG = "SearchFragment"
 
@@ -79,15 +80,15 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
 
         savedImageViewModel.getAllSavedImagesID().observe(viewLifecycleOwner, {
 
+            savedImagesIds = it
+
+            Log.d(TAG, "getAllSavedImageIds: $savedImagesIds")
+
             if (isRefreshEnabled) {
 
                 if (it.isNotEmpty()) {
 
-                    Log.d(TAG, "getAllSavedImageIds: $it")
-
-                    savedImagesIds = it
-
-                    unsplashSearchAdapter = UnsplashSearchResultsAdapter(it)
+                    unsplashSearchAdapter = UnsplashSearchResultsAdapter(savedImagesIds)
                     pixabaySearchAdapter = PixabaySearchResultsAdapter()
 
                 } else {
@@ -339,16 +340,43 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
         startActivity(intent)
     }
 
-    override fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto) {
+    override fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto, position: Int) {
 
-        val im = generateSavedImage(unsplashPhoto, APIName.UNSPLASH)
+        if (savedImagesIds.contains(unsplashPhoto.id)) {
 
-        Log.d(TAG, "onAddToFavouriteBtnClicked: Unsplash savedImage: $im")
+            savedImageViewModel.deleteImageByImageId(unsplashPhoto.id)
 
-        if (savedImagesIds.isEmpty()) {
+            updateItemOfUnsplashSearchAdapter(position)
 
-            //insert the image
+            showToasty(requireContext(), "Image unsaved", ToastyType.INFO)
+
+        } else {
+
+            val savedImage = generateSavedImage(unsplashPhoto, APIName.UNSPLASH)
+
+            savedImageViewModel.insertImage(savedImage)
+
+            showSnackBar(binding.root, "Image Saved")
+
+            updateItemOfUnsplashSearchAdapter(position)
         }
+
+    }
+
+    private fun updateItemOfUnsplashSearchAdapter(position: Int) {
+
+        GlobalScope.launch {
+
+            delay(100)
+
+            withContext(Dispatchers.Main) {
+
+                unsplashSearchAdapter.updateSavedImageListIds(savedImagesIds)
+
+                unsplashSearchAdapter.notifyItemChanged(position)
+            }
+        }
+
     }
 
     override fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto) {
@@ -359,7 +387,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
         //TODO("Not yet implemented")
     }
 
-    override fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto) {
+    override fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto, position: Int) {
         //TODO("Not yet implemented")
     }
     //-------------------------------------------------------------------------------------------
