@@ -360,6 +360,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                         //false : user hasn't selected any collection
                         if (it) {
 
+                            showSnackBar(binding.root, "Image saved")
+
                             Log.d(TAG, "observeForCollectionAddition: value is true")
 
                             //updating the unsplashPhoto isImageSavedToCollection value

@@ -18,7 +18,8 @@ import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentChooseFromCollectionsBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.ChooseCollectionAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToSavedImage
-import com.rohitthebest.phoco_theimagesearchingapp.utils.showToasty
+import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
+import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -104,7 +105,17 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
 
             Log.d(TAG, "getAllCollections: ")
 
-            chooseCollectionAdapter.submitList(it)
+            if (it.isNotEmpty()) {
+
+                binding.chooseCollectionRV.show()
+                binding.addNewCollectionTV.hide()
+
+                chooseCollectionAdapter.submitList(it)
+            } else {
+
+                binding.chooseCollectionRV.hide()
+                binding.addNewCollectionTV.show()
+            }
         })
     }
 
@@ -114,10 +125,11 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
 
         savedImagesViewModel.insertImage(receivedImageToBeSaved)
 
-        showToasty(requireContext(), "Saved to ${collection.collectionName}")
+        //showToasty(requireContext(), "Saved to ${collection.collectionName}")
 
         Log.d(TAG, "onCollectionClicked: Image saved to collection ${collection.collectionName}")
 
+        //passing the value to fragment from which this bottom sheet has been called
         findNavController().previousBackStackEntry?.savedStateHandle?.set(IMAGE_SAVED_TO_COLLECTION_KEY, true)
 
         dismiss()
