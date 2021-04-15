@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.rohitthebest.phoco_theimagesearchingapp.R
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentFavouriteBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.CollectionsAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
@@ -16,12 +17,11 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
 
 private const val TAG = "FavouritesFragment"
 
 @AndroidEntryPoint
-class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
+class FavouritesFragment : Fragment(R.layout.fragment_favourite), CollectionsAdapter.OnClickListener {
 
     private var _binding: FragmentFavouriteBinding? = null
     private val binding get() = _binding!!
@@ -37,15 +37,6 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
         _binding = FragmentFavouriteBinding.bind(view)
 
         getAllSavedPhotosList()
-
-        GlobalScope.launch {
-            delay(250)
-
-            withContext(Dispatchers.Main) {
-
-                getAllCollections()
-            }
-        }
     }
 
     private fun getAllSavedPhotosList() {
@@ -55,6 +46,8 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
             collectionAdapter = CollectionsAdapter(it)
 
             setUpCollectionsRecyclerView()
+
+            getAllCollections()
 
             if (it.isNotEmpty()) {
 
@@ -95,9 +88,16 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
                 adapter = collectionAdapter
                 layoutManager = LinearLayoutManager(requireContext())
             }
+
+            collectionAdapter.setOnClickListener(this)
         } catch (e: Exception) {
             e.printStackTrace()
         }
+    }
+
+    override fun onItemClick(collection: Collection) {
+
+        //todo : navigate to another fragment for showing  the list of saved in this collection
     }
 
     private fun getAllCollections() {
@@ -126,4 +126,5 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
 
         _binding = null
     }
+
 }

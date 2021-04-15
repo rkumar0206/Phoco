@@ -20,8 +20,8 @@
         android:label="FavouritesFragment"
         tools:layout="@layout/fragment_favourite">
         <action
-            android:id="@+id/action_favouritesFragment_to_addCollectionFragment"
-            app:destination="@id/addCollectionFragment" />
+            android:id="@+id/action_favouritesFragment_to_collectionFragmentWithSavedImages"
+            app:destination="@id/collectionFragmentWithSavedImages" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -55,4 +55,14 @@
             app:argType="string"
             app:nullable="true" />
     </dialog>
+    <fragment
+        android:id="@+id/collectionFragmentWithSavedImages"
+        android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.CollectionFragmentWithSavedImages"
+        android:label="CollectionFragmentWithSavedImages"
+        tools:layout="@layout/fragment_collection_with_saved_images">
+        <argument
+            android:name="collectionKey"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 </navigation>
