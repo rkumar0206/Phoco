@@ -5,13 +5,14 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentFavouriteBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.CollectionsAdapter
+import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
+import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,11 +45,6 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
 
                 getAllCollections()
             }
-        }
-
-        binding.addMoreCollectionsFAB.setOnClickListener {
-
-            findNavController().navigate(R.id.action_favouritesFragment_to_addCollectionFragment)
         }
     }
 
@@ -112,7 +108,15 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite) {
 
             if (it.isNotEmpty()) {
 
+                binding.collectionRV.show()
+                binding.noCollectionAddedTV.hide()
+
                 collectionAdapter.submitList(it)
+            } else {
+
+                binding.collectionRV.hide()
+                binding.noCollectionAddedTV.show()
+
             }
         })
     }

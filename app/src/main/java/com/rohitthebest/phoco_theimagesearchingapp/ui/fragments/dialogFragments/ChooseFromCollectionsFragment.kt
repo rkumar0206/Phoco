@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.IMAGE_SAVED_TO_COLLECTION_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
@@ -115,6 +116,10 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
 
         showToasty(requireContext(), "Saved to ${collection.collectionName}")
 
+        Log.d(TAG, "onCollectionClicked: Image saved to collection ${collection.collectionName}")
+
+        findNavController().previousBackStackEntry?.savedStateHandle?.set(IMAGE_SAVED_TO_COLLECTION_KEY, true)
+
         dismiss()
     }
 
@@ -122,7 +127,6 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
         super.onDismiss(dialog)
 
         Log.d(TAG, "onDismiss: ")
-
     }
 
     override fun onDestroyView() {

@@ -103,7 +103,8 @@
 
     </androidx.cardview.widget.CardView>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/collectionRV"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
@@ -111,27 +112,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView6">
+        app:layout_constraintTop_toBottomOf="@+id/cardView6" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/collectionRV"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addMoreCollectionsFAB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:clickable="true"
-            android:contentDescription="@string/fabbutton"
-            android:focusable="true"
-            android:src="@drawable/ic_baseline_add_24"
-            android:tooltipText="Add more collections"
-            tools:targetApi="o" />
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+    <TextView
+        android:id="@+id/noCollectionAddedTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:text="No collections added"
+        android:textSize="18sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@+id/collectionRV"
+        app:layout_constraintEnd_toEndOf="@id/collectionRV"
+        app:layout_constraintStart_toStartOf="@+id/collectionRV"
+        app:layout_constraintTop_toTopOf="@+id/collectionRV"
+        tools:visibility="visible" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

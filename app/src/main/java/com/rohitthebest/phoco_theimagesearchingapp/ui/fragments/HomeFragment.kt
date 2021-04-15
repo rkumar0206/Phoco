@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.HOME_FRAGMENT_TAG
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.IMAGE_SAVED_TO_COLLECTION_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME
@@ -43,6 +44,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
     private val savedImageViewModel by viewModels<SavedImageViewModel>()
 
     private var isRefreshEnabled = true
+    private var isObservingForCollectionAdd = false
     private lateinit var homeAdapter: HomeRVAdapter
 
     private var lastDateSaved: String? = ""
@@ -73,6 +75,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         }
 
         setUpRecyclerView()
+
+        observeForCollectionAddition()
     }
 
     private fun getSavedUnsplashPhoto() {
@@ -304,7 +308,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         )
     }
 
-
     override fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto) {
 
         Log.d(TAG, "onShowMoreOptionsBtnClicked: raw : ${unsplashPhoto.urls.raw}")
@@ -317,12 +320,19 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         //TODO("Not yet implemented")
     }
 
+    //this variable is used for updating the isImageSavedToCollection value, when user long presses the
+    // add to favourite button and the bottom sheet pops up
+    private var unsplashPhotoForUpdatingSaveToCollectionValue: UnsplashPhoto? = null
+    private var position: Int = -1
+
     override fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto, position: Int) {
 
         Log.d(TAG, "onAddToFavouriteLongClicked: ")
 
-        //todo : open the bottom sheet and show the list of collections and when user clicks on any of the collection
-        // save the image to that collection
+        isObservingForCollectionAdd = true
+
+        unsplashPhotoForUpdatingSaveToCollectionValue = unsplashPhoto
+        this.position = position
 
         val savedImage = getSavedImage(unsplashPhoto)
 
@@ -331,6 +341,49 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         )
 
         findNavController().navigate(action)
+
+    }
+
+    private fun observeForCollectionAddition() {
+
+        findNavController().currentBackStackEntry
+                ?.savedStateHandle
+                ?.getLiveData<Boolean>(IMAGE_SAVED_TO_COLLECTION_KEY)
+                ?.observe(viewLifecycleOwner, {
+
+                    Log.d(TAG, "observeForCollectionAddition: isObserva... $isObservingForCollectionAdd")
+
+                    if (isObservingForCollectionAdd) {
+
+
+                        //true : user has selected one of the collection from the bottom sheet
+                        //false : user hasn't selected any collection
+                        if (it) {
+
+                            Log.d(TAG, "observeForCollectionAddition: value is true")
+
+                            //updating the unsplashPhoto isImageSavedToCollection value
+
+                            if (unsplashPhotoForUpdatingSaveToCollectionValue != null && position != -1) {
+
+                                Log.d(TAG, "observeForCollectionAddition: photo : $unsplashPhotoForUpdatingSaveToCollectionValue")
+                                Log.d(TAG, "observeForCollectionAddition: position : $position")
+
+                                unsplashPhotoForUpdatingSaveToCollectionValue?.isImageSavedInCollection = true
+                                unsplashPhotoViewModel.updateUnsplashPhoto(unsplashPhotoForUpdatingSaveToCollectionValue!!)
+                                homeAdapter.notifyItemChanged(position)
+
+                                Log.d(TAG, "observeForCollectionAddition: updated")
+
+                                unsplashPhotoForUpdatingSaveToCollectionValue = null
+                                position = -1
+                            }
+                        }
+
+                        isObservingForCollectionAdd = false
+                    }
+                })
+
     }
 
     //[END OF CLICK LISTENERS]
