@@ -28,6 +28,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertImageDownloadLinksAndInfoToString
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PixabayViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
+import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "SearchFragment"
@@ -40,6 +41,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
 
     private val unsplashViewModel by viewModels<UnsplashViewModel>()
     private val pixabayViewModel by viewModels<PixabayViewModel>()
+    private val savedImageViewModel by viewModels<SavedImageViewModel>()
 
     private lateinit var spinnerAdapter: SpinnerSearchIconAdapter
     private lateinit var spinnerList: ArrayList<APIsInfo>
@@ -47,6 +49,8 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
     private lateinit var unsplashSearchAdapter: UnsplashSearchResultsAdapter
     private lateinit var pixabaySearchAdapter: PixabaySearchResultsAdapter
     private lateinit var currentAPI: APIsInfo
+
+    private var isRefreshEnabled = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -59,10 +63,8 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
 
         spinnerAdapter = SpinnerSearchIconAdapter(requireContext(), spinnerList)
 
-        setUpWebsiteSpinner()
-
-        unsplashSearchAdapter = UnsplashSearchResultsAdapter()
-        pixabaySearchAdapter = PixabaySearchResultsAdapter()
+        isRefreshEnabled = true
+        getAllSavedImageIds()
 
         initSearchEditText()
 
@@ -72,6 +74,30 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
         observePixabayResult()
 
         //setUpRecyclerView()
+    }
+
+    private fun getAllSavedImageIds() {
+
+        savedImageViewModel.getAllSavedImagesID().observe(viewLifecycleOwner, {
+
+            if (isRefreshEnabled) {
+
+                if (it.isNotEmpty()) {
+
+                    unsplashSearchAdapter = UnsplashSearchResultsAdapter(it)
+                    pixabaySearchAdapter = PixabaySearchResultsAdapter()
+
+                } else {
+
+                    unsplashSearchAdapter = UnsplashSearchResultsAdapter()
+                    pixabaySearchAdapter = PixabaySearchResultsAdapter()
+                }
+
+                setUpImageWebsiteOrApiSpinner()
+
+                isRefreshEnabled = false
+            }
+        })
     }
 
     private fun observePixabayResult() {
@@ -211,7 +237,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
 
     }
 
-    private fun setUpWebsiteSpinner() {
+    private fun setUpImageWebsiteOrApiSpinner() {
 
         binding.searchWithWebsiteSpinner.adapter = spinnerAdapter
 

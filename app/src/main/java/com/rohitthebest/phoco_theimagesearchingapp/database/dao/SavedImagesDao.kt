@@ -31,5 +31,6 @@ interface SavedImagesDao {
     @Query("SELECT * FROM saved_image_table WHERE imageId =:id")
     fun getSavedImageByImageId(id: String): Flow<SavedImage>
 
-
+    @Query("SELECT imageId FROM saved_image_table")
+    fun getAllSavedImagesID(): Flow<List<String>>
 }

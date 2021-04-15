@@ -19,7 +19,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.databinding.PhotoItemForRvBin
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 
-class UnsplashSearchResultsAdapter :
+class UnsplashSearchResultsAdapter(val savedImageIdList: List<String> = emptyList()) :
         PagingDataAdapter<UnsplashPhoto, UnsplashSearchResultsAdapter.UnsplashSearchViewHolder>(DiffUtilCallback()) {
 
     private var mListener: OnClickListener? = null
@@ -44,6 +44,17 @@ class UnsplashSearchResultsAdapter :
                             .into(imageUserImage)
 
                     imageUserNameTV.text = it.user.username
+
+                    if (savedImageIdList.isNotEmpty()) {
+
+                        if (savedImageIdList.contains(unsplashPhoto.id)) {
+
+                            binding.addToFavouritesBtn.setImageResource(R.drawable.ic_baseline_bookmark_24)
+                        } else {
+
+                            binding.addToFavouritesBtn.setImageResource(R.drawable.ic_outline_bookmark_border_24)
+                        }
+                    }
                 }
             }
         }

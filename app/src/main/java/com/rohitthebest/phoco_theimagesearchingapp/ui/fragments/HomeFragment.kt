@@ -108,6 +108,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
                     } else {
 
+                        //if it's the next day i.e after 12:00 AM
                         //calling the api
                         makeNewAPIRequest()
                     }
