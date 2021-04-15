@@ -325,23 +325,49 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
     private var unsplashPhotoForUpdatingSaveToCollectionValue: UnsplashPhoto? = null
     private var position: Int = -1
 
+
     override fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto, position: Int) {
 
         Log.d(TAG, "onAddToFavouriteLongClicked: ")
 
         isObservingForCollectionAdd = true
 
+        isRefreshEnabled = true
+
         unsplashPhotoForUpdatingSaveToCollectionValue = unsplashPhoto
         this.position = position
 
-        val savedImage = getSavedImage(unsplashPhoto)
+        if (unsplashPhoto.isImageSavedInCollection) {
 
-        val action = HomeFragmentDirections.actionHomeFragmentToChooseFromCollectionsFragment(
-                convertSavedImageToString(savedImage)
-        )
+            savedImageViewModel.getSavedImageByImageId(unsplashPhoto.id).observe(viewLifecycleOwner, {
 
-        findNavController().navigate(action)
+                if (isRefreshEnabled) {
 
+                    if (it != null) {
+
+                        val action = HomeFragmentDirections.actionHomeFragmentToChooseFromCollectionsFragment(
+                                convertSavedImageToString(it)
+                        )
+
+                        findNavController().navigate(action)
+                    } else {
+
+                        Log.d(TAG, "onAddToFavouriteLongClicked: Something went wrong!!")
+                    }
+
+                    isRefreshEnabled = false
+                }
+            })
+        } else {
+
+            val savedImage = getSavedImage(unsplashPhoto)
+
+            val action = HomeFragmentDirections.actionHomeFragmentToChooseFromCollectionsFragment(
+                    convertSavedImageToString(savedImage)
+            )
+
+            findNavController().navigate(action)
+        }
     }
 
     private fun observeForCollectionAddition() {

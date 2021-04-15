@@ -121,16 +121,21 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
 
     override fun onCollectionClicked(collection: Collection) {
 
-        receivedImageToBeSaved.collectionKey = collection.key
+        if (receivedImageToBeSaved.collectionKey != collection.key) {
+            
+            receivedImageToBeSaved.collectionKey = collection.key
 
-        savedImagesViewModel.insertImage(receivedImageToBeSaved)
+            savedImagesViewModel.insertImage(receivedImageToBeSaved)
 
-        //showToasty(requireContext(), "Saved to ${collection.collectionName}")
+            Log.d(TAG, "onCollectionClicked: Image saved to collection ${collection.collectionName}")
 
-        Log.d(TAG, "onCollectionClicked: Image saved to collection ${collection.collectionName}")
+            //passing the value to fragment from which this bottom sheet has been called
+            findNavController().previousBackStackEntry?.savedStateHandle?.set(IMAGE_SAVED_TO_COLLECTION_KEY, true)
 
-        //passing the value to fragment from which this bottom sheet has been called
-        findNavController().previousBackStackEntry?.savedStateHandle?.set(IMAGE_SAVED_TO_COLLECTION_KEY, true)
+        } else {
+
+            Log.d(TAG, "onCollectionClicked: Image is already there in collection ${collection.collectionName}")
+        }
 
         dismiss()
     }

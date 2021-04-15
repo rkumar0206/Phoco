@@ -28,5 +28,8 @@ interface SavedImagesDao {
     @Query("SELECT * FROM saved_image_table WHERE collectionKey = :collectionKey ORDER BY timeStamp DESC")
     fun getAllSavedImagesByCollectionKey(collectionKey: String): Flow<List<SavedImage>>
 
+    @Query("SELECT * FROM saved_image_table WHERE imageId =:id")
+    fun getSavedImageByImageId(id: String): Flow<SavedImage>
+
 
 }

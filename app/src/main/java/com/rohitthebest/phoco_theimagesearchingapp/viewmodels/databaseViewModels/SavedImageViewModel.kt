@@ -43,4 +43,5 @@ class SavedImageViewModel @ViewModelInject constructor(
     fun getSavedImagesByCollectionKey(collectionKey: String) =
             repository.getSavedImagesByCollectionKey(collectionKey).asLiveData()
 
+    fun getSavedImageByImageId(id: String) = repository.getSavedImageByImageId(id).asLiveData()
 }
