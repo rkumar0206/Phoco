@@ -17,8 +17,6 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
-import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
-import com.rohitthebest.phoco_theimagesearchingapp.database.entity.UserInfo
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentHomeBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.activities.PreviewImageActivity
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.HomeRVAdapter
@@ -262,7 +260,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         if (!unsplashPhoto.isImageSavedInCollection) {
 
-            val savedImage = getSavedImage(unsplashPhoto)
+            val savedImage = generateSavedImage(unsplashPhoto, APIName.UNSPLASH)
 
             savedImageViewModel.insertImage(savedImage)
 
@@ -290,24 +288,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
     }
 
-    private fun getSavedImage(unsplashPhoto: UnsplashPhoto): SavedImage {
-
-        return SavedImage(
-                key = generateKey(),
-                collectionKey = "",
-                timeStamp = System.currentTimeMillis(),
-                apiInfo = APIsInfo(APIName.UNSPLASH, R.drawable.logo_unsplash),
-                imageName = unsplashPhoto.alt_description ?: generateKey(),
-                imageId = unsplashPhoto.id,
-                imageUrls = ImageDownloadLinksAndInfo.ImageUrls(unsplashPhoto.urls.small, unsplashPhoto.urls.regular, unsplashPhoto.links.download),
-                userInfo = UserInfo(
-                        unsplashPhoto.user.name,
-                        unsplashPhoto.user.id,
-                        unsplashPhoto.user.profile_image.medium
-                ),
-                uid = ""
-        )
-    }
 
     override fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto) {
 
@@ -361,7 +341,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
             })
         } else {
 
-            val savedImage = getSavedImage(unsplashPhoto)
+            val savedImage = generateSavedImage(unsplashPhoto, APIName.UNSPLASH)
 
             val action = HomeFragmentDirections.actionHomeFragmentToChooseFromCollectionsFragment(
                     convertSavedImageToString(savedImage)

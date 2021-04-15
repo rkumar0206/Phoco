@@ -15,6 +15,11 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.NO_INTERNET_MESSAGE
+import com.rohitthebest.phoco_theimagesearchingapp.R
+import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.UserInfo
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -326,6 +331,61 @@ fun generateKey(appendString: String = "", radix: Int = 69): String {
                 9223372036854775
         ).toStringM(radix)
     }$appendString"
+}
+
+
+fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
+
+    val savedImage = SavedImage().apply {
+
+        key = generateKey()
+        collectionKey = ""
+    }
+
+    return when (apiName) {
+
+        APIName.UNSPLASH -> {
+
+            val unsplashPhoto = imageToBeSaved as UnsplashPhoto
+
+            savedImage.apply {
+
+                apiInfo = APIsInfo(apiName, R.drawable.logo_unsplash)
+                imageId = unsplashPhoto.id
+                imageName = unsplashPhoto.alt_description ?: generateKey()
+                imageUrls = ImageDownloadLinksAndInfo.ImageUrls(unsplashPhoto.urls.small, unsplashPhoto.urls.regular, unsplashPhoto.links.download)
+                userInfo = UserInfo(
+                        unsplashPhoto.user.name,
+                        unsplashPhoto.user.id,
+                        unsplashPhoto.user.profile_image.medium
+                )
+                uid = ""
+            }
+        }
+
+        APIName.PIXABAY -> {
+
+            val pixabayPhoto = imageToBeSaved as PixabayPhoto
+
+            savedImage.apply {
+
+                apiInfo = APIsInfo(apiName, R.drawable.logo_pixabay_square)
+                imageId = pixabayPhoto.id.toString()
+                imageName = generateKey()   //name of the image
+                imageUrls = ImageDownloadLinksAndInfo
+                        .ImageUrls(pixabayPhoto.previewURL, pixabayPhoto.webformatURL, pixabayPhoto.largeImageURL)
+                userInfo = UserInfo(
+                        pixabayPhoto.user,
+                        pixabayPhoto.user_id.toString(),
+                        pixabayPhoto.userImageURL
+                )
+                uid = ""
+            }
+        }
+
+        else -> SavedImage()
+    }
+
 }
 
 

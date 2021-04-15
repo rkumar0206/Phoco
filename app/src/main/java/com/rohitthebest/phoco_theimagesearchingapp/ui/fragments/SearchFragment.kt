@@ -52,6 +52,8 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
 
     private var isRefreshEnabled = false
 
+    private lateinit var savedImagesIds: List<String>
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -68,12 +70,9 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
 
         initSearchEditText()
 
-        setUpLoadStateListener()
-
         observeUnsplashSearchResult()
         observePixabayResult()
 
-        //setUpRecyclerView()
     }
 
     private fun getAllSavedImageIds() {
@@ -84,16 +83,22 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
 
                 if (it.isNotEmpty()) {
 
+                    Log.d(TAG, "getAllSavedImageIds: $it")
+
+                    savedImagesIds = it
+
                     unsplashSearchAdapter = UnsplashSearchResultsAdapter(it)
                     pixabaySearchAdapter = PixabaySearchResultsAdapter()
 
                 } else {
 
+                    savedImagesIds = emptyList()
                     unsplashSearchAdapter = UnsplashSearchResultsAdapter()
                     pixabaySearchAdapter = PixabaySearchResultsAdapter()
                 }
 
                 setUpImageWebsiteOrApiSpinner()
+                setUpLoadStateListener()
 
                 isRefreshEnabled = false
             }
@@ -335,7 +340,15 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
     }
 
     override fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto) {
-        //TODO("Not yet implemented")
+
+        val im = generateSavedImage(unsplashPhoto, APIName.UNSPLASH)
+
+        Log.d(TAG, "onAddToFavouriteBtnClicked: Unsplash savedImage: $im")
+
+        if (savedImagesIds.isEmpty()) {
+
+            //insert the image
+        }
     }
 
     override fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto) {
@@ -378,6 +391,11 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
     }
 
     override fun onAddToFavouriteBtnClicked(pixabayPhoto: PixabayPhoto) {
+
+        val im = generateSavedImage(pixabayPhoto, APIName.PIXABAY)
+
+        Log.d(TAG, "onAddToFavouriteBtnClicked: Pixabay savedImage: $im")
+
         //TODO("Not yet implemented")
     }
 
@@ -393,5 +411,6 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
         //TODO("Not yet implemented")
     }
     //---------------------------------------------------------------------------------------------
+
 
 }
