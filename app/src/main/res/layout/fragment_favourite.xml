@@ -7,7 +7,7 @@
     android:background="@color/background_color">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/cardView6"
+        android:id="@+id/allPhotosCV"
         android:layout_width="match_parent"
         android:layout_height="170dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -112,7 +112,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView6" />
+        app:layout_constraintTop_toBottomOf="@+id/allPhotosCV" />
 
     <TextView
         android:id="@+id/noCollectionAddedTV"

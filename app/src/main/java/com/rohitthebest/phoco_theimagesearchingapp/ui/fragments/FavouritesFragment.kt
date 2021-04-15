@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -37,6 +38,11 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite), CollectionsAda
         _binding = FragmentFavouriteBinding.bind(view)
 
         getAllSavedPhotosList()
+
+        binding.allPhotosCV.setOnClickListener {
+
+            navigateToCollectionFragment("all_photos")
+        }
     }
 
     private fun getAllSavedPhotosList() {
@@ -97,7 +103,16 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite), CollectionsAda
 
     override fun onItemClick(collection: Collection) {
 
-        //todo : navigate to another fragment for showing  the list of saved in this collection
+        navigateToCollectionFragment(
+                collectionKey = collection.key
+        )
+    }
+
+    private fun navigateToCollectionFragment(collectionKey: String) {
+
+        val action = FavouritesFragmentDirections.actionFavouritesFragmentToCollectionFragmentWithSavedImages(collectionKey)
+
+        findNavController().navigate(action)
     }
 
     private fun getAllCollections() {
