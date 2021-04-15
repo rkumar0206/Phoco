@@ -28,6 +28,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.SpinnerSearchIcon
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.UnsplashSearchResultsAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertImageDownloadLinksAndInfoToString
+import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertSavedImageToString
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PixabayViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
@@ -37,7 +38,8 @@ import kotlinx.coroutines.*
 private const val TAG = "SearchFragment"
 
 @AndroidEntryPoint
-class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResultsAdapter.OnClickListener, PixabaySearchResultsAdapter.OnClickListener {
+class SearchFragment : Fragment(R.layout.fragment_search),
+        UnsplashSearchResultsAdapter.OnClickListener, PixabaySearchResultsAdapter.OnClickListener {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
@@ -396,32 +398,14 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
 
             isRefreshEnabled = true
 
-            savedImageViewModel.getSavedImageByImageId(unsplashPhoto.id).observe(viewLifecycleOwner, {
-
-                if (isRefreshEnabled) {
-
-                    if (it != null) {
-
-                        val action = SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
-                                GsonConverters.convertSavedImageToString(it)
-                        )
-
-                        findNavController().navigate(action)
-                    } else {
-
-                        Log.d(TAG, "onAddToFavouriteLongClicked: Something went wrong!!")
-                    }
-
-                    isRefreshEnabled = false
-                }
-            })
+            getTheSavedImageAndPassItToTheChooseCollectionBottomSheet(unsplashPhoto.id)
 
         } else {
 
             val savedImage = generateSavedImage(unsplashPhoto, APIName.UNSPLASH)
 
             val action = SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
-                    GsonConverters.convertSavedImageToString(savedImage)
+                    convertSavedImageToString(savedImage)
             )
 
             findNavController().navigate(action)
@@ -455,13 +439,44 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
         startActivity(intent)
     }
 
-    override fun onAddToFavouriteBtnClicked(pixabayPhoto: PixabayPhoto) {
+    override fun onAddToFavouriteBtnClicked(pixabayPhoto: PixabayPhoto, position: Int) {
 
-        val im = generateSavedImage(pixabayPhoto, APIName.PIXABAY)
+        if (savedImagesIds.contains(pixabayPhoto.id.toString())) {
 
-        Log.d(TAG, "onAddToFavouriteBtnClicked: Pixabay savedImage: $im")
+            savedImageViewModel.deleteImageByImageId(pixabayPhoto.id.toString())
 
-        //TODO("Not yet implemented")
+            updateItemOfPixabaySearchAdapter(position)
+
+            showToasty(requireContext(), "Image unsaved", ToastyType.INFO)
+
+        } else {
+
+            val savedImage = generateSavedImage(pixabayPhoto, APIName.PIXABAY)
+
+            savedImageViewModel.insertImage(savedImage)
+
+            showSnackBar(binding.root, "Image Saved")
+
+            updateItemOfPixabaySearchAdapter(position)
+
+        }
+
+    }
+
+    private fun updateItemOfPixabaySearchAdapter(position: Int) {
+
+        GlobalScope.launch {
+
+            delay(100)
+
+            withContext(Dispatchers.Main) {
+
+                pixabaySearchAdapter.updateSavedImageListIds(savedImagesIds)
+
+                pixabaySearchAdapter.notifyItemChanged(position)
+            }
+        }
+
     }
 
     override fun ondownloadImageBtnClicked(pixabayPhoto: PixabayPhoto) {
@@ -472,9 +487,29 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
         //TODO("Not yet implemented")
     }
 
-    override fun onAddToFavouriteLongClicked(pixabayPhoto: PixabayPhoto) {
-        //TODO("Not yet implemented")
+    override fun onAddToFavouriteLongClicked(pixabayPhoto: PixabayPhoto, position: Int) {
+
+        isObservingForImageSavedInCollection = true
+        this.position = position
+
+        if (savedImagesIds.contains(pixabayPhoto.id.toString())) {
+
+            isRefreshEnabled = true
+
+            getTheSavedImageAndPassItToTheChooseCollectionBottomSheet(pixabayPhoto.id.toString())
+
+        } else {
+
+            val savedImage = generateSavedImage(pixabayPhoto, APIName.PIXABAY)
+
+            val action = SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
+                    convertSavedImageToString(savedImage)
+            )
+
+            findNavController().navigate(action)
+        }
     }
+
     //---------------------------------------------------------------------------------------------
 
 
@@ -499,6 +534,8 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
 
                                     APIName.UNSPLASH -> updateItemOfUnsplashSearchAdapter(position)
 
+                                    APIName.PIXABAY -> updateItemOfPixabaySearchAdapter(position)
+
                                     else -> Log.d(TAG, "observeForIfSavedImageAddedToTheCollection: ")
                                 }
 
@@ -510,6 +547,32 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
                         isObservingForImageSavedInCollection = false
                     }
                 })
+
+    }
+
+    /*this function will get the image already saved in the database and then pass it to the
+    Bottom sheet for choosing another collection*/
+    private fun getTheSavedImageAndPassItToTheChooseCollectionBottomSheet(id: String) {
+
+        savedImageViewModel.getSavedImageByImageId(id).observe(viewLifecycleOwner, {
+
+            if (isRefreshEnabled) {
+
+                if (it != null) {
+
+                    val action = SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
+                            convertSavedImageToString(it)
+                    )
+
+                    findNavController().navigate(action)
+                } else {
+
+                    Log.d(TAG, "onAddToFavouriteLongClicked: Something went wrong!!")
+                }
+
+                isRefreshEnabled = false
+            }
+        })
 
     }
 

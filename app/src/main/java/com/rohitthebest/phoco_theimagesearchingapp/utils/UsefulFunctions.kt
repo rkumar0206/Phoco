@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.WallpaperManager
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.util.Log
 import android.view.View
@@ -86,10 +87,13 @@ fun showToasty(
 fun showSnackBar(
         view: View,
         message: String = "",
-        duration: Int = Snackbar.LENGTH_SHORT
+        duration: Int = Snackbar.LENGTH_SHORT,
+        textColor: String = "#779dfe"
 ) {
 
-    Snackbar.make(view, message, duration).show()
+    Snackbar.make(view, message, duration)
+            .setTextColor(Color.parseColor(textColor))
+            .show()
 }
 
 fun View.hide() {
@@ -373,7 +377,7 @@ fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
                 imageId = pixabayPhoto.id.toString()
                 imageName = generateKey()   //name of the image
                 imageUrls = ImageDownloadLinksAndInfo
-                        .ImageUrls(pixabayPhoto.previewURL, pixabayPhoto.webformatURL, pixabayPhoto.largeImageURL)
+                        .ImageUrls(pixabayPhoto.previewURL, pixabayPhoto.previewURL, pixabayPhoto.largeImageURL)
                 userInfo = UserInfo(
                         pixabayPhoto.user,
                         pixabayPhoto.user_id.toString(),

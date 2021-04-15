@@ -19,10 +19,15 @@ import com.rohitthebest.phoco_theimagesearchingapp.databinding.PhotoItemForRvBin
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 
-class PixabaySearchResultsAdapter :
+class PixabaySearchResultsAdapter(var savedImageIdList: List<String> = emptyList()) :
         PagingDataAdapter<PixabayPhoto, PixabaySearchResultsAdapter.PixabayViewHolder>(DiffUtilCallback()) {
 
     private var mListener: OnClickListener? = null
+
+    fun updateSavedImageListIds(list: List<String>) {
+
+        this.savedImageIdList = list
+    }
 
     inner class PixabayViewHolder(val binding: PhotoItemForRvBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
 
@@ -43,6 +48,18 @@ class PixabaySearchResultsAdapter :
                             .into(imageUserImage)
 
                     imageUserNameTV.text = it.user
+
+                    if (savedImageIdList.isNotEmpty()) {
+
+                        if (savedImageIdList.contains(pixabayPhoto.id.toString())) {
+
+                            binding.addToFavouritesBtn.setImageResource(R.drawable.ic_baseline_bookmark_24)
+                        } else {
+
+                            binding.addToFavouritesBtn.setImageResource(R.drawable.ic_outline_bookmark_border_24)
+                        }
+                    }
+
                 }
             }
         }
@@ -111,7 +128,7 @@ class PixabaySearchResultsAdapter :
 
                     binding.addToFavouritesBtn.id -> {
 
-                        getItem(absoluteAdapterPosition)?.let { mListener!!.onAddToFavouriteBtnClicked(it) }
+                        getItem(absoluteAdapterPosition)?.let { mListener!!.onAddToFavouriteBtnClicked(it, absoluteAdapterPosition) }
                     }
 
                     binding.downloadImageBtn.id -> {
@@ -137,7 +154,7 @@ class PixabaySearchResultsAdapter :
 
             if (v?.id == binding.addToFavouritesBtn.id) {
 
-                getItem(absoluteAdapterPosition)?.let { mListener!!.onAddToFavouriteLongClicked(it) }
+                getItem(absoluteAdapterPosition)?.let { mListener!!.onAddToFavouriteLongClicked(it, absoluteAdapterPosition) }
             }
 
             return true
@@ -181,11 +198,11 @@ class PixabaySearchResultsAdapter :
     interface OnClickListener {
 
         fun onImageClicked(pixabayPhoto: PixabayPhoto)
-        fun onAddToFavouriteBtnClicked(pixabayPhoto: PixabayPhoto)
+        fun onAddToFavouriteBtnClicked(pixabayPhoto: PixabayPhoto, position: Int)
         fun ondownloadImageBtnClicked(pixabayPhoto: PixabayPhoto)
         fun onImageUserNameClicked(pixabayPhoto: PixabayPhoto)
 
-        fun onAddToFavouriteLongClicked(pixabayPhoto: PixabayPhoto)
+        fun onAddToFavouriteLongClicked(pixabayPhoto: PixabayPhoto, position: Int)
     }
 
     fun setOnClickListener(listener: OnClickListener) {
