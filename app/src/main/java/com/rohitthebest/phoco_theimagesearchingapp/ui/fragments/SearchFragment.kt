@@ -9,9 +9,11 @@ import android.widget.AdapterView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.rohitthebest.phoco_theimagesearchingapp.Constants
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_PIXABAY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNSPLASH
@@ -74,6 +76,7 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
         observeUnsplashSearchResult()
         observePixabayResult()
 
+        observeForIfSavedImageAddedToTheCollection()
     }
 
     private fun getAllSavedImageIds() {
@@ -308,11 +311,8 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
 
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-
-        _binding = null
-    }
+    private var position: Int = -1
+    private var isObservingForImageSavedInCollection = false
 
 
     //----------------------------- Unsplash adapter click listeners ------------------------------
@@ -388,7 +388,44 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
     }
 
     override fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto, position: Int) {
-        //TODO("Not yet implemented")
+
+        isObservingForImageSavedInCollection = true
+        this.position = position
+
+        if (savedImagesIds.contains(unsplashPhoto.id)) {
+
+            isRefreshEnabled = true
+
+            savedImageViewModel.getSavedImageByImageId(unsplashPhoto.id).observe(viewLifecycleOwner, {
+
+                if (isRefreshEnabled) {
+
+                    if (it != null) {
+
+                        val action = SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
+                                GsonConverters.convertSavedImageToString(it)
+                        )
+
+                        findNavController().navigate(action)
+                    } else {
+
+                        Log.d(TAG, "onAddToFavouriteLongClicked: Something went wrong!!")
+                    }
+
+                    isRefreshEnabled = false
+                }
+            })
+
+        } else {
+
+            val savedImage = generateSavedImage(unsplashPhoto, APIName.UNSPLASH)
+
+            val action = SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
+                    GsonConverters.convertSavedImageToString(savedImage)
+            )
+
+            findNavController().navigate(action)
+        }
     }
     //-------------------------------------------------------------------------------------------
 
@@ -439,6 +476,48 @@ class SearchFragment : Fragment(R.layout.fragment_search), UnsplashSearchResults
         //TODO("Not yet implemented")
     }
     //---------------------------------------------------------------------------------------------
+
+
+    private fun observeForIfSavedImageAddedToTheCollection() {
+
+        findNavController().currentBackStackEntry
+                ?.savedStateHandle
+                ?.getLiveData<Boolean>(Constants.IMAGE_SAVED_TO_COLLECTION_KEY)
+                ?.observe(viewLifecycleOwner, {
+
+                    if (isObservingForImageSavedInCollection) {
+
+                        //true : user has selected one of the collection from the bottom sheet
+                        //false : user hasn't selected any collection
+                        if (it) {
+
+                            showSnackBar(binding.root, "Image saved")
+
+                            if (position != -1) {
+
+                                when (currentAPI.apiName) {
+
+                                    APIName.UNSPLASH -> updateItemOfUnsplashSearchAdapter(position)
+
+                                    else -> Log.d(TAG, "observeForIfSavedImageAddedToTheCollection: ")
+                                }
+
+                                Log.d(TAG, "observeForCollectionAddition: updated")
+
+                                position = -1
+                            }
+                        }
+                        isObservingForImageSavedInCollection = false
+                    }
+                })
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        _binding = null
+    }
 
 
 }

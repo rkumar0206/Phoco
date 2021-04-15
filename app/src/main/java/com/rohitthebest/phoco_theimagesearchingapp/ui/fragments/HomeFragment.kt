@@ -42,7 +42,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
     private val savedImageViewModel by viewModels<SavedImageViewModel>()
 
     private var isRefreshEnabled = true
-    private var isObservingForCollectionAdd = false
+    private var isObservingForImageSavedInCollection = false
     private lateinit var homeAdapter: HomeRVAdapter
 
     private var lastDateSaved: String? = ""
@@ -74,7 +74,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         setUpRecyclerView()
 
-        observeForCollectionAddition()
+        observeForIfSavedImageAddedToTheCollection()
     }
 
     private fun getSavedUnsplashPhoto() {
@@ -311,14 +311,14 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         Log.d(TAG, "onAddToFavouriteLongClicked: ")
 
-        isObservingForCollectionAdd = true
-
-        isRefreshEnabled = true
+        isObservingForImageSavedInCollection = true
 
         unsplashPhotoForUpdatingSaveToCollectionValue = unsplashPhoto
         this.position = position
 
         if (unsplashPhoto.isImageSavedInCollection) {
+
+            isRefreshEnabled = true
 
             savedImageViewModel.getSavedImageByImageId(unsplashPhoto.id).observe(viewLifecycleOwner, {
 
@@ -351,16 +351,16 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         }
     }
 
-    private fun observeForCollectionAddition() {
+    private fun observeForIfSavedImageAddedToTheCollection() {
 
         findNavController().currentBackStackEntry
                 ?.savedStateHandle
                 ?.getLiveData<Boolean>(IMAGE_SAVED_TO_COLLECTION_KEY)
                 ?.observe(viewLifecycleOwner, {
 
-                    Log.d(TAG, "observeForCollectionAddition: isObserva... $isObservingForCollectionAdd")
+                    Log.d(TAG, "observeForCollectionAddition: isObserva... $isObservingForImageSavedInCollection")
 
-                    if (isObservingForCollectionAdd) {
+                    if (isObservingForImageSavedInCollection) {
 
 
                         //true : user has selected one of the collection from the bottom sheet
@@ -389,7 +389,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                             }
                         }
 
-                        isObservingForCollectionAdd = false
+                        isObservingForImageSavedInCollection = false
                     }
                 })
 
