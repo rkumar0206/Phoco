@@ -1,15 +1,17 @@
 package com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PixabayViewModel @ViewModelInject constructor(
-        private val repository: PixabayRepository
+@HiltViewModel
+class PixabayViewModel @Inject constructor(
+    private val repository: PixabayRepository
 ) : ViewModel() {
 
     //for searching image

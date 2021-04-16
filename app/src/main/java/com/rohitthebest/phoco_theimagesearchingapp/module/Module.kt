@@ -15,8 +15,8 @@ import com.rohitthebest.phoco_theimagesearchingapp.database.database.UnsplashPho
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -38,7 +38,7 @@ annotation class PixabayImageOkHttpClient
 annotation class PixabayImageRetrofit
 
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 object Module {
 
 

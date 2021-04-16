@@ -1,14 +1,16 @@
 package com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class UnsplashViewModel @ViewModelInject constructor(
+@HiltViewModel
+class UnsplashViewModel @Inject constructor(
     private val repository: UnsplashRepository
 ) : ViewModel() {
 

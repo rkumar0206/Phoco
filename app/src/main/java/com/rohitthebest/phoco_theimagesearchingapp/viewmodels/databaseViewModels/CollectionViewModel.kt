@@ -1,15 +1,17 @@
 package com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.repositories.CollectionRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CollectionViewModel @ViewModelInject constructor(
-        val repository: CollectionRepository
+@HiltViewModel
+class CollectionViewModel @Inject constructor(
+    val repository: CollectionRepository
 ) : ViewModel() {
 
     fun insertCollection(collection: Collection) = viewModelScope.launch {
