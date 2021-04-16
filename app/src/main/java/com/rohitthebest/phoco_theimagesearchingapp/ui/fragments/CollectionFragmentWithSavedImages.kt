@@ -1,7 +1,10 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.selection.SelectionPredicates
@@ -18,6 +21,8 @@ import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+private const val TAG = "CollectionFragmentWithS"
+
 @AndroidEntryPoint
 class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_with_saved_images) {
 
@@ -32,6 +37,7 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
     private lateinit var collectionWithSavedImagesAdapter: CollectionWithSavedImagesAdapter
     private var tracker: SelectionTracker<String>? = null
 
+    private lateinit var backPressedDispatcherCallback: OnBackPressedCallback
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -122,10 +128,27 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
             override fun onSelectionChanged() {
                 super.onSelectionChanged()
 
+                Log.d(TAG, "onSelectionChanged: ")
 
+                backPressedDispatcherCallback.isEnabled = true
+
+                //set up action mode
             }
-
         })
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        backPressedDispatcherCallback =
+            requireActivity().onBackPressedDispatcher.addCallback(this) {
+                // Handle the back button event
+
+                Log.d(TAG, "onCreate: backPressed called")
+
+                tracker?.clearSelection()
+                backPressedDispatcherCallback.isEnabled = false
+            }
     }
 
     override fun onDestroyView() {
