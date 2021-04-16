@@ -146,8 +146,15 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
                 Log.d(TAG, "onCreate: backPressed called")
 
-                tracker?.clearSelection()
-                backPressedDispatcherCallback.isEnabled = false
+                if (tracker?.selection?.isEmpty!!) {
+
+                    backPressedDispatcherCallback.isEnabled = false
+                    requireActivity().onBackPressed()
+                } else {
+
+                    tracker?.clearSelection()
+                    backPressedDispatcherCallback.isEnabled = false
+                }
             }
     }
 
