@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.DiffUtil
@@ -47,9 +48,17 @@ class CollectionWithSavedImagesAdapter :
 
                 imageUserNameTV.text = it.userInfo.userName
 
-                //todo : do something for bookmark button
+                addToFavouritesBtn.setImageResource(R.drawable.ic_baseline_bookmark_24)
+
+                updateViewForIsSelectedValue(isSelected)
             }
 
+        }
+
+        private fun updateViewForIsSelectedValue(isSelected: Boolean) {
+
+            binding.reloadBackground.isVisible = isSelected
+            binding.selectedIV.isVisible = isSelected
         }
 
         private fun setUpAndShowImageInImageView(imageUrl: String) {

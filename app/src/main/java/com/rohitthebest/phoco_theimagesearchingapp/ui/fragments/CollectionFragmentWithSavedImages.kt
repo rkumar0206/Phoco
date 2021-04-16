@@ -4,8 +4,16 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.selection.SelectionPredicates
+import androidx.recyclerview.selection.SelectionTracker
+import androidx.recyclerview.selection.StorageStrategy
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.COLLECTION_WITH_SAVED_IMAGES_SELECTION_ID
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentCollectionWithSavedImagesBinding
+import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.CollectionWithSavedImagesAdapter
+import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.itemDetailsLookUp.CollectionWithSavedImagesItemDetailsLookup
+import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.keyProvider.CollectionWithSavedImagesItemKeyProvider
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,6 +29,10 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
     private var receivedCollectionKey = ""
 
+    private lateinit var collectionWithSavedImagesAdapter: CollectionWithSavedImagesAdapter
+    private var tracker: SelectionTracker<String>? = null
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -31,8 +43,17 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
             requireActivity().onBackPressed()
         }
 
+        collectionWithSavedImagesAdapter = CollectionWithSavedImagesAdapter()
+
         getPassedArgument()
+
+        setUpRecyclerView()
+
+        setUpTracker()
+
+        setObserverToTheTracker()
     }
+
 
     private fun getPassedArgument() {
 
@@ -49,22 +70,62 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
         }
     }
-
     private fun getAllSavedImages() {
 
         if (receivedCollectionKey == "all_photos") {
 
             savedImageViewModel.getAllSavedImages().observe(viewLifecycleOwner, {
 
-                //submit the list to the adapter
+                collectionWithSavedImagesAdapter.submitList(it)
             })
         } else {
 
-            savedImageViewModel.getSavedImagesByCollectionKey(receivedCollectionKey).observe(viewLifecycleOwner, {
+            savedImageViewModel.getSavedImagesByCollectionKey(receivedCollectionKey)
+                .observe(viewLifecycleOwner, {
 
-                // submit this list to the adapter
-            })
+                    collectionWithSavedImagesAdapter.submitList(it)
+                })
         }
+    }
+
+    private fun setUpRecyclerView() {
+
+        binding.savedImagesRV.apply {
+
+            setHasFixedSize(true)
+            adapter = collectionWithSavedImagesAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+    }
+
+    private fun setUpTracker() {
+
+        tracker = SelectionTracker.Builder(
+            COLLECTION_WITH_SAVED_IMAGES_SELECTION_ID,
+            binding.savedImagesRV,
+            CollectionWithSavedImagesItemKeyProvider(collectionWithSavedImagesAdapter),
+            CollectionWithSavedImagesItemDetailsLookup(binding.savedImagesRV),
+            StorageStrategy.createStringStorage()
+        )
+            .withSelectionPredicate(
+                SelectionPredicates.createSelectAnything()
+            )
+            .build()
+
+        collectionWithSavedImagesAdapter.tracker = tracker
+    }
+
+    private fun setObserverToTheTracker() {
+
+        tracker?.addObserver(object : SelectionTracker.SelectionObserver<String>() {
+
+            override fun onSelectionChanged() {
+                super.onSelectionChanged()
+
+
+            }
+
+        })
     }
 
     override fun onDestroyView() {

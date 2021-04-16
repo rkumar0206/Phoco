@@ -3,18 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="#FFFFFF">
 
     <ImageView
         android:id="@+id/image"
         android:layout_width="0dp"
         android:layout_height="300dp"
+        android:contentDescription="@string/imageview"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/backgrounds/scenic"
-        android:contentDescription="@string/imageview" />
+        tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
     <View
         android:id="@+id/view"
@@ -46,12 +47,12 @@
         android:id="@+id/imageUserImage"
         android:layout_width="30dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/imageview"
         android:padding="3dp"
         app:layout_constraintBottom_toBottomOf="@id/view"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/view"
-        app:srcCompat="@drawable/ic_outline_account_circle_24"
-        android:contentDescription="@string/imageview" />
+        app:srcCompat="@drawable/ic_outline_account_circle_24" />
 
     <ImageView
         android:id="@+id/downloadImageBtn"
@@ -70,12 +71,12 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_marginEnd="8dp"
+        android:contentDescription="@string/imageview"
         android:padding="3dp"
         app:layout_constraintBottom_toBottomOf="@id/view"
         app:layout_constraintEnd_toStartOf="@+id/downloadImageBtn"
         app:layout_constraintTop_toTopOf="@+id/view"
-        app:srcCompat="@drawable/ic_outline_bookmark_border_24"
-        android:contentDescription="@string/imageview" />
+        app:srcCompat="@drawable/ic_outline_bookmark_border_24" />
 
     <View
         android:id="@+id/reloadBackground"
@@ -105,5 +106,19 @@
         app:layout_constraintStart_toStartOf="@id/reloadBackground"
         app:layout_constraintTop_toTopOf="@id/reloadBackground"
         app:srcCompat="@drawable/ic_baseline_refresh_24"
+        tools:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/selectedIV"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:contentDescription="@string/imageview"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/image"
+        app:srcCompat="@drawable/ic_baseline_check_circle_outline_24"
         tools:visibility="visible" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
