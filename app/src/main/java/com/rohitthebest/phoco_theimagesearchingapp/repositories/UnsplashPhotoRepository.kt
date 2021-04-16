@@ -3,9 +3,11 @@ package com.rohitthebest.phoco_theimagesearchingapp.repositories
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.database.dao.UnsplashPhotoDao
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class UnsplashPhotoRepository @Inject constructor(
-        val dao: UnsplashPhotoDao
+    val dao: UnsplashPhotoDao
 ) {
 
     suspend fun insertUnsplashPhoto(unsplashPhoto: UnsplashPhoto) = dao.insertUnsplashPhoto(unsplashPhoto)

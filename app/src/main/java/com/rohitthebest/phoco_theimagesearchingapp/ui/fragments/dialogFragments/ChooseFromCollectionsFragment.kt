@@ -55,6 +55,11 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
 
             findNavController().navigate(R.id.action_chooseFromCollectionsFragment_to_addCollectionFragment)
         }
+
+        binding.addNewCollectionTV.setOnClickListener {
+
+            findNavController().navigate(R.id.action_chooseFromCollectionsFragment_to_addCollectionFragment)
+        }
     }
 
     private fun getPassedArgument() {

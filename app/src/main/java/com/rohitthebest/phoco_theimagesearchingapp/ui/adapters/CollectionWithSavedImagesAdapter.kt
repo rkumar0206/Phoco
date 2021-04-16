@@ -52,14 +52,6 @@ class CollectionWithSavedImagesAdapter :
 
         }
 
-        fun getItemsDetails(): ItemDetailsLookup.ItemDetails<String> =
-            object : ItemDetailsLookup.ItemDetails<String>() {
-
-                override fun getPosition(): Int = absoluteAdapterPosition
-
-                override fun getSelectionKey(): String = getItem(absoluteAdapterPosition).key
-            }
-
         private fun setUpAndShowImageInImageView(imageUrl: String) {
 
             Glide.with(binding.view)
@@ -109,6 +101,14 @@ class CollectionWithSavedImagesAdapter :
             binding.reloadBackground.hide()
             binding.reloadFAB.visibility = View.GONE
         }
+
+        fun getItemsDetails(): ItemDetailsLookup.ItemDetails<String> =
+            object : ItemDetailsLookup.ItemDetails<String>() {
+
+                override fun getPosition(): Int = absoluteAdapterPosition
+
+                override fun getSelectionKey(): String = getItem(absoluteAdapterPosition).key
+            }
 
     }
 
