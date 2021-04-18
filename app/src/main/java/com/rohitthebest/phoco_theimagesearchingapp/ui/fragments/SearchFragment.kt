@@ -211,7 +211,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
 
-                if (binding.searchBoxACT.text.toString().validateString()) {
+                if (binding.searchBoxACT.text.toString().isValidString()) {
 
                     hideKeyBoard(requireActivity())
 
@@ -259,7 +259,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
                 currentAPI = parent?.getItemAtPosition(position) as APIsInfo
 
-                if (binding.searchBoxACT.text.toString().validateString() && currentAPI != api) {
+                if (binding.searchBoxACT.text.toString().isValidString() && currentAPI != api) {
 
                     searchWithCorrectAPI(binding.searchBoxACT.text.toString())
                 }

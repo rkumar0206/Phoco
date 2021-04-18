@@ -20,8 +20,8 @@ import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.ChooseCollectionA
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToListOfStrings
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToSavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
+import com.rohitthebest.phoco_theimagesearchingapp.utils.isValidString
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
-import com.rohitthebest.phoco_theimagesearchingapp.utils.validateString
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -77,7 +77,7 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
 
             val tag = args?.withTag
 
-            if (tag?.validateString()!!) {
+            if (tag?.isValidString()!!) {
 
                 // if tag is not null then it means that a list of saved images key is passed as argument
 

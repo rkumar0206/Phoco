@@ -96,6 +96,14 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
                     //todo :  navigate to dialog fragment for editing collection
                     showToast(requireContext(), "Edit collection clicked")
+
+                    val action = CollectionFragmentWithSavedImagesDirections
+                            .actionCollectionFragmentWithSavedImagesToAddCollectionFragment(
+                                    receivedCollectionKey
+                            )
+
+                    findNavController().navigate(action)
+
                     true
                 }
 

@@ -15,8 +15,8 @@ import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentAddCollectionBinding
 import com.rohitthebest.phoco_theimagesearchingapp.utils.ToastyType
 import com.rohitthebest.phoco_theimagesearchingapp.utils.generateKey
+import com.rohitthebest.phoco_theimagesearchingapp.utils.isValidString
 import com.rohitthebest.phoco_theimagesearchingapp.utils.showToasty
-import com.rohitthebest.phoco_theimagesearchingapp.utils.validateString
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,14 +30,18 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
 
     private val collectionViewModel by viewModels<CollectionViewModel>()
 
+    private var isCollectionKeyReceived = false
+    private var receivedCollectionKey = ""
+    private lateinit var receivedCollection: Collection
+
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
 
         return LayoutInflater.from(requireContext())
-            .inflate(R.layout.fragment_add_collection, container, false)
+                .inflate(R.layout.fragment_add_collection, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -45,9 +49,50 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
 
         _binding = FragmentAddCollectionBinding.bind(view)
 
+        getPassedArguments()
+
         textWatcher()
 
         initListeners()
+    }
+
+    private fun getPassedArguments() {
+
+        if (!arguments?.isEmpty!!) {
+
+            val args = arguments?.let {
+
+                AddCollectionFragmentArgs.fromBundle(it)
+            }
+
+            if (args?.collectionKey?.isValidString()!!) {
+
+                isCollectionKeyReceived = true
+                receivedCollectionKey = args.collectionKey
+                getCollection()
+            }
+        }
+    }
+
+    private fun getCollection() {
+
+        collectionViewModel.getCollectionByKey(receivedCollectionKey).observe(viewLifecycleOwner, {
+
+            receivedCollection = it
+            updateUI()
+        })
+    }
+
+    private fun updateUI() {
+
+        binding.apply {
+
+            collectionNameET.editText?.setText(receivedCollection.collectionName)
+            collectionDescriptionET.editText?.setText(receivedCollection.collectionDescription)
+
+            dialogTitle.text = getString(R.string.edit_collection)
+            submitBtn.text = getString(R.string.save)
+        }
     }
 
     private fun initListeners() {
@@ -97,8 +142,16 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
                                         ignoreCase = true)
                         ) {
 
-                            isDuplicateExist = true
-                            break
+                            if (isCollectionKeyReceived &&
+                                    i.collectionName.equals(receivedCollection.collectionName, true)) {
+
+                                continue
+                            } else {
+
+                                isDuplicateExist = true
+                                break
+                            }
+
                         }
                     }
 
@@ -107,12 +160,12 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
                         showToasty(requireContext(), "Collection already exists", ToastyType.ERROR)
                     } else {
 
-                        insertNewCollectionToDatabase()
+                        insertOrUpdateCollection()
                     }
 
                 } else {
 
-                    insertNewCollectionToDatabase()
+                    insertOrUpdateCollection()
                 }
 
                 isRefreshEnabled = false
@@ -120,29 +173,45 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
         })
     }
 
-    private fun insertNewCollectionToDatabase() {
+    private fun insertOrUpdateCollection() {
 
-        Log.d(TAG, "insertNewCollectionToDatabase: ")
+        if (!isCollectionKeyReceived) {
 
-        val collection = Collection(
-                key = generateKey(),
-                collectionName = binding.collectionNameET.editText?.text?.trim().toString(),
-                collectionDescription = binding.collectionDescriptionET.editText?.text?.trim()
-                        .toString(),
-                collectionImageUrl = "",
-                uid = ""
-        )
+            Log.d(TAG, "insertNewCollectionToDatabase: ")
 
-        collectionViewModel.insertCollection(collection)
+            val collection = Collection(
+                    key = generateKey(),
+                    collectionName = binding.collectionNameET.editText?.text?.trim().toString(),
+                    collectionDescription = binding.collectionDescriptionET.editText?.text?.trim()
+                            .toString(),
+                    collectionImageUrl = "",
+                    uid = ""
+            )
 
-        showToasty(requireContext(), "Collection added")
+            collectionViewModel.insertCollection(collection)
+
+            showToasty(requireContext(), "Collection added")
+        } else {
+
+            receivedCollection.apply {
+
+                this.collectionName = binding.collectionNameET.editText?.text?.trim().toString()
+                this.collectionDescription = binding.collectionDescriptionET.editText?.text?.trim()
+                        .toString()
+                this.collectionImageUrl = ""
+            }
+
+            collectionViewModel.updateCollection(receivedCollection)
+
+            showToasty(requireContext(), "Collection updated")
+        }
 
         dismiss()
     }
 
     private fun validateForm(): Boolean {
 
-        if (!binding.collectionNameET.editText?.text.toString().validateString()) {
+        if (!binding.collectionNameET.editText?.text.toString().isValidString()) {
 
             binding.collectionNameET.error = EDIT_TEXT_EMPTY_MESSAGE
             return false

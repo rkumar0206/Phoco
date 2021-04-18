@@ -24,6 +24,11 @@ class CollectionViewModel @Inject constructor(
         repository.insertCollections(collections)
     }
 
+    fun updateCollection(collection: Collection) = viewModelScope.launch {
+
+        repository.updateCollection(collection)
+    }
+
     fun deleteCollection(collection: Collection) = viewModelScope.launch {
 
         repository.deleteCollection(collection)

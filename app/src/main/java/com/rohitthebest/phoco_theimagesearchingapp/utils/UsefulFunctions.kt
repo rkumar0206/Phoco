@@ -184,7 +184,7 @@ suspend fun setImageAsHomeScreenWallpaperFromImageUrl(context: Context, imageUrl
     }
 }
 
-fun String.validateString(): Boolean {
+fun String.isValidString(): Boolean {
 
     return this.trim().isNotEmpty() && this.trim() != "" && this.trim() != "null"
 }

@@ -12,6 +12,8 @@ class CollectionRepository @Inject constructor(
 
     suspend fun insertCollections(collections: List<Collection>) = dao.insertCollections(collections)
 
+    suspend fun updateCollection(collection: Collection) = dao.updateCollection(collection)
+
     suspend fun deleteCollection(collection: Collection) = dao.deleteCollection(collection)
 
     suspend fun deleteAllCollection() = dao.deleteAllCollection()

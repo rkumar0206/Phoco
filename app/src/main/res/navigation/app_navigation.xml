@@ -41,7 +41,12 @@
         android:id="@+id/addCollectionFragment"
         android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.dialogFragments.AddCollectionFragment"
         android:label="AddCollectionFragment"
-        tools:layout="@layout/fragment_add_collection" />
+        tools:layout="@layout/fragment_add_collection">
+        <argument
+            android:name="collectionKey"
+            app:argType="string"
+            app:nullable="true" />
+    </dialog>
     <dialog
         android:id="@+id/chooseFromCollectionsFragment"
         android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.dialogFragments.ChooseFromCollectionsFragment"
@@ -72,5 +77,8 @@
         <action
             android:id="@+id/action_collectionFragmentWithSavedImages_to_chooseFromCollectionsFragment"
             app:destination="@id/chooseFromCollectionsFragment" />
+        <action
+            android:id="@+id/action_collectionFragmentWithSavedImages_to_addCollectionFragment"
+            app:destination="@id/addCollectionFragment" />
     </fragment>
 </navigation>

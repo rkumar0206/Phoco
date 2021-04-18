@@ -24,4 +24,6 @@
     <string name="choose_collection">Choose collection</string>
     <string name="imagebutton">imageButton</string>
     <string name="add_new_collection">Add new collection</string>
+    <string name="edit_collection">Edit collection</string>
+    <string name="save">Save</string>
 </resources>

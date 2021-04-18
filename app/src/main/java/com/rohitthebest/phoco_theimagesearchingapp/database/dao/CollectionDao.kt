@@ -13,6 +13,9 @@ interface CollectionDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCollections(collections: List<Collection>)
 
+    @Update
+    suspend fun updateCollection(collection: Collection)
+
     @Delete
     suspend fun deleteCollection(collection: Collection)
 
