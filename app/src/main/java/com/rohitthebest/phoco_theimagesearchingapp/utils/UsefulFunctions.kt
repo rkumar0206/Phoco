@@ -91,6 +91,8 @@ fun showSnackBar(
         textColor: String = "#779dfe"
 ) {
 
+    Log.d(TAG, "showSnackBar: $message")
+
     Snackbar.make(view, message, duration)
             .setTextColor(Color.parseColor(textColor))
             .show()

@@ -10,4 +10,7 @@
         android:id="@+id/menu_move_selected_images_to_collection"
         android:title="Move"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_select_all_savedImages"
+        android:title="@android:string/selectAll" />
 </menu>

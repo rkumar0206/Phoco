@@ -16,12 +16,14 @@ import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.COLLECTION_WITH_SAVED_IMAGES_SELECTION_ID
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentCollectionWithSavedImagesBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.CollectionWithSavedImagesAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.itemDetailsLookUp.CollectionWithSavedImagesItemDetailsLookup
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.keyProvider.CollectionWithSavedImagesItemKeyProvider
+import com.rohitthebest.phoco_theimagesearchingapp.utils.showSnackBar
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,6 +48,8 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
     private var selectedItems: Selection<String>? = null
     var mActionMode: ActionMode? = null
+
+    private var isRefreshEnabled = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -90,14 +94,22 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
             savedImageViewModel.getAllSavedImages().observe(viewLifecycleOwner, {
 
-                collectionWithSavedImagesAdapter.submitList(it)
+                if (isRefreshEnabled) {
+
+                    collectionWithSavedImagesAdapter.submitList(it)
+                    isRefreshEnabled = false
+                }
             })
         } else {
 
             savedImageViewModel.getSavedImagesByCollectionKey(receivedCollectionKey)
                 .observe(viewLifecycleOwner, {
 
-                    collectionWithSavedImagesAdapter.submitList(it)
+                    if (isRefreshEnabled) {
+
+                        collectionWithSavedImagesAdapter.submitList(it)
+                        isRefreshEnabled = false
+                    }
                 })
         }
     }
@@ -191,11 +203,13 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
                 R.id.menu_delete_all_selected_saved_images -> {
 
+                    deleteAllSelectedItems()
                     true
                 }
 
                 R.id.menu_move_selected_images_to_collection -> {
 
+                    //todo : Change the collection key of the all the selected images
                     true
                 }
 
@@ -208,6 +222,35 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
             mActionMode = null
             tracker?.clearSelection()
         }
+    }
+
+    private fun deleteAllSelectedItems() {
+
+        val keyList = selectedItems?.toList()
+
+        Log.d(TAG, "deleteAllSelectedItems: $keyList")
+
+        MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Are you sure?")
+                .setMessage("All the selected images will be deleted")
+                .setPositiveButton("Ok") { dialog, _ ->
+
+                    isRefreshEnabled = true
+                    keyList?.let {
+
+                        savedImageViewModel.deleteAllByKey(it)
+                        showSnackBar(binding.root, "Image(s) deleted")
+                    }
+                    dialog.dismiss()
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
+
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
