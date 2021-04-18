@@ -31,6 +31,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companio
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 import com.rohitthebest.phoco_theimagesearchingapp.utils.showSnackBar
+import com.rohitthebest.phoco_theimagesearchingapp.utils.showToast
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -82,6 +83,29 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
         setObserverToTheTracker()
 
         observeForIfSavedImageAddedToTheCollection()
+
+        setUpMenuClickListener()
+    }
+
+    private fun setUpMenuClickListener() {
+
+        val menu = binding.savedImagesToolbar.menu
+
+        menu.findItem(R.id.menu_edit_collection)
+                .setOnMenuItemClickListener {
+
+                    //todo :  navigate to dialog fragment for editing collection
+                    showToast(requireContext(), "Edit collection clicked")
+                    true
+                }
+
+        menu.findItem(R.id.menu_delete_collection)
+                .setOnMenuItemClickListener {
+
+                    //todo : delete the collection after showing a confirmation message
+                    showToast(requireContext(), "Delete menu button clicked")
+                    true
+                }
     }
 
 
@@ -247,8 +271,6 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
                 }
 
                 R.id.menu_move_selected_images_to_collection -> {
-
-                    //todo : Change the collection key of the all the selected images
 
                     isObservingForImageSavedInCollection = true
 
