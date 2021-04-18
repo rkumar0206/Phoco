@@ -2,11 +2,16 @@ package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.ActionMode
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.selection.Selection
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
@@ -38,6 +43,9 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
     private var tracker: SelectionTracker<String>? = null
 
     private lateinit var backPressedDispatcherCallback: OnBackPressedCallback
+
+    private var selectedItems: Selection<String>? = null
+    var mActionMode: ActionMode? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -132,29 +140,94 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
                 backPressedDispatcherCallback.isEnabled = true
 
-                //set up action mode
+                selectedItems = tracker?.selection
+
+                val items = selectedItems?.size()
+
+                items?.let {
+
+                    if (it > 0) {
+
+                        if (mActionMode != null) {
+
+                            mActionMode?.title = "${selectedItems?.size()} selected"
+                            return
+                        }
+
+                        mActionMode = (requireActivity() as (AppCompatActivity))
+                                .startSupportActionMode(mActionModeCallback)
+                    } else {
+
+                        if (mActionMode != null) {
+
+                            mActionMode?.finish()
+                        }
+                    }
+                }
+
             }
         })
+    }
+
+    private val mActionModeCallback = object : ActionMode.Callback {
+
+        override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+
+            mode?.menuInflater?.inflate(R.menu.menu_saved_images_action_mode, menu)
+
+            mode?.title = "${selectedItems?.size()} selected"
+
+            return true
+        }
+
+        override fun onPrepareActionMode(mode: ActionMode?, menu: Menu?): Boolean {
+
+            return false
+        }
+
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+
+            return when (item?.itemId) {
+
+                R.id.menu_delete_all_selected_saved_images -> {
+
+                    true
+                }
+
+                R.id.menu_move_selected_images_to_collection -> {
+
+                    true
+                }
+
+                else -> false
+            }
+        }
+
+        override fun onDestroyActionMode(mode: ActionMode?) {
+
+            mActionMode = null
+            tracker?.clearSelection()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         backPressedDispatcherCallback =
-            requireActivity().onBackPressedDispatcher.addCallback(this) {
-                // Handle the back button event
+                requireActivity().onBackPressedDispatcher.addCallback(this) {
+                    // Handle the back button event
 
-                Log.d(TAG, "onCreate: backPressed called")
+                    Log.d(TAG, "onCreate: backPressed called")
 
-                if (tracker?.selection?.isEmpty!!) {
+                    if (tracker?.selection?.isEmpty!!) {
 
-                    backPressedDispatcherCallback.isEnabled = false
-                    requireActivity().onBackPressed()
-                } else {
+                        backPressedDispatcherCallback.isEnabled = false
+                        requireActivity().onBackPressed()
+                    } else {
 
-                    tracker?.clearSelection()
-                    backPressedDispatcherCallback.isEnabled = false
-                }
+                        tracker?.clearSelection()
+                        backPressedDispatcherCallback.isEnabled = false
+                    }
             }
     }
 
