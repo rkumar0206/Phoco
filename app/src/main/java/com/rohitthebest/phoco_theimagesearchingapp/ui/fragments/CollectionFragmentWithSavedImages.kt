@@ -51,6 +51,8 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
     private var isRefreshEnabled = true
 
+    private var allItemsKey = emptyList<String>()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -98,6 +100,9 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
                     collectionWithSavedImagesAdapter.submitList(it)
                     isRefreshEnabled = false
+
+                    allItemsKey = it.map { k -> k.key }
+
                 }
             })
         } else {
@@ -210,6 +215,12 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
                 R.id.menu_move_selected_images_to_collection -> {
 
                     //todo : Change the collection key of the all the selected images
+                    true
+                }
+
+                R.id.menu_select_all_savedImages  -> {
+
+                    tracker?.setItemsSelected(allItemsKey, true)
                     true
                 }
 
