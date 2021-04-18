@@ -19,9 +19,15 @@ import com.rohitthebest.phoco_theimagesearchingapp.databinding.PhotoItemForRvBin
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 
-class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>(DiffUtilCallback()) {
+class HomeRVAdapter(private var savedImagesIdList: List<String> = emptyList()) :
+        ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>(DiffUtilCallback()) {
 
     private var mListener: OnClickListener? = null
+
+    fun updateSavedImageListIds(list: List<String>) {
+
+        this.savedImagesIdList = list
+    }
 
     inner class HomeRVViewHolder(val binding: PhotoItemForRvBinding) : RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
 
@@ -43,12 +49,15 @@ class HomeRVAdapter : ListAdapter<UnsplashPhoto, HomeRVAdapter.HomeRVViewHolder>
 
                     imageUserNameTV.text = it.user.username
 
-                    if (unsplashPhoto.isImageSavedInCollection) {
+                    if (savedImagesIdList.isNotEmpty()) {
 
-                        addToFavouritesBtn.setImageResource(R.drawable.ic_baseline_bookmark_24)
-                    } else {
+                        if (savedImagesIdList.contains(unsplashPhoto.id)) {
 
-                        addToFavouritesBtn.setImageResource(R.drawable.ic_outline_bookmark_border_24)
+                            binding.addToFavouritesBtn.setImageResource(R.drawable.ic_baseline_bookmark_24)
+                        } else {
+
+                            binding.addToFavouritesBtn.setImageResource(R.drawable.ic_outline_bookmark_border_24)
+                        }
                     }
                 }
             }

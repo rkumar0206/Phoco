@@ -27,6 +27,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.Unsp
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
 import java.util.*
 
 private const val TAG = "HomeFragment"
@@ -47,17 +48,18 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
     private var lastDateSaved: String? = ""
 
+    private var savedImagesIdList = emptyList<String>()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentHomeBinding.bind(view)
 
-        homeAdapter = HomeRVAdapter()
-
-       loadUnplashPhotoSavedDate()
+        loadUnplashPhotoSavedDate()
 
         isRefreshEnabled = true
-        getSavedUnsplashPhoto()
+
+        getSavedImagesIdList()
 
         binding.homeSwipeRefreshLayout.setOnRefreshListener {
 
@@ -67,14 +69,29 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
             } else {
 
                 binding.homeSwipeRefreshLayout.isRefreshing = false
-                getSavedUnsplashPhoto()
+                /* isRefreshEnabled = true
+                 getSavedImagesIdList()*/
             }
 
         }
 
-        setUpRecyclerView()
-
         observeForIfSavedImageAddedToTheCollection()
+    }
+
+    private fun getSavedImagesIdList() {
+
+        savedImageViewModel.getAllSavedImagesID().observe(viewLifecycleOwner, {
+
+            savedImagesIdList = it
+
+            if (isRefreshEnabled) {
+
+                homeAdapter = HomeRVAdapter(savedImagesIdList)
+                setUpRecyclerView()
+
+                getSavedUnsplashPhoto()
+            }
+        })
     }
 
     private fun getSavedUnsplashPhoto() {
@@ -151,11 +168,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                     //clearing the app cache
                     requireContext().clearAppCache()
 
-                    binding.homeSwipeRefreshLayout.isRefreshing = false
-
                     saveTheListToDatabase(it.data)
 
-                    homeAdapter.submitList(it.data)
+                    //homeAdapter.submitList(it.data)
 
                 }
 
@@ -179,26 +194,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
             data?.let {
 
                 unsplashPhotoViewModel.deleteAllUnsplashPhoto()
+                unsplashPhotoViewModel.insertUnsplashPhotoList(data)
 
-                savedImageViewModel.getAllSavedImages().observe(viewLifecycleOwner, {
+                binding.homeSwipeRefreshLayout.isRefreshing = false
 
-                    val idList = it.map { s ->
-
-                        s.imageId
-                    }
-
-                    data.forEach { unsplashPhoto ->
-
-                        if (idList.contains(unsplashPhoto.id)) {
-
-                            unsplashPhoto.isImageSavedInCollection = true
-                        }
-                    }
-
-                    unsplashPhotoViewModel.insertUnsplashPhotoList(data)
-                })
-
-                //unsplashPhotoViewModel.insertUnsplashPhotoList(data)
+                homeAdapter.submitList(data)
             }
 
             saveUnsplashPhotoDate()
@@ -258,36 +258,43 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         Log.d(TAG, "onAddToFavouriteBtnClicked: Download : ${unsplashPhoto.links.download}")
 
-        if (!unsplashPhoto.isImageSavedInCollection) {
+        if (savedImagesIdList.contains(unsplashPhoto.id)) {
+
+            savedImageViewModel.deleteImageByImageId(unsplashPhoto.id)
+
+            updateItemOfUnsplashSearchAdapter(position)
+
+            showToasty(requireContext(), "Image unsaved", ToastyType.INFO)
+        } else {
 
             val savedImage = generateSavedImage(unsplashPhoto, APIName.UNSPLASH)
 
             savedImageViewModel.insertImage(savedImage)
 
-            unsplashPhoto.isImageSavedInCollection = true
-
-            unsplashPhotoViewModel.updateUnsplashPhoto(unsplashPhoto)
-
-            homeAdapter.notifyItemChanged(position)
+            updateItemOfUnsplashSearchAdapter(position)
 
             showSnackBar(binding.root, "Image saved")
 
             //todo : upload to firestore if cloud support is available in future
-        } else {
+        }
+    }
 
-            savedImageViewModel.deleteImageByImageId(unsplashPhoto.id)
 
-            unsplashPhoto.isImageSavedInCollection = false
+    private fun updateItemOfUnsplashSearchAdapter(position: Int) {
 
-            unsplashPhotoViewModel.updateUnsplashPhoto(unsplashPhoto)
+        GlobalScope.launch {
 
-            homeAdapter.notifyItemChanged(position)
+            delay(100)
 
-            showToasty(requireContext(), "Image unsaved", ToastyType.INFO)
+            withContext(Dispatchers.Main) {
+
+                homeAdapter.updateSavedImageListIds(savedImagesIdList)
+
+                homeAdapter.notifyItemChanged(position)
+            }
         }
 
     }
-
 
     override fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto) {
 
@@ -301,11 +308,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         //TODO("Not yet implemented")
     }
 
-    //this variable is used for updating the isImageSavedToCollection value, when user long presses the
-    // add to favourite button and the bottom sheet pops up
-    private var unsplashPhotoForUpdatingSaveToCollectionValue: UnsplashPhoto? = null
-    private var position: Int = -1
 
+    private var position: Int = -1
 
     override fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto, position: Int) {
 
@@ -313,10 +317,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         isObservingForImageSavedInCollection = true
 
-        unsplashPhotoForUpdatingSaveToCollectionValue = unsplashPhoto
         this.position = position
 
-        if (unsplashPhoto.isImageSavedInCollection) {
+        if (savedImagesIdList.contains(unsplashPhoto.id)) {
 
             isRefreshEnabled = true
 
@@ -362,7 +365,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
                     if (isObservingForImageSavedInCollection) {
 
-
                         //true : user has selected one of the collection from the bottom sheet
                         //false : user hasn't selected any collection
                         if (it) {
@@ -371,20 +373,14 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
                             Log.d(TAG, "observeForCollectionAddition: value is true")
 
-                            //updating the unsplashPhoto isImageSavedToCollection value
+                            if (position != -1) {
 
-                            if (unsplashPhotoForUpdatingSaveToCollectionValue != null && position != -1) {
-
-                                Log.d(TAG, "observeForCollectionAddition: photo : $unsplashPhotoForUpdatingSaveToCollectionValue")
                                 Log.d(TAG, "observeForCollectionAddition: position : $position")
 
-                                unsplashPhotoForUpdatingSaveToCollectionValue?.isImageSavedInCollection = true
-                                unsplashPhotoViewModel.updateUnsplashPhoto(unsplashPhotoForUpdatingSaveToCollectionValue!!)
-                                homeAdapter.notifyItemChanged(position)
+                                updateItemOfUnsplashSearchAdapter(position)
 
                                 Log.d(TAG, "observeForCollectionAddition: updated")
 
-                                unsplashPhotoForUpdatingSaveToCollectionValue = null
                                 position = -1
                             }
                         }
