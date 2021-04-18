@@ -22,6 +22,8 @@ object Constants {
     const val SEARCH_FRAGMENT_TAG_UNSPLASH = "sEARCHfRAGEMNTWITHUNSPLAsHtaG"
     const val SEARCH_FRAGMENT_TAG_PIXABAY = "sEARCHfRAGEMNTWITHPixabaYtaG"
 
+    const val COLLECTION_KEY_FOR_ALL_PHOTOS = "fjvajkfvkjbvbvhbhva"
+
     const val IMAGE_SAVED_TO_COLLECTION_KEY = "vjavjkbvbvbbvbvakjbvkjbkvab"
 
     const val COLLECTION_WITH_SAVED_IMAGES_SELECTION_ID = "jkvbskjvbjkvbkjvbbfjdvnjkvn"

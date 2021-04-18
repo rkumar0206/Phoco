@@ -27,4 +27,6 @@ class SavedImageRepository @Inject constructor(
     fun getSavedImageByImageId(id: String) = dao.getSavedImageByImageId(id)
 
     fun getAllSavedImagesID() = dao.getAllSavedImagesID()
+
+    fun getAllSavedImagesByListOfKeys(listOfKeys: List<String>) = dao.getAllSavedImagesByListOfKeys(listOfKeys)
 }

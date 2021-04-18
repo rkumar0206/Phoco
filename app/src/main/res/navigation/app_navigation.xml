@@ -54,6 +54,11 @@
             android:name="imageToSave"
             app:argType="string"
             app:nullable="true" />
+        <argument
+            android:name="withTag"
+            android:defaultValue="null"
+            app:argType="string"
+            app:nullable="true" />
     </dialog>
     <fragment
         android:id="@+id/collectionFragmentWithSavedImages"
@@ -64,5 +69,8 @@
             android:name="collectionKey"
             app:argType="string"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_collectionFragmentWithSavedImages_to_chooseFromCollectionsFragment"
+            app:destination="@id/chooseFromCollectionsFragment" />
     </fragment>
 </navigation>

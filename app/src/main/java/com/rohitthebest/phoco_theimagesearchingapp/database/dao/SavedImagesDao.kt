@@ -36,4 +36,7 @@ interface SavedImagesDao {
 
     @Query("SELECT imageId FROM saved_image_table")
     fun getAllSavedImagesID(): Flow<List<String>>
+
+    @Query("SELECT * FROM saved_image_table WHERE `key` IN (:listOfKeys)")
+    fun getAllSavedImagesByListOfKeys(listOfKeys: List<String>): Flow<List<SavedImage>>
 }

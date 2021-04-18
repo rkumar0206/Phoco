@@ -32,6 +32,15 @@ class GsonConverters {
             return gson.fromJson(str, type)
         }
 
+        fun convertListOfStringString(strings: List<String>): String {
 
+            return gson.toJson(strings)
+        }
+
+        fun convertStringToListOfStrings(str: String): List<String> {
+
+            val type = object : TypeToken<List<String>>() {}.type
+            return gson.fromJson(str, type)
+        }
     }
 }

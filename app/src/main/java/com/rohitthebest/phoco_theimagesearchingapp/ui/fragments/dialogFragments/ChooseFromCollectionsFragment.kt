@@ -17,9 +17,11 @@ import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentChooseFromCollectionsBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.ChooseCollectionAdapter
+import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToListOfStrings
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToSavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
+import com.rohitthebest.phoco_theimagesearchingapp.utils.validateString
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,6 +40,8 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
     private lateinit var chooseCollectionAdapter: ChooseCollectionAdapter
 
     private lateinit var receivedImageToBeSaved: SavedImage
+
+    private var receivedImagesList = emptyList<SavedImage>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -71,10 +75,35 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
                 ChooseFromCollectionsFragmentArgs.fromBundle(it)
             }
 
-            receivedImageToBeSaved = convertStringToSavedImage(args?.imageToSave!!)
+            val tag = args?.withTag
 
-            getAllSavedImages()
+            if (tag?.validateString()!!) {
+
+                // if tag is not null then it means that a list of saved images key is passed as argument
+
+                val listOfSavedImagesKeys = convertStringToListOfStrings(args.imageToSave!!)
+                getAllSavedImagesByKeys(listOfSavedImagesKeys)
+
+                Log.d(TAG, "getPassedArgument: receivedKeyList : $listOfSavedImagesKeys")
+
+                getAllSavedImages()
+            } else {
+
+                receivedImageToBeSaved = convertStringToSavedImage(args.imageToSave!!)
+
+                getAllSavedImages()
+            }
+
+
         }
+    }
+
+    private fun getAllSavedImagesByKeys(listOfSavedImagesKeys: List<String>) {
+
+        savedImagesViewModel.getAllSavedImagesByListOfKeys(listOfSavedImagesKeys).observe(viewLifecycleOwner, {
+
+            receivedImagesList = it
+        })
     }
 
     private fun getAllSavedImages() {
@@ -126,20 +155,39 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
 
     override fun onCollectionClicked(collection: Collection) {
 
-        if (receivedImageToBeSaved.collectionKey != collection.key) {
-            
-            receivedImageToBeSaved.collectionKey = collection.key
 
-            savedImagesViewModel.insertImage(receivedImageToBeSaved)
+        if (receivedImagesList.isEmpty()) {
 
-            Log.d(TAG, "onCollectionClicked: Image saved to collection ${collection.collectionName}")
+            if (receivedImageToBeSaved.collectionKey != collection.key) {
+
+                receivedImageToBeSaved.collectionKey = collection.key
+
+                savedImagesViewModel.insertImage(receivedImageToBeSaved)
+
+                Log.d(TAG, "onCollectionClicked: Image saved to collection ${collection.collectionName}")
+
+                //passing the value to fragment from which this bottom sheet has been called
+                findNavController().previousBackStackEntry?.savedStateHandle?.set(IMAGE_SAVED_TO_COLLECTION_KEY, true)
+
+            } else {
+
+                Log.d(TAG, "onCollectionClicked: Image is already there in collection ${collection.collectionName}")
+            }
+        } else {
+
+            receivedImagesList.forEach {
+
+                it.collectionKey = collection.key
+            }
+
+            Log.d(TAG, "onCollectionClicked: receivedSavedImagesList : $receivedImagesList")
+
+            savedImagesViewModel.insertImages(receivedImagesList)
 
             //passing the value to fragment from which this bottom sheet has been called
             findNavController().previousBackStackEntry?.savedStateHandle?.set(IMAGE_SAVED_TO_COLLECTION_KEY, true)
 
-        } else {
-
-            Log.d(TAG, "onCollectionClicked: Image is already there in collection ${collection.collectionName}")
+            Log.d(TAG, "onCollectionClicked: updated the key of all the received list")
         }
 
         dismiss()

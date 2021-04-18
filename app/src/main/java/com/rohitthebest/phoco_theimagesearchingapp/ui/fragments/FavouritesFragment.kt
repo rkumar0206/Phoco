@@ -9,6 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.COLLECTION_KEY_FOR_ALL_PHOTOS
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentFavouriteBinding
@@ -41,7 +42,7 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite), CollectionsAda
 
         binding.allPhotosCV.setOnClickListener {
 
-            navigateToCollectionFragment("all_photos")
+            navigateToCollectionFragment(COLLECTION_KEY_FOR_ALL_PHOTOS)
         }
     }
 

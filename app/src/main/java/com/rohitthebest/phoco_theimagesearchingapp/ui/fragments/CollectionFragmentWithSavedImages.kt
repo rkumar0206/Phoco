@@ -11,18 +11,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ActionMode
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.selection.Selection
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.rohitthebest.phoco_theimagesearchingapp.Constants
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.COLLECTION_KEY_FOR_ALL_PHOTOS
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.COLLECTION_WITH_SAVED_IMAGES_SELECTION_ID
 import com.rohitthebest.phoco_theimagesearchingapp.R
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentCollectionWithSavedImagesBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.CollectionWithSavedImagesAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.itemDetailsLookUp.CollectionWithSavedImagesItemDetailsLookup
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.keyProvider.CollectionWithSavedImagesItemKeyProvider
+import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertListOfStringString
+import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
+import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 import com.rohitthebest.phoco_theimagesearchingapp.utils.showSnackBar
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
@@ -40,6 +47,7 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
     private val collectionViewModel by viewModels<CollectionViewModel>()
 
     private var receivedCollectionKey = ""
+    private lateinit var receivedCollection: Collection
 
     private lateinit var collectionWithSavedImagesAdapter: CollectionWithSavedImagesAdapter
     private var tracker: SelectionTracker<String>? = null
@@ -72,6 +80,8 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
         setUpTracker()
 
         setObserverToTheTracker()
+
+        observeForIfSavedImageAddedToTheCollection()
     }
 
 
@@ -86,29 +96,49 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
             receivedCollectionKey = args?.collectionKey!!
 
+            getCollectionInfo()
+
             getAllSavedImages()
 
         }
     }
+
+    private fun getCollectionInfo() {
+
+        if (receivedCollectionKey != COLLECTION_KEY_FOR_ALL_PHOTOS) {
+
+            collectionViewModel.getCollectionByKey(receivedCollectionKey).observe(viewLifecycleOwner, {
+
+                receivedCollection = it
+
+                binding.savedImagesToolbar.title = receivedCollection.collectionName
+            })
+        } else {
+
+            binding.savedImagesToolbar.title = "All photos"
+        }
+    }
+
     private fun getAllSavedImages() {
 
-        if (receivedCollectionKey == "all_photos") {
+        if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) {
 
             savedImageViewModel.getAllSavedImages().observe(viewLifecycleOwner, {
+
+                allItemsKey = it.map { k -> k.key }
 
                 if (isRefreshEnabled) {
 
                     collectionWithSavedImagesAdapter.submitList(it)
                     isRefreshEnabled = false
-
-                    allItemsKey = it.map { k -> k.key }
-
                 }
             })
         } else {
 
             savedImageViewModel.getSavedImagesByCollectionKey(receivedCollectionKey)
                 .observe(viewLifecycleOwner, {
+
+                    allItemsKey = it.map { k -> k.key }
 
                     if (isRefreshEnabled) {
 
@@ -165,6 +195,8 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
                     if (it > 0) {
 
+                        binding.savedImagesAppBar.hide()
+
                         if (mActionMode != null) {
 
                             mActionMode?.title = "${selectedItems?.size()} selected"
@@ -185,6 +217,8 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
             }
         })
     }
+
+    private var isObservingForImageSavedInCollection = false
 
     private val mActionModeCallback = object : ActionMode.Callback {
 
@@ -215,10 +249,25 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
                 R.id.menu_move_selected_images_to_collection -> {
 
                     //todo : Change the collection key of the all the selected images
+
+                    isObservingForImageSavedInCollection = true
+
+                    isRefreshEnabled = true
+
+                    val selectedKeyList = selectedItems?.toList()
+
+                    Log.d(TAG, "onActionItemClicked: selectedKeyList : $selectedKeyList")
+
+                    val action = CollectionFragmentWithSavedImagesDirections
+                            .actionCollectionFragmentWithSavedImagesToChooseFromCollectionsFragment(
+                                    convertListOfStringString(selectedKeyList!!), "listOfPhotos"
+                            )
+
+                    findNavController().navigate(action)
                     true
                 }
 
-                R.id.menu_select_all_savedImages  -> {
+                R.id.menu_select_all_savedImages -> {
 
                     tracker?.setItemsSelected(allItemsKey, true)
                     true
@@ -232,8 +281,34 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
             mActionMode = null
             tracker?.clearSelection()
+            binding.savedImagesAppBar.show()
         }
     }
+
+    private fun observeForIfSavedImageAddedToTheCollection() {
+
+        findNavController().currentBackStackEntry
+                ?.savedStateHandle
+                ?.getLiveData<Boolean>(Constants.IMAGE_SAVED_TO_COLLECTION_KEY)
+                ?.observe(viewLifecycleOwner, {
+
+                    if (isObservingForImageSavedInCollection) {
+
+                        if (it) {
+
+                            showSnackBar(binding.root, "Images moved")
+
+                            Log.d(TAG, "observeForCollectionAddition: value is true")
+
+                            tracker?.clearSelection()
+                        }
+
+                        isObservingForImageSavedInCollection = false
+                    }
+                })
+
+    }
+
 
     private fun deleteAllSelectedItems() {
 
