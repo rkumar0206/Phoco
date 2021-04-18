@@ -81,7 +81,6 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
         observeForIfSavedImageAddedToTheCollection()
 
-        setUpMenuClickListener()
     }
 
     private fun getPassedArgument() {
@@ -115,9 +114,15 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
                     binding.savedImagesToolbar.title = receivedCollection.collectionName
                 }
             })
+
+            setUpMenuClickListener()
+
         } else {
 
             binding.savedImagesToolbar.title = "All photos"
+
+            binding.savedImagesToolbar.menu.clear()
+            binding.savedImagesToolbar.menu.close()
         }
     }
 
