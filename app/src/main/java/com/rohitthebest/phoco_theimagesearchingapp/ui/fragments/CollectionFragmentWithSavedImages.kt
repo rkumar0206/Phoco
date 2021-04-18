@@ -27,11 +27,8 @@ import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentCollectio
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.CollectionWithSavedImagesAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.itemDetailsLookUp.CollectionWithSavedImagesItemDetailsLookup
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.keyProvider.CollectionWithSavedImagesItemKeyProvider
+import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertListOfStringString
-import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
-import com.rohitthebest.phoco_theimagesearchingapp.utils.show
-import com.rohitthebest.phoco_theimagesearchingapp.utils.showSnackBar
-import com.rohitthebest.phoco_theimagesearchingapp.utils.showToast
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -87,36 +84,6 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
         setUpMenuClickListener()
     }
 
-    private fun setUpMenuClickListener() {
-
-        val menu = binding.savedImagesToolbar.menu
-
-        menu.findItem(R.id.menu_edit_collection)
-                .setOnMenuItemClickListener {
-
-                    //todo :  navigate to dialog fragment for editing collection
-                    showToast(requireContext(), "Edit collection clicked")
-
-                    val action = CollectionFragmentWithSavedImagesDirections
-                            .actionCollectionFragmentWithSavedImagesToAddCollectionFragment(
-                                    receivedCollectionKey
-                            )
-
-                    findNavController().navigate(action)
-
-                    true
-                }
-
-        menu.findItem(R.id.menu_delete_collection)
-                .setOnMenuItemClickListener {
-
-                    //todo : delete the collection after showing a confirmation message
-                    showToast(requireContext(), "Delete menu button clicked")
-                    true
-                }
-    }
-
-
     private fun getPassedArgument() {
 
         if (!arguments?.isEmpty!!) {
@@ -141,9 +108,12 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
             collectionViewModel.getCollectionByKey(receivedCollectionKey).observe(viewLifecycleOwner, {
 
-                receivedCollection = it
+                if (isRefreshEnabled) {
 
-                binding.savedImagesToolbar.title = receivedCollection.collectionName
+                    receivedCollection = it
+
+                    binding.savedImagesToolbar.title = receivedCollection.collectionName
+                }
             })
         } else {
 
@@ -168,17 +138,70 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
         } else {
 
             savedImageViewModel.getSavedImagesByCollectionKey(receivedCollectionKey)
-                .observe(viewLifecycleOwner, {
+                    .observe(viewLifecycleOwner, {
 
-                    allItemsKey = it.map { k -> k.key }
+                        allItemsKey = it.map { k -> k.key }
 
-                    if (isRefreshEnabled) {
+                        if (isRefreshEnabled) {
 
-                        collectionWithSavedImagesAdapter.submitList(it)
-                        isRefreshEnabled = false
-                    }
-                })
+                            collectionWithSavedImagesAdapter.submitList(it)
+                            isRefreshEnabled = false
+                        }
+                    })
         }
+    }
+
+    private fun setUpMenuClickListener() {
+
+        val menu = binding.savedImagesToolbar.menu
+
+        menu.findItem(R.id.menu_edit_collection)
+                .setOnMenuItemClickListener {
+
+                    val action = CollectionFragmentWithSavedImagesDirections
+                            .actionCollectionFragmentWithSavedImagesToAddCollectionFragment(
+                                    receivedCollectionKey
+                            )
+
+                    findNavController().navigate(action)
+
+                    true
+                }
+
+        menu.findItem(R.id.menu_delete_collection)
+                .setOnMenuItemClickListener {
+
+                    deleteCollection()
+
+                    true
+                }
+    }
+
+    private fun deleteCollection() {
+
+        MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Delete this collection?")
+                .setMessage("All the images inside this collection will also be deleted and cannot be retrieved again.")
+                .setIcon(R.drawable.ic_baseline_delete_24)
+                .setPositiveButton("Okay") { dialog, _ ->
+
+                    savedImageViewModel.deleteByCollectionKey(receivedCollectionKey)
+                    collectionViewModel.deleteCollection(receivedCollection)
+
+                    showToasty(requireContext(), "Collection deleted", ToastyType.INFO)
+
+                    dialog.dismiss()
+
+                    requireActivity().onBackPressed()
+
+                }
+                .setNegativeButton("Cancel") { dialog, _ ->
+
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
+
     }
 
     private fun setUpRecyclerView() {

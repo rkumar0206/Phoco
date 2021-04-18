@@ -25,6 +25,9 @@ interface SavedImagesDao {
     @Query("DELETE FROM saved_image_table WHERE imageId = :imageId")
     suspend fun deleteImageByImageId(imageId: String)
 
+    @Query("DELETE FROM saved_image_table WHERE collectionKey= :collectionKey")
+    suspend fun deleteByCollectionKey(collectionKey: String)
+
     @Query("SELECT * FROM saved_image_table ORDER BY timeStamp DESC")
     fun getAllSavedImages(): Flow<List<SavedImage>>
 

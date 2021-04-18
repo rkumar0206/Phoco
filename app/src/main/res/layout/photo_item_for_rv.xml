@@ -37,6 +37,7 @@
         android:gravity="center_vertical"
         android:maxLines="1"
         android:padding="3dp"
+        android:textColor="@color/text_color"
         app:layout_constraintBottom_toBottomOf="@id/imageUserImage"
         app:layout_constraintEnd_toStartOf="@+id/addToFavouritesBtn"
         app:layout_constraintStart_toEndOf="@+id/imageUserImage"
