@@ -23,6 +23,7 @@ object Constants {
     const val SAVED_IMAGE_TAG = "SavedImagebkjvjknvnmnvjk"
     const val SEARCH_FRAGMENT_TAG_UNSPLASH = "sEARCHfRAGEMNTWITHUNSPLAsHtaG"
     const val SEARCH_FRAGMENT_TAG_PIXABAY = "sEARCHfRAGEMNTWITHPixabaYtaG"
+    const val SEARCH_FRAGMENT_TAG_PEXEL = "sEARCHfRAGEMNTWIvjsvjsnjkvnkjbaYtaG"
 
     const val COLLECTION_KEY_FOR_ALL_PHOTOS = "fjvajkfvkjbvbvhbhva"
 

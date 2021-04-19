@@ -15,6 +15,7 @@ import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rohitthebest.phoco_theimagesearchingapp.Constants
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_PEXEL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_PIXABAY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNSPLASH
 import com.rohitthebest.phoco_theimagesearchingapp.R
@@ -481,14 +482,14 @@ class SearchFragment : Fragment(R.layout.fragment_search),
         val intent = Intent(requireContext(), PreviewImageActivity::class.java)
 
         val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
-                ImageDownloadLinksAndInfo.ImageUrls(
-                        pixabayPhoto.previewURL,
-                        pixabayPhoto.webformatURL,
-                        pixabayPhoto.largeImageURL
-                ),
-                System.currentTimeMillis().toString(16),
-                SEARCH_FRAGMENT_TAG_PIXABAY,
-                pixabayPhoto.id.toString()
+            ImageDownloadLinksAndInfo.ImageUrls(
+                pixabayPhoto.previewURL,
+                pixabayPhoto.webformatURL,
+                pixabayPhoto.largeImageURL
+            ),
+            generateKey("_pixabay"),
+            SEARCH_FRAGMENT_TAG_PIXABAY,
+            pixabayPhoto.id.toString()
         )
 
         intent.putExtra(
@@ -593,6 +594,24 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
     override fun onImageClicked(pexelPhoto: PexelPhoto) {
 
+        val intent = Intent(requireContext(), PreviewImageActivity::class.java)
+
+        val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
+            ImageDownloadLinksAndInfo.ImageUrls(
+                pexelPhoto.src.medium,
+                pexelPhoto.src.large,
+                pexelPhoto.src.original
+            ),
+            generateKey("_pexel"),
+            SEARCH_FRAGMENT_TAG_PEXEL,
+            pexelPhoto.id.toString()
+        )
+
+        intent.putExtra(
+            PREVIEW_IMAGE_MESSAGE_KEY,
+            convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
+        )
+        startActivity(intent)
     }
 
     override fun onAddToFavouriteBtnClicked(pexelPhoto: PexelPhoto, position: Int) {
@@ -600,7 +619,23 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     }
 
     override fun onDownloadImageBtnClicked(pexelPhoto: PexelPhoto, view: View) {
-        //TODO("Not yet implemented")
+
+        val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
+            ImageDownloadLinksAndInfo.ImageUrls(
+                pexelPhoto.src.medium,
+                pexelPhoto.src.large,
+                pexelPhoto.src.original
+            ),
+            generateKey("_pexel"),
+            "",
+            ""
+        )
+
+        showDownloadOptionPopupMenu(
+            requireActivity(),
+            view,
+            imageDownloadLinksAndInfo
+        )
     }
 
     override fun onImageUserNameClicked(pexelPhoto: PexelPhoto) {
