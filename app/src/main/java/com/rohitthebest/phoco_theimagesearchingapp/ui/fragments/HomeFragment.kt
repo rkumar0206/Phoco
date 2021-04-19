@@ -5,9 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.MenuItem
 import android.view.View
-import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -36,7 +34,7 @@ import java.util.*
 private const val TAG = "HomeFragment"
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickListener, PopupMenu.OnMenuItemClickListener {
+class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickListener {
 
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -299,14 +297,13 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
     }
 
-    private lateinit var imageDownloadLinksAndInfo: ImageDownloadLinksAndInfo
 
     @SuppressLint("RestrictedApi")
     override fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto, view: View) {
 
         Log.d(TAG, "onShowMoreOptionsBtnClicked: raw : ${unsplashPhoto.urls.raw}")
 
-        imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
+        val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
                 ImageDownloadLinksAndInfo.ImageUrls(
                         unsplashPhoto.urls.small,
                         unsplashPhoto.urls.regular,
@@ -317,53 +314,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                 ""
         )
 
-        val popupMenu = PopupMenu(requireContext(), view)
-        popupMenu.menuInflater.inflate(R.menu.downlaod_options_menu, popupMenu.menu)
 
-        popupMenu.setOnMenuItemClickListener(this)
-
-        popupMenu.show()
-
-    }
-
-    override fun onMenuItemClick(item: MenuItem?): Boolean {
-
-        return when (item?.itemId) {
-
-            R.id.menu_small_download_option -> {
-
-                downloadImage(imageDownloadLinksAndInfo.imageUrls.small)
-
-                true
-            }
-
-            R.id.menu_medium_download_option -> {
-
-                downloadImage(imageDownloadLinksAndInfo.imageUrls.medium)
-                true
-            }
-
-            R.id.menu_original_download_option -> {
-
-                downloadImage(imageDownloadLinksAndInfo.imageUrls.original)
-                true
-            }
-
-            else -> false
-        }
-    }
-
-    private fun downloadImage(imageUrl: String) {
-
-        downloadFile(
+        showDownloadOptionPopupMenu(
                 requireActivity(),
-                imageUrl,
-                if (imageDownloadLinksAndInfo.imageName != "" && !imageDownloadLinksAndInfo.imageName.contains(
-                                "/"
-                        )
-                )
-                    "${imageDownloadLinksAndInfo.imageName}.jpg"
-                else "${generateKey()}.jpg"
+                view,
+                imageDownloadLinksAndInfo
         )
 
     }

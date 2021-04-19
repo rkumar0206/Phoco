@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.widget.PopupMenu
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -394,7 +395,57 @@ fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
 
 }
 
+fun showDownloadOptionPopupMenu(activity: Activity, view: View, imageDownloadLinksAndInfo: ImageDownloadLinksAndInfo) {
 
+    val popup = PopupMenu(activity, view)
+
+    popup.menuInflater.inflate(R.menu.downlaod_options_menu, popup.menu)
+
+    popup.show()
+
+    popup.setOnMenuItemClickListener {
+
+        return@setOnMenuItemClickListener when (it.itemId) {
+
+            R.id.menu_small_download_option -> {
+
+                downloadFile(
+                        activity,
+                        imageDownloadLinksAndInfo.imageUrls.small,
+                        imageDownloadLinksAndInfo.imageName + ".jpg"
+                )
+
+                true
+            }
+
+            R.id.menu_medium_download_option -> {
+
+                downloadFile(
+                        activity,
+                        imageDownloadLinksAndInfo.imageUrls.medium,
+                        imageDownloadLinksAndInfo.imageName + ".jpg"
+                )
+
+                true
+            }
+
+            R.id.menu_original_download_option -> {
+
+                downloadFile(
+                        activity,
+                        imageDownloadLinksAndInfo.imageUrls.original,
+                        imageDownloadLinksAndInfo.imageName + ".jpg"
+                )
+
+                true
+            }
+
+
+            else -> false
+        }
+    }
+
+}
 
 
 

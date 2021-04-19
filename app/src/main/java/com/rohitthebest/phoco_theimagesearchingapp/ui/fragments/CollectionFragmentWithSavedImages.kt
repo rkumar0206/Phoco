@@ -248,7 +248,18 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
     override fun onDownloadImageBtnClicked(savedImage: SavedImage, view: View) {
 
-        //todo : onDownloadImageBtnClicked
+        val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
+                savedImage.imageUrls,
+                savedImage.imageName,
+                "",
+                ""
+        )
+
+        showDownloadOptionPopupMenu(
+                requireActivity(),
+                view,
+                imageDownloadLinksAndInfo
+        )
     }
 
     private fun setUpTracker() {

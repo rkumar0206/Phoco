@@ -229,23 +229,28 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
     private fun searchWithCorrectAPI(searchString: String) {
 
-        when (currentAPI.apiName) {
+        if (requireContext().isInternetAvailable()) {
 
-            APIName.UNSPLASH -> {
+            when (currentAPI.apiName) {
 
-                unsplashViewModel.searchImage(searchString)
+                APIName.UNSPLASH -> {
+
+                    unsplashViewModel.searchImage(searchString)
+                }
+
+                APIName.PIXABAY -> {
+
+                    pixabayViewModel.searchWithPixabay(searchString)
+                }
+
+                else -> {
+                    unsplashViewModel.searchImage(searchString)
+                }
             }
+        } else {
 
-            APIName.PIXABAY -> {
-
-                pixabayViewModel.searchWithPixabay(searchString)
-            }
-
-            else -> {
-                unsplashViewModel.searchImage(searchString)
-            }
+            requireContext().showNoInternetMessage()
         }
-
     }
 
     private fun setUpImageWebsiteOrApiSpinner() {
@@ -267,6 +272,8 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 setUpRecyclerView()
 
                 updateHintOnTheSearchACT()
+
+                hideKeyBoard(requireActivity())
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -381,8 +388,25 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
     }
 
+
     override fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto, view: View) {
-        //TODO("Not yet implemented")
+
+        val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
+                ImageDownloadLinksAndInfo.ImageUrls(
+                        unsplashPhoto.urls.small,
+                        unsplashPhoto.urls.regular,
+                        unsplashPhoto.links.download
+                ),
+                unsplashPhoto.alt_description ?: generateKey(),
+                "",
+                ""
+        )
+
+        showDownloadOptionPopupMenu(
+                requireActivity(),
+                view,
+                imageDownloadLinksAndInfo
+        )
     }
 
     override fun onImageUserNameClicked(unsplashPhoto: UnsplashPhoto) {
@@ -480,7 +504,23 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     }
 
     override fun ondownloadImageBtnClicked(pixabayPhoto: PixabayPhoto, view: View) {
-        //TODO("Not yet implemented")
+
+        val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
+                ImageDownloadLinksAndInfo.ImageUrls(
+                        pixabayPhoto.previewURL,
+                        pixabayPhoto.webformatURL,
+                        pixabayPhoto.largeImageURL
+                ),
+                generateKey("_pixabay"),
+                "",
+                ""
+        )
+
+        showDownloadOptionPopupMenu(
+                requireActivity(),
+                view,
+                imageDownloadLinksAndInfo
+        )
     }
 
     override fun onImageUserNameClicked(pixabayPhoto: PixabayPhoto) {

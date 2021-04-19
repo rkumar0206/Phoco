@@ -37,6 +37,7 @@
             android:padding="3dp"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:textColor="@color/text_color"
             app:layout_constraintBottom_toBottomOf="@+id/chooseCollectionIV"
             app:layout_constraintEnd_toEndOf="@+id/chooseCollectionIV"
             app:layout_constraintStart_toStartOf="@+id/chooseCollectionIV"
