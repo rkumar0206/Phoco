@@ -34,11 +34,6 @@ class DownloadFile {
                 request.setTitle(fileName)
                 request.setDescription(activity.getString(R.string.downloading_file))
 
-                try {
-                    request.allowScanningByMediaScanner()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                 request.setDestinationInExternalPublicDir(
                         Environment.DIRECTORY_DOWNLOADS,

@@ -66,7 +66,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             HOME_FRAGMENT_TAG -> {
 
-                // in this condition images saved in UnsplashPhoto Database will be displayed
+                // in this condition images saved in UnsplashPhoto Database will be displayed (HomeFragment images)
                 getImageList()
             }
             SAVED_IMAGE_TAG -> {

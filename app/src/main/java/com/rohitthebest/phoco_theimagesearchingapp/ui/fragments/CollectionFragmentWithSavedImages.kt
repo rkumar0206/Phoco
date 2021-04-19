@@ -176,6 +176,8 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
                     findNavController().navigate(action)
 
+                    isRefreshEnabled = true
+
                     true
                 }
 
