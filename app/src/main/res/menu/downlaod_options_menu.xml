@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_small_download_option"
+        android:title="@string/small" />
+    <item
+        android:id="@+id/menu_medium_download_option"
+        android:title="@string/medium" />
+    <item
+        android:id="@+id/menu_original_download_option"
+        android:title="@string/original" />
+</menu>

@@ -132,7 +132,7 @@ class HomeRVAdapter(private var savedImagesIdList: List<String> = emptyList()) :
 
                     binding.downloadImageBtn.id -> {
 
-                        mListener!!.onDownloadImageBtnClicked(getItem(absoluteAdapterPosition))
+                        mListener!!.onDownloadImageBtnClicked(getItem(absoluteAdapterPosition), binding.downloadImageBtn)
                     }
 
                     binding.imageUserNameTV.id -> {
@@ -197,7 +197,7 @@ class HomeRVAdapter(private var savedImagesIdList: List<String> = emptyList()) :
 
         fun onImageClicked(unsplashPhoto: UnsplashPhoto)
         fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto, position: Int)
-        fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto)
+        fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto, view: View)
         fun onImageUserNameClicked(unsplashPhoto: UnsplashPhoto)
 
         fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto, position: Int)
