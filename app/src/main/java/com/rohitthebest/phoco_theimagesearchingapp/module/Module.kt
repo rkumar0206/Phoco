@@ -3,10 +3,12 @@ package com.rohitthebest.phoco_theimagesearchingapp.module
 import android.content.Context
 import androidx.room.Room
 import com.rohitthebest.phoco_theimagesearchingapp.Constants
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PEXEL_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PIXABAY_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_DATABASE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATABASE_NAME
+import com.rohitthebest.phoco_theimagesearchingapp.api.PexelAPI
 import com.rohitthebest.phoco_theimagesearchingapp.api.PixabayAPI
 import com.rohitthebest.phoco_theimagesearchingapp.api.UnsplashAPI
 import com.rohitthebest.phoco_theimagesearchingapp.database.database.CollectionDatabase
@@ -36,6 +38,12 @@ annotation class PixabayImageOkHttpClient
 
 @Qualifier
 annotation class PixabayImageRetrofit
+
+@Qualifier
+annotation class PexelImageOkHttpClient
+
+@Qualifier
+annotation class PexelImageRetrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -99,18 +107,54 @@ object Module {
 
             @PixabayImageOkHttpClient okHttpClient: OkHttpClient
     ): Retrofit = Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(PIXABAY_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        .client(okHttpClient)
+        .baseUrl(PIXABAY_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
     @Provides
     @Singleton
     fun providesPixabayImageAPI(
-            @PixabayImageRetrofit retrofit: Retrofit
+        @PixabayImageRetrofit retrofit: Retrofit
     ): PixabayAPI = retrofit.create(PixabayAPI::class.java)
 
     //------------------------------------------------------------------------------------------
+
+
+    //============================ Pexel API =========================================
+
+
+    @PexelImageOkHttpClient
+    @Provides
+    @Singleton
+    fun providePexelOkHttpClient(): OkHttpClient {
+
+        val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
+
+        return OkHttpClient.Builder()
+            .addInterceptor(interceptor)
+            .readTimeout(25, TimeUnit.SECONDS)
+            .build()
+    }
+
+    @Singleton
+    @Provides
+    fun providesPexelRetrofit(
+        @PexelImageOkHttpClient okHttpClient: OkHttpClient
+    ): Retrofit = Retrofit.Builder()
+        .client(okHttpClient)
+        .baseUrl(PEXEL_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    @Provides
+    @Singleton
+    fun providesPexelImageAPI(
+        @PexelImageRetrofit retrofit: Retrofit
+    ): PexelAPI = retrofit.create(PexelAPI::class.java)
+
+
+    //---------------------------------------------------------------------------------------
 
 
     //======================= Unsplash photo database ======================================
@@ -118,11 +162,11 @@ object Module {
     @Singleton
     @Provides
     fun provideUnsplashPhotoDatabase(
-            @ApplicationContext context: Context
+        @ApplicationContext context: Context
     ) = Room.databaseBuilder(
-            context,
-            UnsplashPhotoDatabase::class.java,
-            UNSPLASH_PHOTO_DATABASE_NAME
+        context,
+        UnsplashPhotoDatabase::class.java,
+        UNSPLASH_PHOTO_DATABASE_NAME
     )
             .fallbackToDestructiveMigration()
             .build()
