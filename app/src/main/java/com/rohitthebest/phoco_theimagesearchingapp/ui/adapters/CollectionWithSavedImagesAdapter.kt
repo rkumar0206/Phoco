@@ -48,7 +48,7 @@ class CollectionWithSavedImagesAdapter :
 
                 imageUserNameTV.text = it.userInfo.userName
 
-                addToFavouritesBtn.setImageResource(R.drawable.ic_baseline_bookmark_24)
+                addToFavouritesBtn.hide()
 
                 updateViewForIsSelectedValue(isSelected)
             }
@@ -112,12 +112,36 @@ class CollectionWithSavedImagesAdapter :
         }
 
         fun getItemsDetails(): ItemDetailsLookup.ItemDetails<String> =
-            object : ItemDetailsLookup.ItemDetails<String>() {
+                object : ItemDetailsLookup.ItemDetails<String>() {
 
-                override fun getPosition(): Int = absoluteAdapterPosition
+                    override fun getPosition(): Int = absoluteAdapterPosition
 
-                override fun getSelectionKey(): String = getItem(absoluteAdapterPosition).key
+                    override fun getSelectionKey(): String = getItem(absoluteAdapterPosition).key
+                }
+
+        init {
+
+            binding.root.setOnClickListener {
+
+                if (checkForNullability()) {
+
+                    mListener!!.onItemClick(getItem(absoluteAdapterPosition))
+                }
             }
+
+            binding.downloadImageBtn.setOnClickListener {
+
+                if (checkForNullability()) {
+
+                    mListener!!.onDownloadImageBtnClicked(getItem(absoluteAdapterPosition))
+                }
+            }
+        }
+
+        private fun checkForNullability(): Boolean {
+
+            return absoluteAdapterPosition != RecyclerView.NO_POSITION && mListener != null
+        }
 
     }
 
@@ -154,7 +178,8 @@ class CollectionWithSavedImagesAdapter :
 
     interface OnClickListener {
 
-        fun onItemClick(model: SavedImage)
+        fun onItemClick(savedImage: SavedImage)
+        fun onDownloadImageBtnClicked(savedImage: SavedImage)
     }
 
     fun setOnClickListener(listener: OnClickListener) {

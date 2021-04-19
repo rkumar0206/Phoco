@@ -1,5 +1,6 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -21,13 +22,18 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rohitthebest.phoco_theimagesearchingapp.Constants
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.COLLECTION_KEY_FOR_ALL_PHOTOS
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.COLLECTION_WITH_SAVED_IMAGES_SELECTION_ID
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentCollectionWithSavedImagesBinding
+import com.rohitthebest.phoco_theimagesearchingapp.ui.activities.PreviewImageActivity
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.CollectionWithSavedImagesAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.itemDetailsLookUp.CollectionWithSavedImagesItemDetailsLookup
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.keyProvider.CollectionWithSavedImagesItemKeyProvider
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
+import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertImageDownloadLinksAndInfoToString
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertListOfStringString
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
@@ -36,7 +42,7 @@ import dagger.hilt.android.AndroidEntryPoint
 private const val TAG = "CollectionFragmentWithS"
 
 @AndroidEntryPoint
-class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_with_saved_images) {
+class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_with_saved_images), CollectionWithSavedImagesAdapter.OnClickListener {
 
     private var _binding: FragmentCollectionWithSavedImagesBinding? = null
     private val binding get() = _binding!!
@@ -217,16 +223,40 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
             adapter = collectionWithSavedImagesAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
+
+        collectionWithSavedImagesAdapter.setOnClickListener(this)
+    }
+
+    override fun onItemClick(savedImage: SavedImage) {
+
+        Log.d(TAG, "onItemClick: $savedImage")
+
+        val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
+                savedImage.imageUrls,
+                receivedCollectionKey,  /*passing collection key to previewImageActivity instead of image
+                 name and next every thing will be handled in the PreviewImageActivity*/
+                SAVED_IMAGE_TAG,
+                savedImage.imageId
+        )
+
+        val intent = Intent(requireContext(), PreviewImageActivity::class.java)
+        intent.putExtra(PREVIEW_IMAGE_MESSAGE_KEY, convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo))
+        startActivity(intent)
+    }
+
+    override fun onDownloadImageBtnClicked(savedImage: SavedImage) {
+
+        //todo : onDownloadImageBtnClicked
     }
 
     private fun setUpTracker() {
 
         tracker = SelectionTracker.Builder(
-            COLLECTION_WITH_SAVED_IMAGES_SELECTION_ID,
-            binding.savedImagesRV,
-            CollectionWithSavedImagesItemKeyProvider(collectionWithSavedImagesAdapter),
-            CollectionWithSavedImagesItemDetailsLookup(binding.savedImagesRV),
-            StorageStrategy.createStringStorage()
+                COLLECTION_WITH_SAVED_IMAGES_SELECTION_ID,
+                binding.savedImagesRV,
+                CollectionWithSavedImagesItemKeyProvider(collectionWithSavedImagesAdapter),
+                CollectionWithSavedImagesItemDetailsLookup(binding.savedImagesRV),
+                StorageStrategy.createStringStorage()
         )
             .withSelectionPredicate(
                 SelectionPredicates.createSelectAnything()
@@ -423,4 +453,5 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
         _binding = null
     }
+
 }

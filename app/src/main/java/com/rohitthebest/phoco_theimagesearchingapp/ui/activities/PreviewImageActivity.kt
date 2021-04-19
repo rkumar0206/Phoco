@@ -15,13 +15,17 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.rohitthebest.phoco_theimagesearchingapp.Constants
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.HOME_FRAGMENT_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ActivityPreviewImageBinding
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToImageDownloadLinksAndInfo
+import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -40,10 +44,14 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
     private var isDownloadOptionsVisible = false
 
     private val unsplashPhotoViewModel by viewModels<UnsplashPhotoViewModel>()
+    private val savedImageViewModel by viewModels<SavedImageViewModel>()
 
     private lateinit var homeImageList: List<UnsplashPhoto>
 
     private var currentImageIndex: Int = 0
+
+    private var receivedCollectionKey = ""  // will be used only when image comes from collection
+    private lateinit var receivedSavedImageList: List<SavedImage>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,14 +62,27 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_MESSAGE_KEY)
                 ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
 
-        if (imageDownloadLinksAndInfo.tag == HOME_FRAGMENT_TAG) {
+        when (imageDownloadLinksAndInfo.tag) {
 
-            getImageList()
-        } else {
+            HOME_FRAGMENT_TAG -> {
 
-            binding.nextPreviewImageBtn.hide()
-            binding.previousPreviewImageBtn.hide()
-            binding.imageNumberTV.hide()
+                // in this condition images saved in UnsplashPhoto Database will be displayed
+                getImageList()
+            }
+            SAVED_IMAGE_TAG -> {
+
+                // in this condition images saved in collections will be displayed
+
+                receivedCollectionKey = imageDownloadLinksAndInfo.imageName // received as collection key here
+
+                getSavedImageListRelatedToPassedCollectionKey()
+            }
+            else -> {
+
+                binding.nextPreviewImageBtn.hide()
+                binding.previousPreviewImageBtn.hide()
+                binding.imageNumberTV.hide()
+            }
         }
 
         setImageInImageView()
@@ -70,6 +91,24 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         wallpaperManager = WallpaperManager.getInstance(applicationContext)
 
+    }
+
+    private fun getSavedImageListRelatedToPassedCollectionKey() {
+
+        if (receivedCollectionKey == Constants.COLLECTION_KEY_FOR_ALL_PHOTOS) {
+
+            savedImageViewModel.getAllSavedImages().observe(this, {
+
+                receivedSavedImageList = it
+            })
+        } else {
+
+            savedImageViewModel.getSavedImagesByCollectionKey(receivedCollectionKey).observe(
+                    this, {
+
+                receivedSavedImageList = it
+            })
+        }
     }
 
     @SuppressLint("SetTextI18n")
