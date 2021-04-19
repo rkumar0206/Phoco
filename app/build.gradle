@@ -21,6 +21,7 @@ android {
 
         buildConfigField("String", "UNSPLASH_CLIENT_ID", MyUnsplashApiKey)
         buildConfigField("String", "PIXABAY_API_KEY", MYPixabayAPIKey)
+        buildConfigField("String", "PEXEL_API_KEY", MYPexelAPIKey)
     }
 
 
