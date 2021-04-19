@@ -93,6 +93,19 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
+    private fun getImageList() {
+
+        unsplashPhotoViewModel.getAllUnsplashPhoto().observe(this, {
+
+            homeImageList = it
+
+            currentImageIndex = homeImageList.indexOfFirst { image -> image.id == imageDownloadLinksAndInfo.imageId }
+
+            updateTheImageIndexNumberInTextView()
+
+        })
+    }
+
     private fun getSavedImageListRelatedToPassedCollectionKey() {
 
         if (receivedCollectionKey == Constants.COLLECTION_KEY_FOR_ALL_PHOTOS) {
@@ -100,6 +113,10 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             savedImageViewModel.getAllSavedImages().observe(this, {
 
                 receivedSavedImageList = it
+
+                currentImageIndex = receivedSavedImageList.indexOfFirst { image -> image.imageId == imageDownloadLinksAndInfo.imageId }
+
+                updateTheImageIndexNumberInTextView()
             })
         } else {
 
@@ -107,29 +124,13 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                     this, {
 
                 receivedSavedImageList = it
+
+                currentImageIndex = receivedSavedImageList.indexOfFirst { image -> image.imageId == imageDownloadLinksAndInfo.imageId }
+
+                updateTheImageIndexNumberInTextView()
             })
         }
-    }
 
-    @SuppressLint("SetTextI18n")
-    private fun updateTheImageIndexNumberInTextView() {
-
-        binding.imageNumberTV.text = "${currentImageIndex + 1} / ${homeImageList.size}"
-    }
-
-    private fun getImageList() {
-
-        unsplashPhotoViewModel.getAllUnsplashPhoto().observe(this, {
-
-            homeImageList = it
-
-            val currentImage = homeImageList.filter { image -> image.id == imageDownloadLinksAndInfo.imageId }
-
-            currentImageIndex = homeImageList.indexOf(currentImage[0])
-
-            updateTheImageIndexNumberInTextView()
-
-        })
     }
 
     private fun initListeners() {
@@ -235,49 +236,107 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             binding.nextPreviewImageBtn.id -> {
 
-                if (currentImageIndex < homeImageList.size - 1) {
+                handleNextImageBtn()
 
-                    currentImageIndex++
-                    updateTheImageIndexNumberInTextView()
-                    updateImageDownloadInfo()
-
-                } else {
-
-                    currentImageIndex = 0
-                    updateTheImageIndexNumberInTextView()
-                    updateImageDownloadInfo()
-                }
             }
 
             binding.previousPreviewImageBtn.id -> {
 
-                if (currentImageIndex > 0) {
-
-                    currentImageIndex--
-
-                    updateTheImageIndexNumberInTextView()
-                    updateImageDownloadInfo()
-                } else {
-
-                    currentImageIndex = homeImageList.size - 1
-                    updateTheImageIndexNumberInTextView()
-                    updateImageDownloadInfo()
-                }
+                handlePreviousImageBtn()
             }
+        }
+    }
+
+
+    private fun handleNextImageBtn() {
+
+        if (imageDownloadLinksAndInfo.tag == HOME_FRAGMENT_TAG) {
+
+            if (currentImageIndex < homeImageList.size - 1) {
+
+                currentImageIndex++
+
+            } else {
+                currentImageIndex = 0
+            }
+        } else {
+
+            if (currentImageIndex < receivedSavedImageList.size - 1) {
+
+                currentImageIndex++
+            } else {
+
+                currentImageIndex = 0
+            }
+        }
+
+        updateTheImageIndexNumberInTextView()
+        updateImageDownloadInfo()
+    }
+
+    private fun handlePreviousImageBtn() {
+
+        if (imageDownloadLinksAndInfo.tag == HOME_FRAGMENT_TAG) {
+
+            if (currentImageIndex > 0) {
+
+                currentImageIndex--
+            } else {
+
+                currentImageIndex = homeImageList.size - 1
+            }
+        } else {
+
+            if (currentImageIndex > 0) {
+
+                currentImageIndex--
+            } else {
+
+                currentImageIndex = receivedSavedImageList.size - 1
+            }
+        }
+
+        updateTheImageIndexNumberInTextView()
+        updateImageDownloadInfo()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateTheImageIndexNumberInTextView() {
+
+        if (imageDownloadLinksAndInfo.tag == HOME_FRAGMENT_TAG) {
+
+            binding.imageNumberTV.text = "${currentImageIndex + 1} / ${homeImageList.size}"
+        } else {
+
+            binding.imageNumberTV.text = "${currentImageIndex + 1} / ${receivedSavedImageList.size}"
         }
     }
 
     private fun updateImageDownloadInfo() {
 
-        val currentImage = homeImageList[currentImageIndex]
+        if (imageDownloadLinksAndInfo.tag == HOME_FRAGMENT_TAG) {
 
-        imageDownloadLinksAndInfo.imageUrls = ImageDownloadLinksAndInfo
-                .ImageUrls(currentImage.urls.small, currentImage.urls.regular, currentImage.links.download)
+            val currentImage = homeImageList[currentImageIndex]
 
-        imageDownloadLinksAndInfo.imageName = currentImage.alt_description ?: ""
-        imageDownloadLinksAndInfo.imageId = currentImage.id
+            imageDownloadLinksAndInfo.imageUrls = ImageDownloadLinksAndInfo
+                    .ImageUrls(currentImage.urls.small, currentImage.urls.regular, currentImage.links.download)
 
-        setImageInImageView()
+            imageDownloadLinksAndInfo.imageName = currentImage.alt_description ?: ""
+            imageDownloadLinksAndInfo.imageId = currentImage.id
+
+            setImageInImageView()
+        } else {
+
+            val currentImage = receivedSavedImageList[currentImageIndex]
+
+            imageDownloadLinksAndInfo.imageUrls = ImageDownloadLinksAndInfo
+                    .ImageUrls(currentImage.imageUrls.small, currentImage.imageUrls.medium, currentImage.imageUrls.original)
+
+            imageDownloadLinksAndInfo.imageName = currentImage.imageName
+            imageDownloadLinksAndInfo.imageId = currentImage.imageId
+
+            setImageInImageView()
+        }
     }
 
     private fun showDownloadOptions() {
