@@ -43,9 +43,8 @@ class PexelSearchResultsAdapter(var savedImageIdList: List<String> = emptyList()
 
                     //displaying the user image
                     Glide.with(binding.view)
-                        .load(it.photographer_url)
+                        .load(R.drawable.ic_outline_account_circle_24)
                         .centerInside()
-                        .error(R.drawable.ic_outline_account_circle_24)
                         .into(imageUserImage)
 
                     imageUserNameTV.text = it.photographer
