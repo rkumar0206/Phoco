@@ -29,6 +29,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.UnsplashSearchRes
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertImageDownloadLinksAndInfoToString
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertSavedImageToString
+import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PexelViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PixabayViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
@@ -46,6 +47,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
     private val unsplashViewModel by viewModels<UnsplashViewModel>()
     private val pixabayViewModel by viewModels<PixabayViewModel>()
+    private val pexelViewModel by viewModels<PexelViewModel>()
     private val savedImageViewModel by viewModels<SavedImageViewModel>()
 
     private lateinit var spinnerAdapter: SpinnerSearchIconAdapter
@@ -77,6 +79,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
         observeUnsplashSearchResult()
         observePixabayResult()
+        observePexelResult()
 
         observeForIfSavedImageAddedToTheCollection()
     }
@@ -127,6 +130,14 @@ class SearchFragment : Fragment(R.layout.fragment_search),
         })
     }
 
+    private fun observePexelResult() {
+
+        pexelViewModel.pexelSearchResult.observe(viewLifecycleOwner, {
+
+            //todo : submit list to the pexel search adapter
+        })
+    }
+
     private fun setUpRecyclerView() {
 
         binding.searchRV.apply {
@@ -135,24 +146,30 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
                 APIName.UNSPLASH -> {
                     unsplashSearchAdapter.withLoadStateHeaderAndFooter(
-                            header = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() },
-                            footer = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() }
+                        header = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() },
+                        footer = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() }
                     )
                 }
 
                 APIName.PIXABAY -> {
 
                     pixabaySearchAdapter.withLoadStateHeaderAndFooter(
-                            header = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() },
-                            footer = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() }
+                        header = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() },
+                        footer = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() }
                     )
                 }
+
+                /*APIName.PEXELS -> {
+
+                    //todo : pexel search adapter
+                }*/
+
 
                 else -> {
 
                     unsplashSearchAdapter.withLoadStateHeaderAndFooter(
-                            header = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() },
-                            footer = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() }
+                        header = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() },
+                        footer = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() }
                     )
                 }
             }
@@ -241,6 +258,11 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 APIName.PIXABAY -> {
 
                     pixabayViewModel.searchWithPixabay(searchString)
+                }
+
+                APIName.PEXELS -> {
+
+                    pexelViewModel.searchImage(searchString)
                 }
 
                 else -> {
