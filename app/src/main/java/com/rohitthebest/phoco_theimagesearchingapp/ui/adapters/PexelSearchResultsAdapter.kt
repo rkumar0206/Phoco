@@ -68,7 +68,7 @@ class PexelSearchResultsAdapter(var savedImageIdList: List<String> = emptyList()
         private fun setUpAndShowImageInImageView(pexelPhoto: PexelPhoto) {
 
             Glide.with(binding.view)
-                .load(pexelPhoto.src.medium)
+                .load(pexelPhoto.src.large)
                 .apply {
                     this.error(R.drawable.ic_outline_error_outline_24)
                     this.centerCrop()

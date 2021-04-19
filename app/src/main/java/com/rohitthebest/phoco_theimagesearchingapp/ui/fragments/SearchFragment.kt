@@ -18,14 +18,12 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSA
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_PIXABAY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNSPLASH
 import com.rohitthebest.phoco_theimagesearchingapp.R
+import com.rohitthebest.phoco_theimagesearchingapp.data.pexelsData.PexelPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentSearchBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.activities.PreviewImageActivity
-import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.LoadingStateAdapterForPaging
-import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.PixabaySearchResultsAdapter
-import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.SpinnerSearchIconAdapter
-import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.UnsplashSearchResultsAdapter
+import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertImageDownloadLinksAndInfoToString
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertSavedImageToString
@@ -40,7 +38,8 @@ private const val TAG = "SearchFragment"
 
 @AndroidEntryPoint
 class SearchFragment : Fragment(R.layout.fragment_search),
-        UnsplashSearchResultsAdapter.OnClickListener, PixabaySearchResultsAdapter.OnClickListener {
+    UnsplashSearchResultsAdapter.OnClickListener, PixabaySearchResultsAdapter.OnClickListener,
+    PexelSearchResultsAdapter.OnClickListener {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
@@ -55,6 +54,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
     private lateinit var unsplashSearchAdapter: UnsplashSearchResultsAdapter
     private lateinit var pixabaySearchAdapter: PixabaySearchResultsAdapter
+    private lateinit var pexelSearchAdapter: PexelSearchResultsAdapter
     private lateinit var currentAPI: APIsInfo
 
     private var isRefreshEnabled = false
@@ -97,13 +97,15 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 if (it.isNotEmpty()) {
 
                     unsplashSearchAdapter = UnsplashSearchResultsAdapter(savedImagesIds)
-                    pixabaySearchAdapter = PixabaySearchResultsAdapter()
+                    pixabaySearchAdapter = PixabaySearchResultsAdapter(savedImagesIds)
+                    pexelSearchAdapter = PexelSearchResultsAdapter(savedImagesIds)
 
                 } else {
 
                     savedImagesIds = emptyList()
                     unsplashSearchAdapter = UnsplashSearchResultsAdapter()
                     pixabaySearchAdapter = PixabaySearchResultsAdapter()
+                    pexelSearchAdapter = PexelSearchResultsAdapter()
                 }
 
                 setUpImageWebsiteOrApiSpinner()
@@ -134,7 +136,9 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
         pexelViewModel.pexelSearchResult.observe(viewLifecycleOwner, {
 
-            //todo : submit list to the pexel search adapter
+            Log.d(TAG, "observePexelResult: $it")
+
+            pexelSearchAdapter.submitData(viewLifecycleOwner.lifecycle, it)
         })
     }
 
@@ -159,10 +163,13 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                     )
                 }
 
-                /*APIName.PEXELS -> {
+                APIName.PEXELS -> {
 
-                    //todo : pexel search adapter
-                }*/
+                    pexelSearchAdapter.withLoadStateHeaderAndFooter(
+                        header = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() },
+                        footer = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() }
+                    )
+                }
 
 
                 else -> {
@@ -180,6 +187,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
         unsplashSearchAdapter.setOnClickListener(this)
         pixabaySearchAdapter.setOnClickListener(this)
+        pexelSearchAdapter.setOnClickListener(this)
     }
 
     private fun setUpLoadStateListener() {
@@ -191,6 +199,11 @@ class SearchFragment : Fragment(R.layout.fragment_search),
         }
 
         pixabaySearchAdapter.addLoadStateListener {
+
+            applyChangesAccordingToLoadState(it)
+        }
+
+        pexelSearchAdapter.addLoadStateListener {
 
             applyChangesAccordingToLoadState(it)
         }
@@ -564,9 +577,10 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
             val savedImage = generateSavedImage(pixabayPhoto, APIName.PIXABAY)
 
-            val action = SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
+            val action =
+                SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
                     convertSavedImageToString(savedImage)
-            )
+                )
 
             findNavController().navigate(action)
         }
@@ -575,40 +589,64 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     //---------------------------------------------------------------------------------------------
 
 
+    //----------------------------- Pexel adapter click listeners ------------------------------
+
+    override fun onImageClicked(pexelPhoto: PexelPhoto) {
+
+    }
+
+    override fun onAddToFavouriteBtnClicked(pexelPhoto: PexelPhoto, position: Int) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onDownloadImageBtnClicked(pexelPhoto: PexelPhoto, view: View) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onImageUserNameClicked(pexelPhoto: PexelPhoto) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onAddToFavouriteLongClicked(pexelPhoto: PexelPhoto, position: Int) {
+        //TODO("Not yet implemented")
+    }
+
+    //---------------------------------------------------------------------------------------------
+
     private fun observeForIfSavedImageAddedToTheCollection() {
 
         findNavController().currentBackStackEntry
-                ?.savedStateHandle
-                ?.getLiveData<Boolean>(Constants.IMAGE_SAVED_TO_COLLECTION_KEY)
-                ?.observe(viewLifecycleOwner, {
+            ?.savedStateHandle
+            ?.getLiveData<Boolean>(Constants.IMAGE_SAVED_TO_COLLECTION_KEY)
+            ?.observe(viewLifecycleOwner, {
 
-                    if (isObservingForImageSavedInCollection) {
+                if (isObservingForImageSavedInCollection) {
 
-                        //true : user has selected one of the collection from the bottom sheet
-                        //false : user hasn't selected any collection
-                        if (it) {
+                    //true : user has selected one of the collection from the bottom sheet
+                    //false : user hasn't selected any collection
+                    if (it) {
 
-                            showSnackBar(binding.root, "Image saved")
+                        showSnackBar(binding.root, "Image saved")
 
-                            if (position != -1) {
+                        if (position != -1) {
 
-                                when (currentAPI.apiName) {
+                            when (currentAPI.apiName) {
 
-                                    APIName.UNSPLASH -> updateItemOfUnsplashSearchAdapter(position)
+                                APIName.UNSPLASH -> updateItemOfUnsplashSearchAdapter(position)
 
-                                    APIName.PIXABAY -> updateItemOfPixabaySearchAdapter(position)
+                                APIName.PIXABAY -> updateItemOfPixabaySearchAdapter(position)
 
-                                    else -> Log.d(TAG, "observeForIfSavedImageAddedToTheCollection: ")
-                                }
-
-                                Log.d(TAG, "observeForCollectionAddition: updated")
-
-                                position = -1
+                                else -> Log.d(TAG, "observeForIfSavedImageAddedToTheCollection: ")
                             }
+
+                            Log.d(TAG, "observeForCollectionAddition: updated")
+
+                            position = -1
                         }
-                        isObservingForImageSavedInCollection = false
                     }
-                })
+                    isObservingForImageSavedInCollection = false
+                }
+            })
 
     }
 
@@ -622,9 +660,10 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
                 if (it != null) {
 
-                    val action = SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
+                    val action =
+                        SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
                             convertSavedImageToString(it)
-                    )
+                        )
 
                     findNavController().navigate(action)
                 } else {
@@ -643,6 +682,5 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
         _binding = null
     }
-
 
 }

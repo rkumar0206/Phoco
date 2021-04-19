@@ -137,6 +137,7 @@ object Module {
             .build()
     }
 
+    @PexelImageRetrofit
     @Singleton
     @Provides
     fun providesPexelRetrofit(

@@ -8,7 +8,7 @@ import retrofit2.http.Query
 interface PexelAPI {
 
     @Headers("Authorization: ${BuildConfig.PEXEL_API_KEY}")
-    @GET("/search")
+    @GET("v1/search")
     suspend fun searchPhoto(
         @Query("query") query: String,
         @Query("page") page: Int,
