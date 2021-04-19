@@ -133,7 +133,7 @@ class UnsplashSearchResultsAdapter(var savedImageIdList: List<String> = emptyLis
 
                     binding.downloadImageBtn.id -> {
 
-                        getItem(absoluteAdapterPosition)?.let { mListener!!.onDownloadImageBtnClicked(it) }
+                        getItem(absoluteAdapterPosition)?.let { mListener!!.onDownloadImageBtnClicked(it, binding.downloadImageBtn) }
                     }
 
                     binding.imageUserNameTV.id -> {
@@ -195,7 +195,7 @@ class UnsplashSearchResultsAdapter(var savedImageIdList: List<String> = emptyLis
 
         fun onImageClicked(unsplashPhoto: UnsplashPhoto)
         fun onAddToFavouriteBtnClicked(unsplashPhoto: UnsplashPhoto, position: Int)
-        fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto)
+        fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto, view: View)
         fun onImageUserNameClicked(unsplashPhoto: UnsplashPhoto)
 
         fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto, position: Int)

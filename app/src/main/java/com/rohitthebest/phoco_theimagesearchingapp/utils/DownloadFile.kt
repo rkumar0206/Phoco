@@ -9,19 +9,6 @@ import android.webkit.MimeTypeMap
 import android.widget.Toast
 import com.rohitthebest.phoco_theimagesearchingapp.R
 
-
-@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-class DownloadFile {
-
-    /**
-     * Used to download the file from url.
-     *
-     *
-     * 1. Download the file using Download Manager.
-     *
-     * @param url      Url.
-     * @param fileName File Name.
-     */
     fun downloadFile(activity: Activity, url: String?, fileName: String?) {
 
         try {
@@ -66,4 +53,3 @@ class DownloadFile {
         }
         return type
     }
-}

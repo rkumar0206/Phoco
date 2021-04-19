@@ -133,7 +133,7 @@ class PixabaySearchResultsAdapter(var savedImageIdList: List<String> = emptyList
 
                     binding.downloadImageBtn.id -> {
 
-                        getItem(absoluteAdapterPosition)?.let { mListener!!.ondownloadImageBtnClicked(it) }
+                        getItem(absoluteAdapterPosition)?.let { mListener!!.ondownloadImageBtnClicked(it, binding.downloadImageBtn) }
                     }
 
                     binding.imageUserNameTV.id -> {
@@ -199,7 +199,7 @@ class PixabaySearchResultsAdapter(var savedImageIdList: List<String> = emptyList
 
         fun onImageClicked(pixabayPhoto: PixabayPhoto)
         fun onAddToFavouriteBtnClicked(pixabayPhoto: PixabayPhoto, position: Int)
-        fun ondownloadImageBtnClicked(pixabayPhoto: PixabayPhoto)
+        fun ondownloadImageBtnClicked(pixabayPhoto: PixabayPhoto, view: View)
         fun onImageUserNameClicked(pixabayPhoto: PixabayPhoto)
 
         fun onAddToFavouriteLongClicked(pixabayPhoto: PixabayPhoto, position: Int)

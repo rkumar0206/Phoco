@@ -246,7 +246,7 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
         startActivity(intent)
     }
 
-    override fun onDownloadImageBtnClicked(savedImage: SavedImage) {
+    override fun onDownloadImageBtnClicked(savedImage: SavedImage, view: View) {
 
         //todo : onDownloadImageBtnClicked
     }

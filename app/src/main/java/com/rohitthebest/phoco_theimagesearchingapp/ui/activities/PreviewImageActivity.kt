@@ -370,7 +370,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         showToast(this, "Downloading Image")
 
-        DownloadFile().downloadFile(
+        downloadFile(
                 this,
                 imageUrl,
                 if (imageDownloadLinksAndInfo.imageName != "" && !imageDownloadLinksAndInfo.imageName.contains(
@@ -378,7 +378,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                         )
                 )
                     "${imageDownloadLinksAndInfo.imageName}.jpg"
-                else "${System.currentTimeMillis()}.jpg"
+                else "${generateKey()}.jpg"
         )
 
     }
