@@ -615,8 +615,45 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     }
 
     override fun onAddToFavouriteBtnClicked(pexelPhoto: PexelPhoto, position: Int) {
-        //TODO("Not yet implemented")
+
+        if (savedImagesIds.contains(pexelPhoto.id.toString())) {
+
+            savedImageViewModel.deleteImageByImageId(pexelPhoto.id.toString())
+
+            updateItemOfPixabaySearchAdapter(position)
+
+            showToasty(requireContext(), "Image unsaved", ToastyType.INFO)
+
+        } else {
+
+            val savedImage = generateSavedImage(pexelPhoto, APIName.PEXELS)
+
+            savedImageViewModel.insertImage(savedImage)
+
+            showSnackBar(binding.root, "Image Saved")
+
+            updateItemOfPexelSearchAdapter(position)
+
+        }
+
     }
+
+    private fun updateItemOfPexelSearchAdapter(position: Int) {
+
+        GlobalScope.launch {
+
+            delay(100)
+
+            withContext(Dispatchers.Main) {
+
+                pexelSearchAdapter.updateSavedImageListIds(savedImagesIds)
+
+                pexelSearchAdapter.notifyItemChanged(position)
+            }
+        }
+
+    }
+
 
     override fun onDownloadImageBtnClicked(pexelPhoto: PexelPhoto, view: View) {
 
@@ -643,7 +680,27 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     }
 
     override fun onAddToFavouriteLongClicked(pexelPhoto: PexelPhoto, position: Int) {
-        //TODO("Not yet implemented")
+
+        isObservingForImageSavedInCollection = true
+        this.position = position
+
+        if (savedImagesIds.contains(pexelPhoto.id.toString())) {
+
+            isRefreshEnabled = true
+
+            getTheSavedImageAndPassItToTheChooseCollectionBottomSheet(pexelPhoto.id.toString())
+
+        } else {
+
+            val savedImage = generateSavedImage(pexelPhoto, APIName.PEXELS)
+
+            val action =
+                SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
+                    convertSavedImageToString(savedImage)
+                )
+
+            findNavController().navigate(action)
+        }
     }
 
     //---------------------------------------------------------------------------------------------
@@ -670,6 +727,8 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                                 APIName.UNSPLASH -> updateItemOfUnsplashSearchAdapter(position)
 
                                 APIName.PIXABAY -> updateItemOfPixabaySearchAdapter(position)
+
+                                APIName.PEXELS -> updateItemOfPexelSearchAdapter(position)
 
                                 else -> Log.d(TAG, "observeForIfSavedImageAddedToTheCollection: ")
                             }

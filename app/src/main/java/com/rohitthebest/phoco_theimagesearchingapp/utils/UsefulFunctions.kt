@@ -18,6 +18,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.NO_INTERNET_MESSAGE
 import com.rohitthebest.phoco_theimagesearchingapp.R
+import com.rohitthebest.phoco_theimagesearchingapp.data.pexelsData.PexelPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
@@ -378,13 +379,37 @@ fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
 
                 apiInfo = APIsInfo(apiName, R.drawable.logo_pixabay_square)
                 imageId = pixabayPhoto.id.toString()
-                imageName = generateKey()   //name of the image
+                imageName = generateKey("_pixabay")   //name of the image
                 imageUrls = ImageDownloadLinksAndInfo
-                        .ImageUrls(pixabayPhoto.previewURL, pixabayPhoto.previewURL, pixabayPhoto.largeImageURL)
+                    .ImageUrls(
+                        pixabayPhoto.previewURL,
+                        pixabayPhoto.previewURL,
+                        pixabayPhoto.largeImageURL
+                    )
                 userInfo = UserInfo(
-                        pixabayPhoto.user,
-                        pixabayPhoto.user_id.toString(),
-                        pixabayPhoto.userImageURL
+                    pixabayPhoto.user,
+                    pixabayPhoto.user_id.toString(),
+                    pixabayPhoto.userImageURL
+                )
+                uid = ""
+            }
+        }
+
+        APIName.PEXELS -> {
+
+            val pexelPhoto = imageToBeSaved as PexelPhoto
+
+            savedImage.apply {
+
+                apiInfo = APIsInfo(apiName, R.drawable.logo_pexels)
+                imageId = pexelPhoto.id.toString()
+                imageName = generateKey("_pexel")   //name of the image
+                imageUrls = ImageDownloadLinksAndInfo
+                    .ImageUrls(pexelPhoto.src.medium, pexelPhoto.src.large, pexelPhoto.src.original)
+                userInfo = UserInfo(
+                    pexelPhoto.photographer,
+                    pexelPhoto.photographer_id.toString(),
+                    pexelPhoto.photographer_url
                 )
                 uid = ""
             }
