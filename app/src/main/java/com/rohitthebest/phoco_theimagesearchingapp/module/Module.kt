@@ -1,13 +1,16 @@
 package com.rohitthebest.phoco_theimagesearchingapp.module
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
 import com.rohitthebest.phoco_theimagesearchingapp.Constants
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.MOHIT_IMAGE_API_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PEXEL_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PIXABAY_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_DATABASE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATABASE_NAME
+import com.rohitthebest.phoco_theimagesearchingapp.api.MohitImageAPI
 import com.rohitthebest.phoco_theimagesearchingapp.api.PexelAPI
 import com.rohitthebest.phoco_theimagesearchingapp.api.PixabayAPI
 import com.rohitthebest.phoco_theimagesearchingapp.api.UnsplashAPI
@@ -20,6 +23,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -44,6 +49,13 @@ annotation class PexelImageOkHttpClient
 
 @Qualifier
 annotation class PexelImageRetrofit
+
+@Qualifier
+annotation class WebImageOkHttpClient
+
+@Qualifier
+annotation class WebImageRetrofit
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -151,8 +163,68 @@ object Module {
     @Provides
     @Singleton
     fun providesPexelImageAPI(
-        @PexelImageRetrofit retrofit: Retrofit
+            @PexelImageRetrofit retrofit: Retrofit
     ): PexelAPI = retrofit.create(PexelAPI::class.java)
+
+
+    //---------------------------------------------------------------------------------------
+
+    //============================ Mohit Image API =========================================
+
+    @WebImageOkHttpClient
+    @Provides
+    @Singleton
+    fun provideWebOkHttpClient(): OkHttpClient {
+
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+
+        val client: OkHttpClient = OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .readTimeout(25, TimeUnit.SECONDS)
+                .build()
+
+        client.newBuilder()
+                .addInterceptor { chain ->
+
+                    val request: Request = chain.request()
+                    var response: Response? = null
+                    var responseOK = false
+                    var tryCount = 0
+
+                    while (!responseOK && tryCount < 3) {
+                        try {
+                            response = chain.proceed(request)
+
+                            responseOK = response.isSuccessful
+                        } catch (e: java.lang.Exception) {
+                            Log.d("intercept", "Request is not successful - $tryCount")
+                        } finally {
+                            tryCount++
+                        }
+                    }
+                    response!!
+
+                }.build()
+        return client
+    }
+
+    @WebImageRetrofit
+    @Singleton
+    @Provides
+    fun providesWebRetrofit(
+            @WebImageOkHttpClient okHttpClient: OkHttpClient
+    ): Retrofit = Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl(MOHIT_IMAGE_API_BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+    @Provides
+    @Singleton
+    fun providesWebImageAPI(
+            @WebImageRetrofit retrofit: Retrofit
+    ): MohitImageAPI = retrofit.create(MohitImageAPI::class.java)
 
 
     //---------------------------------------------------------------------------------------
@@ -163,11 +235,11 @@ object Module {
     @Singleton
     @Provides
     fun provideUnsplashPhotoDatabase(
-        @ApplicationContext context: Context
+            @ApplicationContext context: Context
     ) = Room.databaseBuilder(
-        context,
-        UnsplashPhotoDatabase::class.java,
-        UNSPLASH_PHOTO_DATABASE_NAME
+            context,
+            UnsplashPhotoDatabase::class.java,
+            UNSPLASH_PHOTO_DATABASE_NAME
     )
             .fallbackToDestructiveMigration()
             .build()
