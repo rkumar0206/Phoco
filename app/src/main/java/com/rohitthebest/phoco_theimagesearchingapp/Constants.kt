@@ -9,6 +9,7 @@ object Constants {
     const val UNSPLASH_BASE_URL = "https://api.unsplash.com/"
     const val PIXABAY_BASE_URL = "https://pixabay.com"
     const val PEXEL_BASE_URL = "https://api.pexels.com/"
+    const val MOHIT_IMAGE_API_BASE_URL = "https://gentle-forest-22725.herokuapp.com"
 
     const val UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME =
             "UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME"
