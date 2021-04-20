@@ -31,6 +31,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companio
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PexelViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PixabayViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
+import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.WebPhotoViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -49,6 +50,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     private val pixabayViewModel by viewModels<PixabayViewModel>()
     private val pexelViewModel by viewModels<PexelViewModel>()
     private val savedImageViewModel by viewModels<SavedImageViewModel>()
+    private val webImageViewModel by viewModels<WebPhotoViewModel>()
 
     private lateinit var spinnerAdapter: SpinnerSearchIconAdapter
     private lateinit var spinnerList: ArrayList<APIsInfo>
@@ -56,10 +58,9 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     private lateinit var unsplashSearchAdapter: UnsplashSearchResultsAdapter
     private lateinit var pixabaySearchAdapter: PixabaySearchResultsAdapter
     private lateinit var pexelSearchAdapter: PexelSearchResultsAdapter
+
     private lateinit var currentAPI: APIsInfo
-
     private var isRefreshEnabled = false
-
     private lateinit var savedImagesIds: List<String>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
