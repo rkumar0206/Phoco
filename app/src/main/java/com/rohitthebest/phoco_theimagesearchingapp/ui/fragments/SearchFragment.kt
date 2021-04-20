@@ -90,6 +90,8 @@ class SearchFragment : Fragment(R.layout.fragment_search),
         observeWebImageResult()
 
         observeForIfSavedImageAddedToTheCollection()
+
+        binding.searchBoxACT.showKeyboard(requireActivity())
     }
 
     private fun getAllSavedImageIds() {
@@ -129,6 +131,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
         pixabayViewModel.pixabaySearchResult.observe(viewLifecycleOwner, {
 
             pixabaySearchAdapter.submitData(viewLifecycleOwner.lifecycle, it)
+            binding.noResultsFoundTV.hide()
         })
     }
 
@@ -137,6 +140,8 @@ class SearchFragment : Fragment(R.layout.fragment_search),
         unsplashViewModel.unsplashSearchResult.observe(viewLifecycleOwner, {
 
             unsplashSearchAdapter.submitData(viewLifecycleOwner.lifecycle, it)
+            binding.noResultsFoundTV.hide()
+
         })
     }
 
@@ -147,6 +152,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
             Log.d(TAG, "observePexelResult: $it")
 
             pexelSearchAdapter.submitData(viewLifecycleOwner.lifecycle, it)
+            binding.noResultsFoundTV.hide()
         })
     }
 
@@ -179,7 +185,15 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
                     Log.d(TAG, "observeWebImageResult: Success ${it.data?.result}")
 
-                    webImageAdapter.submitList(it.data?.result)
+                    if (it.data?.result.isNullOrEmpty()) {
+
+                        binding.noResultsFoundTV.show()
+                    } else {
+
+                        binding.noResultsFoundTV.hide()
+                        webImageAdapter.submitList(it.data?.result)
+                    }
+
                 }
 
                 is Resources.Error -> {
@@ -360,11 +374,10 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 if (binding.searchBoxACT.text.toString().isValidString() && currentAPI != api) {
 
                     searchWithCorrectAPI(binding.searchBoxACT.text.toString())
+                    hideKeyBoard(requireActivity())
                 }
 
                 updateHintOnTheSearchACT()
-
-                hideKeyBoard(requireActivity())
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -848,9 +861,9 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 if (it != null) {
 
                     val action =
-                        SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
-                            convertSavedImageToString(it)
-                        )
+                            SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
+                                    convertSavedImageToString(it)
+                            )
 
                     findNavController().navigate(action)
                 } else {
@@ -862,6 +875,12 @@ class SearchFragment : Fragment(R.layout.fragment_search),
             }
         })
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+
+        hideKeyBoard(requireActivity())
     }
 
     override fun onDestroyView() {

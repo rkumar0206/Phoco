@@ -26,4 +26,5 @@
     <string name="add_new_collection">Add new collection</string>
     <string name="edit_collection">Edit collection</string>
     <string name="save">Save</string>
+    <string name="no_results_found">No results found !!!</string>
 </resources>

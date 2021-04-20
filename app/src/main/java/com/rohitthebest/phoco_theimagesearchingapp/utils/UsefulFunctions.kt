@@ -193,6 +193,8 @@ fun String.isValidString(): Boolean {
 
 fun hideKeyBoard(activity: Activity) {
 
+    Log.d(TAG, "hideKeyBoard: ")
+
     try {
 
         GlobalScope.launch {
@@ -207,6 +209,9 @@ fun hideKeyBoard(activity: Activity) {
 }
 
 suspend fun closeKeyboard(activity: Activity) {
+
+    Log.d(TAG, "closeKeyboard: ")
+
     try {
         withContext(Dispatchers.IO) {
 
@@ -226,6 +231,22 @@ suspend fun closeKeyboard(activity: Activity) {
     }
 }
 
+
+fun View.showKeyboard(activity: Activity) {
+    try {
+
+        Log.d(TAG, "showKeyboard: ")
+
+        this.requestFocus()
+
+        val inputMethodManager =
+                activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+        inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+    } catch (e: java.lang.Exception) {
+        e.printStackTrace()
+    }
+}
 
 /**
  * this function can convert an integer into  a string of a given base/radix
