@@ -35,6 +35,9 @@ import com.rohitthebest.phoco_theimagesearchingapp.R
                     "Please insert an SD card to download file",
                     Toast.LENGTH_SHORT
             ).show()
+        } catch (e: SecurityException) {
+
+            showToast(activity, "Invalid file path")
         }
     }
 

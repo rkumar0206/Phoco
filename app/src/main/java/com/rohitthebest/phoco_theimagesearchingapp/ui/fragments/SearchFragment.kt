@@ -18,7 +18,10 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSA
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_PEXEL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_PIXABAY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNSPLASH
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_WEB
 import com.rohitthebest.phoco_theimagesearchingapp.R
+import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
+import com.rohitthebest.phoco_theimagesearchingapp.data.mohitImagApiData.WebPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.data.pexelsData.PexelPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
@@ -40,8 +43,8 @@ private const val TAG = "SearchFragment"
 
 @AndroidEntryPoint
 class SearchFragment : Fragment(R.layout.fragment_search),
-    UnsplashSearchResultsAdapter.OnClickListener, PixabaySearchResultsAdapter.OnClickListener,
-    PexelSearchResultsAdapter.OnClickListener {
+        UnsplashSearchResultsAdapter.OnClickListener, PixabaySearchResultsAdapter.OnClickListener,
+        PexelSearchResultsAdapter.OnClickListener, WebImageAdapter.OnClickListener {
 
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
@@ -58,6 +61,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     private lateinit var unsplashSearchAdapter: UnsplashSearchResultsAdapter
     private lateinit var pixabaySearchAdapter: PixabaySearchResultsAdapter
     private lateinit var pexelSearchAdapter: PexelSearchResultsAdapter
+    private lateinit var webImageAdapter: WebImageAdapter
 
     private lateinit var currentAPI: APIsInfo
     private var isRefreshEnabled = false
@@ -76,12 +80,14 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
         isRefreshEnabled = true
         getAllSavedImageIds()
+        webImageAdapter = WebImageAdapter()
 
         initSearchEditText()
 
         observeUnsplashSearchResult()
         observePixabayResult()
         observePexelResult()
+        observeWebImageResult()
 
         observeForIfSavedImageAddedToTheCollection()
     }
@@ -144,7 +150,57 @@ class SearchFragment : Fragment(R.layout.fragment_search),
         })
     }
 
+    private fun observeWebImageResult() {
+
+        webImageViewModel.webImage.observe(viewLifecycleOwner, {
+
+            Log.d(TAG, "observeWebImageResult: $it")
+
+            when (it) {
+
+                is Resources.Loading -> {
+
+                    Log.d(TAG, "observeWebImageResult: Loading")
+
+                    binding.apply {
+
+                        progressBar.show()
+                        searchRV.hide()
+                    }
+                }
+
+                is Resources.Success -> {
+
+                    binding.apply {
+
+                        progressBar.hide()
+                        searchRV.show()
+                    }
+
+                    Log.d(TAG, "observeWebImageResult: Success ${it.data?.result}")
+
+                    webImageAdapter.submitList(it.data?.result)
+                }
+
+                is Resources.Error -> {
+
+                    binding.apply {
+
+                        progressBar.show()
+                        searchRV.hide()
+                    }
+
+                    Log.d(TAG, "observeWebImageResult: Error ${it.message}")
+
+                    showToasty(requireContext(), it.message.toString(), ToastyType.ERROR)
+                }
+            }
+        })
+    }
+
     private fun setUpRecyclerView() {
+
+        Log.d(TAG, "setUpRecyclerView: current Api ${currentAPI.apiName}")
 
         binding.searchRV.apply {
 
@@ -152,34 +208,30 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
                 APIName.UNSPLASH -> {
                     unsplashSearchAdapter.withLoadStateHeaderAndFooter(
-                        header = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() },
-                        footer = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() }
+                            header = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() },
+                            footer = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() }
                     )
                 }
 
                 APIName.PIXABAY -> {
 
                     pixabaySearchAdapter.withLoadStateHeaderAndFooter(
-                        header = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() },
-                        footer = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() }
+                            header = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() },
+                            footer = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() }
                     )
                 }
 
                 APIName.PEXELS -> {
 
                     pexelSearchAdapter.withLoadStateHeaderAndFooter(
-                        header = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() },
-                        footer = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() }
+                            header = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() },
+                            footer = LoadingStateAdapterForPaging { pixabaySearchAdapter.retry() }
                     )
                 }
 
+                APIName.WEB -> {
 
-                else -> {
-
-                    unsplashSearchAdapter.withLoadStateHeaderAndFooter(
-                        header = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() },
-                        footer = LoadingStateAdapterForPaging { unsplashSearchAdapter.retry() }
-                    )
+                    webImageAdapter
                 }
             }
 
@@ -190,6 +242,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
         unsplashSearchAdapter.setOnClickListener(this)
         pixabaySearchAdapter.setOnClickListener(this)
         pexelSearchAdapter.setOnClickListener(this)
+        webImageAdapter.setOnClickListener(this)
     }
 
     private fun setUpLoadStateListener() {
@@ -280,8 +333,9 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                     pexelViewModel.searchImage(searchString)
                 }
 
-                else -> {
-                    unsplashViewModel.searchImage(searchString)
+                APIName.WEB -> {
+
+                    webImageViewModel.searchImage(searchString)
                 }
             }
         } else {
@@ -301,12 +355,12 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
                 currentAPI = parent?.getItemAtPosition(position) as APIsInfo
 
+                setUpRecyclerView()
+
                 if (binding.searchBoxACT.text.toString().isValidString() && currentAPI != api) {
 
                     searchWithCorrectAPI(binding.searchBoxACT.text.toString())
                 }
-
-                setUpRecyclerView()
 
                 updateHintOnTheSearchACT()
 
@@ -655,7 +709,6 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
     }
 
-
     override fun onDownloadImageBtnClicked(pexelPhoto: PexelPhoto, view: View) {
 
         val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
@@ -696,9 +749,9 @@ class SearchFragment : Fragment(R.layout.fragment_search),
             val savedImage = generateSavedImage(pexelPhoto, APIName.PEXELS)
 
             val action =
-                SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
-                    convertSavedImageToString(savedImage)
-                )
+                    SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
+                            convertSavedImageToString(savedImage)
+                    )
 
             findNavController().navigate(action)
         }
@@ -706,42 +759,81 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
     //---------------------------------------------------------------------------------------------
 
+
+    //------------------------------ Web image adapter click listener ---------------------------
+
+    override fun onImageClicked(webPhoto: WebPhoto) {
+
+        val intent = Intent(requireContext(), PreviewImageActivity::class.java)
+
+        val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
+                ImageDownloadLinksAndInfo.ImageUrls(
+                        webPhoto.preview!!,
+                        webPhoto.imgurl!!,
+                        webPhoto.imgurl
+                ),
+                generateKey("_web"),
+                SEARCH_FRAGMENT_TAG_WEB,
+                ""
+        )
+
+        intent.putExtra(
+                PREVIEW_IMAGE_MESSAGE_KEY,
+                convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
+        )
+        startActivity(intent)
+    }
+
+    override fun onDownloadImageBtnClicked(webPhoto: WebPhoto, view: View) {
+
+        showToast(requireContext(), "Downloading image...")
+
+        downloadFile(
+                requireActivity(),
+                webPhoto.imgurl,
+                generateKey("_web.jpg", 30)
+        )
+    }
+
+
+    //-------------------------------------------------------------------------------------------
+
     private fun observeForIfSavedImageAddedToTheCollection() {
 
         findNavController().currentBackStackEntry
-            ?.savedStateHandle
-            ?.getLiveData<Boolean>(Constants.IMAGE_SAVED_TO_COLLECTION_KEY)
-            ?.observe(viewLifecycleOwner, {
+                ?.savedStateHandle
+                ?.getLiveData<Boolean>(Constants.IMAGE_SAVED_TO_COLLECTION_KEY)
+                ?.observe(viewLifecycleOwner, {
 
-                if (isObservingForImageSavedInCollection) {
+                    if (isObservingForImageSavedInCollection) {
 
-                    //true : user has selected one of the collection from the bottom sheet
-                    //false : user hasn't selected any collection
-                    if (it) {
+                        //true : user has selected one of the collection from the bottom sheet
+                        //false : user hasn't selected any collection
+                        if (it) {
 
-                        showSnackBar(binding.root, "Image saved")
+                            showSnackBar(binding.root, "Image saved")
 
-                        if (position != -1) {
+                            if (position != -1) {
 
-                            when (currentAPI.apiName) {
+                                when (currentAPI.apiName) {
 
-                                APIName.UNSPLASH -> updateItemOfUnsplashSearchAdapter(position)
+                                    APIName.UNSPLASH -> updateItemOfUnsplashSearchAdapter(position)
 
-                                APIName.PIXABAY -> updateItemOfPixabaySearchAdapter(position)
+                                    APIName.PIXABAY -> updateItemOfPixabaySearchAdapter(position)
 
-                                APIName.PEXELS -> updateItemOfPexelSearchAdapter(position)
+                                    APIName.PEXELS -> updateItemOfPexelSearchAdapter(position)
 
-                                else -> Log.d(TAG, "observeForIfSavedImageAddedToTheCollection: ")
+                                    else -> Log.d(TAG, "observeForIfSavedImageAddedToTheCollection: ")
+                                }
+
+                                Log.d(TAG, "observeForCollectionAddition: updated")
+
+                                position = -1
                             }
-
-                            Log.d(TAG, "observeForCollectionAddition: updated")
-
-                            position = -1
                         }
+                        isObservingForImageSavedInCollection = false
                     }
-                    isObservingForImageSavedInCollection = false
-                }
-            })
+                })
 
     }
 
@@ -777,5 +869,4 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
         _binding = null
     }
-
 }

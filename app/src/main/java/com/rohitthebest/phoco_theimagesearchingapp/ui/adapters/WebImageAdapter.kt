@@ -65,11 +65,14 @@ class WebImageAdapter() :
                         override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
 
                             showReloadBtn()
+                            binding.downloadImageBtn.hide()
                             return false
                         }
 
                         override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+
                             hideReloadBtn()
+                            binding.downloadImageBtn.show()
                             return false
                         }
 
@@ -95,7 +98,6 @@ class WebImageAdapter() :
 
             binding.image.setOnClickListener(this)
             binding.downloadImageBtn.setOnClickListener(this)
-            binding.imageUserNameTV.setOnClickListener(this)
 
             binding.reloadFAB.setOnClickListener(this)
         }
@@ -116,11 +118,6 @@ class WebImageAdapter() :
                         mListener!!.onDownloadImageBtnClicked(getItem(absoluteAdapterPosition), binding.downloadImageBtn)
                     }
 
-                    binding.imageUserNameTV.id -> {
-
-                        mListener!!.onImageUserNameClicked(getItem(absoluteAdapterPosition))
-                    }
-
                     binding.reloadFAB.id -> {
 
                         hideReloadBtn()
@@ -129,7 +126,6 @@ class WebImageAdapter() :
                 }
             }
         }
-
 
         private fun checkForNullability(): Boolean {
 
@@ -169,7 +165,6 @@ class WebImageAdapter() :
 
         fun onImageClicked(webPhoto: WebPhoto)
         fun onDownloadImageBtnClicked(webPhoto: WebPhoto, view: View)
-        fun onImageUserNameClicked(webPhoto: WebPhoto)
     }
 
     fun setOnClickListener(listener: OnClickListener) {
