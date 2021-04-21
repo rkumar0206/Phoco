@@ -15,7 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PhocoTheImageSearchingApp">
         <activity android:name=".ui.activities.PreviewImageActivity" />
-        <activity android:name=".ui.activities.MainActivity">
+        <activity
+            android:name=".ui.activities.MainActivity"
+
+            android:screenOrientation="portrait">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

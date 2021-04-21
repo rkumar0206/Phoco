@@ -11,7 +11,7 @@
         android:id="@+id/previewImageIV"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -49,15 +49,18 @@
         tools:visibility="visible" />
 
     <LinearLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/fabOptionButtonLL"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:gravity="center"
         android:orientation="horizontal"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible">
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/downloadImageFAB"
@@ -69,6 +72,7 @@
             android:contentDescription="@string/fabbutton"
             android:focusable="true"
             android:tooltipText="Download Image"
+            app:fabSize="mini"
             app:srcCompat="@drawable/ic_outline_arrow_circle_down_24"
             tools:targetApi="o" />
 
@@ -82,6 +86,7 @@
             android:contentDescription="@string/fabbutton"
             android:focusable="true"
             android:tooltipText="Home screen wallpaper"
+            app:fabSize="mini"
             app:srcCompat="@drawable/ic_baseline_wallpaper_24"
             tools:targetApi="o" />
 
@@ -95,7 +100,22 @@
             android:contentDescription="@string/fabbutton"
             android:focusable="true"
             android:tooltipText="Extract colors"
+            app:fabSize="mini"
             app:srcCompat="@drawable/ic_baseline_color_lens_24"
+            tools:targetApi="o" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/shareImageFAB"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:contentDescription="@string/fabbutton"
+            android:focusable="true"
+            android:tooltipText="Extract colors"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_baseline_share_24"
             tools:targetApi="o" />
 
     </LinearLayout>
@@ -106,8 +126,8 @@
         android:layout_height="wrap_content"
         android:alpha="0"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@+id/previewImageIV"
-        app:layout_constraintStart_toStartOf="@+id/linearLayout"
+        app:layout_constraintBottom_toTopOf="@+id/fabOptionButtonLL"
+        app:layout_constraintStart_toStartOf="@+id/fabOptionButtonLL"
         tools:alpha="1">
 
         <androidx.cardview.widget.CardView

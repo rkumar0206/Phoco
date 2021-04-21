@@ -42,6 +42,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var wallpaperManager: WallpaperManager
 
     private var isDownloadOptionsVisible = false
+    private var isFABOptionVisible = true
 
     private val unsplashPhotoViewModel by viewModels<UnsplashPhotoViewModel>()
     private val savedImageViewModel by viewModels<SavedImageViewModel>()
@@ -139,6 +140,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         binding.setImageAsHomescreenFAB.setOnClickListener(this)
         binding.extractImageColorsFAB.setOnClickListener(this)
         binding.reloadFAB.setOnClickListener(this)
+        binding.shareImageFAB.setOnClickListener(this)
 
         binding.smallDownloadCV.setOnClickListener(this)
         binding.mediumDownloadCV.setOnClickListener(this)
@@ -231,7 +233,17 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             binding.previewImageIV.id -> {
 
-                hideDownloadOptions()
+                if (isFABOptionVisible && !isDownloadOptionsVisible) {
+
+                    hideFabButtonOptions()
+
+                } else if (isFABOptionVisible && isDownloadOptionsVisible) {
+
+                    hideDownloadOptions()
+                } else {
+
+                    showFabButtonOptions()
+                }
             }
 
             binding.nextPreviewImageBtn.id -> {
@@ -359,12 +371,40 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private fun showFabButtonOptions() {
+
+        isFABOptionVisible = !isFABOptionVisible
+
+        binding.fabOptionButtonLL.animate().alpha(1f).setDuration(600).start()
+        enableOrDisableFABOptions(true)
+    }
+
+    private fun hideFabButtonOptions() {
+
+        if (isFABOptionVisible) {
+
+            isFABOptionVisible = !isFABOptionVisible
+            binding.fabOptionButtonLL.animate().alpha(0f).setDuration(600).start()
+            enableOrDisableFABOptions(false)
+        }
+    }
+
+
     private fun enableOrDisableDownloadOptions(isEnable: Boolean) {
 
         binding.smallDownloadCV.isEnabled = isEnable
         binding.mediumDownloadCV.isEnabled = isEnable
         binding.originalDownloadCV.isEnabled = isEnable
     }
+
+    private fun enableOrDisableFABOptions(isEnable: Boolean) {
+
+        binding.downloadImageFAB.isEnabled = isEnable
+        binding.setImageAsHomescreenFAB.isEnabled = isEnable
+        binding.extractImageColorsFAB.isEnabled = isEnable
+        binding.shareImageFAB.isEnabled = isEnable
+    }
+
 
     private fun downloadTheImage(imageUrl: String) {
 
