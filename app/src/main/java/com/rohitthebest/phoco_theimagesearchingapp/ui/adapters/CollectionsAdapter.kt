@@ -32,24 +32,30 @@ class CollectionsAdapter(private val savedImageList: List<SavedImage>) : ListAda
 
                     if (savedImageList.isNotEmpty()) {
 
-                        val savedImage = savedImageList.filter {
+                        val filteredSavedImageList = savedImageList.filter {
 
                             it.collectionKey == collection.key
                         }
 
                         try {
 
-                            for (i in savedImageList.indices) {
+                            for (i in imageViewList.indices) {
 
-                                if (i < 4) {
+                                Log.d(TAG, "setData: Value of i is $i")
+
+                                if (i < filteredSavedImageList.size) {
 
                                     Glide.with(binding.root)
-                                            .load(savedImage[i].imageUrls.small)
+                                            .load(filteredSavedImageList[i].imageUrls.small)
                                             .transition(DrawableTransitionOptions.withCrossFade())
                                             .into(imageViewList[i])
-                                }
-                            }
 
+                                } else {
+
+                                    imageViewList[i].setImageResource(0)
+                                }
+
+                            }
                         } catch (e: IndexOutOfBoundsException) {
 
                             e.printStackTrace()

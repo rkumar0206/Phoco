@@ -36,6 +36,9 @@ class ChooseCollectionAdapter(private val savedImageList: List<SavedImage>) :
                                 .load(savedImageInThisCollection.imageUrls.medium)
                                 .transition(DrawableTransitionOptions.withCrossFade())
                                 .into(chooseCollectionIV)
+                    } else {
+
+                        chooseCollectionIV.setImageResource(0)
                     }
 
                     chooseCollectionNameTV.text = collection.collectionName

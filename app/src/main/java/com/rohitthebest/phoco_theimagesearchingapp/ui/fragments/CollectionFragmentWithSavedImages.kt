@@ -42,7 +42,8 @@ import dagger.hilt.android.AndroidEntryPoint
 private const val TAG = "CollectionFragmentWithS"
 
 @AndroidEntryPoint
-class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_with_saved_images), CollectionWithSavedImagesAdapter.OnClickListener {
+class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_with_saved_images),
+        CollectionWithSavedImagesAdapter.OnClickListener {
 
     private var _binding: FragmentCollectionWithSavedImagesBinding? = null
     private val binding get() = _binding!!
@@ -409,7 +410,6 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
                 })
 
     }
-
 
     private fun deleteAllSelectedItems() {
 
