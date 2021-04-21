@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.WallpaperManager
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -491,6 +492,17 @@ fun showDownloadOptionPopupMenu(activity: Activity, view: View, imageDownloadLin
         }
     }
 
+}
+
+
+fun shareAsText(context: Context, message: String, subject: String? = "") {
+
+    val intent = Intent(Intent.ACTION_SEND)
+    intent.type = "text/plain"
+    intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+    intent.putExtra(Intent.EXTRA_TEXT, message)
+
+    context.startActivity(Intent.createChooser(intent, "Share via"))
 }
 
 

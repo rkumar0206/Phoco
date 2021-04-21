@@ -28,9 +28,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companio
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 private const val TAG = "PreviewImageActivity"
 
@@ -156,6 +154,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         when (v?.id) {
 
+            /*[START OF FAB BUTTON CLICKS]*/
             binding.downloadImageFAB.id -> {
 
                 if (!isDownloadOptionsVisible) {
@@ -211,6 +210,17 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 hideDownloadOptions()
             }
 
+            binding.shareImageFAB.id -> {
+
+                shareAsText(this,
+
+                        "Follow this link to download the image :\n\n${imageDownloadLinksAndInfo.imageUrls.original}",
+                        "Image download link")
+                hideDownloadOptions()
+            }
+            /*[EBD OF FAB BUTTON CLICKS]*/
+
+
             /*[START OF download quality options]*/
             binding.smallDownloadCV.id -> {
 
@@ -231,6 +241,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             }
             /*[END OF download quality options]*/
 
+
             binding.previewImageIV.id -> {
 
                 if (isFABOptionVisible && !isDownloadOptionsVisible) {
@@ -249,16 +260,33 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             binding.nextPreviewImageBtn.id -> {
 
                 handleNextImageBtn()
-
+                showClickEffect(binding.nextClickEffextView)
             }
 
             binding.previousPreviewImageBtn.id -> {
 
                 handlePreviousImageBtn()
+                showClickEffect(binding.previousClcikEffectView)
             }
         }
     }
 
+
+    private fun showClickEffect(view: View) {
+
+        view.animate().alpha(1f).setDuration(600).start()
+
+        GlobalScope.launch {
+            delay(150)
+
+            withContext(Dispatchers.Main) {
+                23
+                view.animate().alpha(0f).setDuration(600).start()
+
+            }
+        }
+
+    }
 
     private fun handleNextImageBtn() {
 
@@ -376,6 +404,9 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         isFABOptionVisible = !isFABOptionVisible
 
         binding.fabOptionButtonLL.animate().alpha(1f).setDuration(600).start()
+        binding.nextPreviewImageBtn.animate().alpha(1f).setDuration(600).start()
+        binding.previousPreviewImageBtn.animate().alpha(1f).setDuration(600).start()
+        binding.imageNumberTV.animate().alpha(1f).setDuration(600).start()
         enableOrDisableFABOptions(true)
     }
 
@@ -385,6 +416,9 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             isFABOptionVisible = !isFABOptionVisible
             binding.fabOptionButtonLL.animate().alpha(0f).setDuration(600).start()
+            binding.nextPreviewImageBtn.animate().alpha(0f).setDuration(600).start()
+            binding.previousPreviewImageBtn.animate().alpha(0f).setDuration(600).start()
+            binding.imageNumberTV.animate().alpha(0f).setDuration(600).start()
             enableOrDisableFABOptions(false)
         }
     }
@@ -403,6 +437,8 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         binding.setImageAsHomescreenFAB.isEnabled = isEnable
         binding.extractImageColorsFAB.isEnabled = isEnable
         binding.shareImageFAB.isEnabled = isEnable
+        binding.nextPreviewImageBtn.isEnabled = isEnable
+        binding.previousPreviewImageBtn.isEnabled = isEnable
     }
 
 
