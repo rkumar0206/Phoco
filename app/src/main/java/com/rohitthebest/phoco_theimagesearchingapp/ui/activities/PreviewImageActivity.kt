@@ -146,6 +146,8 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         binding.nextPreviewImageBtn.setOnClickListener(this)
         binding.previousPreviewImageBtn.setOnClickListener(this)
+        binding.nextClickEffextView.setOnClickListener(this)
+        binding.previousClcikEffectView.setOnClickListener(this)
 
         binding.previewImageIV.setOnClickListener(this)
     }
@@ -256,19 +258,20 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                     showFabButtonOptions()
                 }
             }
-
-            binding.nextPreviewImageBtn.id -> {
-
-                handleNextImageBtn()
-                showClickEffect(binding.nextClickEffextView)
-            }
-
-            binding.previousPreviewImageBtn.id -> {
-
-                handlePreviousImageBtn()
-                showClickEffect(binding.previousClcikEffectView)
-            }
         }
+
+        if (v?.id == binding.nextPreviewImageBtn.id || v?.id == binding.nextClickEffextView.id) {
+
+            handleNextImageBtn()
+            showClickEffect(binding.nextClickEffextView)
+        }
+
+        if (v?.id == binding.previousPreviewImageBtn.id || v?.id == binding.previousClcikEffectView.id) {
+
+            handlePreviousImageBtn()
+            showClickEffect(binding.previousClcikEffectView)
+        }
+
     }
 
 
@@ -280,7 +283,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             delay(150)
 
             withContext(Dispatchers.Main) {
-                23
+
                 view.animate().alpha(0f).setDuration(600).start()
 
             }

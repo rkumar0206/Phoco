@@ -113,7 +113,7 @@
             android:clickable="true"
             android:contentDescription="@string/fabbutton"
             android:focusable="true"
-            android:tooltipText="Extract colors"
+            android:tooltipText="Share download link"
             app:fabSize="mini"
             app:srcCompat="@drawable/ic_baseline_share_24"
             tools:targetApi="o" />
