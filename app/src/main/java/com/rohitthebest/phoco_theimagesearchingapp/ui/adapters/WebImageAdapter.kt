@@ -40,11 +40,11 @@ class WebImageAdapter() :
 
                     //displaying the user image
                     Glide.with(binding.view)
-                            .load(R.drawable.ic_outline_account_circle_24)
+                            .load(R.drawable.ic_baseline_web_24)
                             .centerInside()
                             .into(imageUserImage)
 
-                    imageUserNameTV.text = "No user name!!"
+                    imageUserNameTV.text = "Visit website"
 
                     addToFavouritesBtn.hide()
                 }
@@ -100,6 +100,7 @@ class WebImageAdapter() :
             binding.downloadImageBtn.setOnClickListener(this)
 
             binding.reloadFAB.setOnClickListener(this)
+            binding.imageUserNameTV.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
@@ -122,6 +123,11 @@ class WebImageAdapter() :
 
                         hideReloadBtn()
                         setUpAndShowImageInImageView(getItem(absoluteAdapterPosition))
+                    }
+
+                    binding.imageUserNameTV.id -> {
+
+                        getItem(absoluteAdapterPosition).rurl?.let { mListener!!.onVisitWebsiteTVClicked(it) }
                     }
                 }
             }
@@ -165,6 +171,7 @@ class WebImageAdapter() :
 
         fun onImageClicked(webPhoto: WebPhoto)
         fun onDownloadImageBtnClicked(webPhoto: WebPhoto, view: View)
+        fun onVisitWebsiteTVClicked(websiteUrl: String)
     }
 
     fun setOnClickListener(listener: OnClickListener) {

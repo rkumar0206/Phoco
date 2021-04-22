@@ -811,6 +811,11 @@ class SearchFragment : Fragment(R.layout.fragment_search),
         )
     }
 
+    override fun onVisitWebsiteTVClicked(websiteUrl: String) {
+
+        openLinkInBrowser(requireContext(), websiteUrl)
+    }
+
 
     //-------------------------------------------------------------------------------------------
 
