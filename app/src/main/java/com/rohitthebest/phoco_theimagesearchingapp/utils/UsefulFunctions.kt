@@ -3,6 +3,8 @@ package com.rohitthebest.phoco_theimagesearchingapp.utils
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.WallpaperManager
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -507,6 +509,15 @@ fun shareAsText(context: Context, message: String, subject: String? = "") {
     context.startActivity(Intent.createChooser(intent, "Share via"))
 }
 
+fun copyToClipBoard(activity: Activity, text: String) {
+
+    val clipboardManager =
+            activity.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+
+    val clipData = ClipData.newPlainText("text", text)
+
+    clipboardManager.setPrimaryClip(clipData)
+}
 
 
 

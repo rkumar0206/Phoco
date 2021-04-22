@@ -17,6 +17,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.EXTRACTED_COLORS_IMAGE_URL_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ExtractedColorsBottomSheetLayoutBinding
@@ -43,6 +44,8 @@ class ExtractedColorsBottomSheetDialog : BottomSheetDialogFragment(), View.OnCli
     private val binding get() = _binding!!
 
     private var imageUrl = ""
+
+    private var swatchColors: SwatchColors? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
@@ -93,6 +96,13 @@ class ExtractedColorsBottomSheetDialog : BottomSheetDialogFragment(), View.OnCli
         binding.mutedSwatchView.setOnClickListener(this)
         binding.darkMutedSwatchView.setOnClickListener(this)
         binding.lightMutedSwatchView.setOnClickListener(this)
+
+        binding.vibrantSwatchTV.setOnClickListener(this)
+        binding.darkVirantSwatchTV.setOnClickListener(this)
+        binding.lightVibrantSwatchTV.setOnClickListener(this)
+        binding.mutedSwatchTV.setOnClickListener(this)
+        binding.darkMutedSwatchTV.setOnClickListener(this)
+        binding.lightMutedSwatchTV.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -101,23 +111,99 @@ class ExtractedColorsBottomSheetDialog : BottomSheetDialogFragment(), View.OnCli
 
             binding.vibrantSwatchView.id -> {
 
+                swatchColors?.let {
+
+                    showDialog(it.vibrantSwatch!!)
+                }
+
             }
             binding.darkVibrantSwatchView.id -> {
+
+                swatchColors?.let {
+
+                    showDialog(it.darkVibrantSwatch!!)
+                }
 
             }
             binding.lightVibrantSwatchView.id -> {
 
+                swatchColors?.let {
+
+                    showDialog(it.lightVibrantSwatch!!)
+                }
+
             }
             binding.mutedSwatchView.id -> {
+
+                swatchColors?.let {
+
+                    showDialog(it.mutedSwatch!!)
+                }
 
             }
             binding.darkMutedSwatchView.id -> {
 
+                swatchColors?.let {
+
+                    showDialog(it.darkMutedSwatch!!)
+                }
+
             }
             binding.lightMutedSwatchView.id -> {
 
+                swatchColors?.let {
+
+                    showDialog(it.lightMutedSwatch!!)
+                }
+
+            }
+
+            binding.vibrantSwatchTV.id -> {
+
+                swatchColors?.vibrantSwatch?.rgb?.getHexColorString()?.let { copyToClipBoard(requireActivity(), it) }
+                showToast(requireContext(), "Background color copied")
+            }
+            binding.darkVirantSwatchTV.id -> {
+                swatchColors?.darkVibrantSwatch?.rgb?.getHexColorString()?.let { copyToClipBoard(requireActivity(), it) }
+                showToast(requireContext(), "Background color copied")
+
+            }
+            binding.lightVibrantSwatchTV.id -> {
+                swatchColors?.lightVibrantSwatch?.rgb?.getHexColorString()?.let { copyToClipBoard(requireActivity(), it) }
+                showToast(requireContext(), "Background color copied")
+
+            }
+            binding.mutedSwatchTV.id -> {
+                swatchColors?.mutedSwatch?.rgb?.getHexColorString()?.let { copyToClipBoard(requireActivity(), it) }
+                showToast(requireContext(), "Background color copied")
+
+            }
+            binding.darkMutedSwatchTV.id -> {
+                swatchColors?.darkMutedSwatch?.rgb?.getHexColorString()?.let { copyToClipBoard(requireActivity(), it) }
+                showToast(requireContext(), "Background color copied")
+
+            }
+            binding.lightMutedSwatchTV.id -> {
+                swatchColors?.lightMutedSwatch?.rgb?.getHexColorString()?.let { copyToClipBoard(requireActivity(), it) }
+                showToast(requireContext(), "Background color copied")
+
             }
         }
+    }
+
+    private fun showDialog(swatch: Palette.Swatch) {
+
+        MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Color info")
+                .setMessage("Background color : ${swatch.rgb.getHexColorString()}\n\n" +
+                        "Title text color : ${swatch.titleTextColor.getHexColorString()}\n\n" +
+                        "Body text color : ${swatch.bodyTextColor.getHexColorString()}")
+                .setPositiveButton("Ok") { dialog, _ ->
+
+                    dialog.dismiss()
+                }
+                .create()
+                .show()
     }
 
 
@@ -156,7 +242,7 @@ class ExtractedColorsBottomSheetDialog : BottomSheetDialogFragment(), View.OnCli
                                 Log.d(TAG, "onResourceReady: darkMutedSwatch : ${palette?.darkMutedSwatch}")
                                 Log.d(TAG, "onResourceReady: lightMutedSwatch : ${palette?.lightMutedSwatch}")
 
-                                val swatchColors = SwatchColors(
+                                swatchColors = SwatchColors(
                                         palette?.vibrantSwatch,
                                         palette?.darkVibrantSwatch,
                                         palette?.lightVibrantSwatch,
@@ -165,7 +251,10 @@ class ExtractedColorsBottomSheetDialog : BottomSheetDialogFragment(), View.OnCli
                                         palette?.lightMutedSwatch,
                                 )
 
-                                updateViews(swatchColors)
+                                swatchColors?.let {
+
+                                    updateViews(it)
+                                }
                             }
                         }
 
