@@ -13,7 +13,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
-import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -188,45 +187,7 @@ suspend fun setImageAsHomeScreenWallpaperFromImageUrl(context: Context, imageUrl
     }
 }
 
-suspend fun extractColorsFromTheImage(context: Context, imageUrl: String) {
-
-    withContext(Dispatchers.IO) {
-
-        Glide.with(context)
-                .asBitmap()
-                .load(imageUrl)
-                .into(object : CustomTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-
-                        val paletteBuilder = Palette.Builder(resource)
-
-                        paletteBuilder.maximumColorCount(64).generate { palette ->
-
-                            val swatchList = palette?.swatches
-
-                            val c1 = palette?.vibrantSwatch
-                            val c2 = palette?.darkVibrantSwatch
-                            val c3 = palette?.lightVibrantSwatch
-                            val c4 = palette?.mutedSwatch
-                            val c5 = palette?.darkMutedSwatch
-                            val c6 = palette?.lightMutedSwatch
-
-                            Log.d(TAG, "onResourceReady: vibrantSwatch : $c1")
-                            Log.d(TAG, "onResourceReady: darkVibrantSwatch : $c2")
-                            Log.d(TAG, "onResourceReady: lightVibrantSwatch : $c3")
-                            Log.d(TAG, "onResourceReady: mutedSwatch : $c4")
-                            Log.d(TAG, "onResourceReady: darkMutedSwatch : $c5")
-                            Log.d(TAG, "onResourceReady: lightMutedSwatch : $c6")
-                        }
-                    }
-
-                    override fun onLoadCleared(placeholder: Drawable?) {
-                        //TODO("Not yet implemented")
-                    }
-                })
-
-    }
-}
+fun Int.getHexColorString() = String.format("#%06X", 0xFFFFFFFF and this.toLong())
 
 fun String.isValidString(): Boolean {
 

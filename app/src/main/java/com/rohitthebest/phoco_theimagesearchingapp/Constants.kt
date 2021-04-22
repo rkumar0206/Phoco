@@ -32,4 +32,5 @@ object Constants {
     const val IMAGE_SAVED_TO_COLLECTION_KEY = "vjavjkbvbvbbvbvakjbvkjbkvab"
 
     const val COLLECTION_WITH_SAVED_IMAGES_SELECTION_ID = "jkvbskjvbjkvbkjvbbfjdvnjkvn"
+    const val EXTRACTED_COLORS_IMAGE_URL_KEY = "fjvnsdkkebvubjbhjbhjbHB"
 }

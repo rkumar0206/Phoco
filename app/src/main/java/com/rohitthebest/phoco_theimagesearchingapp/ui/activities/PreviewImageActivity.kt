@@ -16,6 +16,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rohitthebest.phoco_theimagesearchingapp.Constants
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.EXTRACTED_COLORS_IMAGE_URL_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.HOME_FRAGMENT_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_TAG
@@ -23,6 +24,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ActivityPreviewImageBinding
+import com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.dialogFragments.ExtractedColorsBottomSheetDialog
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToImageDownloadLinksAndInfo
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
@@ -146,9 +148,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         binding.nextPreviewImageBtn.setOnClickListener(this)
         binding.previousPreviewImageBtn.setOnClickListener(this)
-        binding.nextClickEffextView.setOnClickListener(this)
-        binding.previousClcikEffectView.setOnClickListener(this)
-
         binding.previewImageIV.setOnClickListener(this)
     }
 
@@ -200,12 +199,14 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             binding.extractImageColorsFAB.id -> {
 
-                CoroutineScope(Dispatchers.Main).launch {
+                val bundle = Bundle()
+                bundle.putString(EXTRACTED_COLORS_IMAGE_URL_KEY, imageDownloadLinksAndInfo.imageUrls.medium)
 
-                    extractColorsFromTheImage(
-                            applicationContext,
-                            imageDownloadLinksAndInfo.imageUrls.medium
-                    )
+                supportFragmentManager.let {
+
+                    ExtractedColorsBottomSheetDialog.newInstance(bundle).apply {
+                        show(it, TAG)
+                    }
                 }
 
                 //todo : extract image colors
@@ -266,20 +267,19 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                     showFabButtonOptions()
                 }
             }
+
+            binding.nextPreviewImageBtn.id -> {
+
+                handleNextImageBtn()
+                showClickEffect(binding.nextClickEffextView)
+            }
+
+            binding.previousPreviewImageBtn.id -> {
+
+                handlePreviousImageBtn()
+                showClickEffect(binding.previousClcikEffectView)
+            }
         }
-
-        if (v?.id == binding.nextPreviewImageBtn.id || v?.id == binding.nextClickEffextView.id) {
-
-            handleNextImageBtn()
-            showClickEffect(binding.nextClickEffextView)
-        }
-
-        if (v?.id == binding.previousPreviewImageBtn.id || v?.id == binding.previousClcikEffectView.id) {
-
-            handlePreviousImageBtn()
-            showClickEffect(binding.previousClcikEffectView)
-        }
-
     }
 
 
