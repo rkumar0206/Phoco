@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/darkVibrantSwatchView"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vibrantSwatchView" />
+
+    <View
+        android:id="@+id/lightVibrantSwatchView"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/darkVibrantSwatchView" />
+
+    <View
+        android:id="@+id/mutedSwatchView"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lightVibrantSwatchView" />
+
+    <View
+        android:id="@+id/darkMutedSwatchView"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mutedSwatchView" />
+
+    <View
+        android:id="@+id/lightMutedSwatchView"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/darkMutedSwatchView" />
+
+    <View
+        android:id="@+id/vibrantSwatchView"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/vibrantSwatchTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/darkVibrantSwatchView"
+        app:layout_constraintEnd_toEndOf="@+id/vibrantSwatchView"
+        app:layout_constraintStart_toStartOf="@+id/vibrantSwatchView"
+        app:layout_constraintTop_toTopOf="@+id/vibrantSwatchView"
+        tools:text="vibrant color" />
+
+    <TextView
+        android:id="@+id/darkVirantSwatchTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/darkVibrantSwatchView"
+        app:layout_constraintEnd_toEndOf="@+id/darkVibrantSwatchView"
+        app:layout_constraintStart_toStartOf="@+id/darkVibrantSwatchView"
+        app:layout_constraintTop_toTopOf="@+id/darkVibrantSwatchView"
+        tools:text="dark vibrant color" />
+
+    <TextView
+        android:id="@+id/lightVibrantSwatchTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/lightVibrantSwatchView"
+        app:layout_constraintEnd_toEndOf="@id/lightVibrantSwatchView"
+        app:layout_constraintStart_toStartOf="@id/lightVibrantSwatchView"
+        app:layout_constraintTop_toTopOf="@id/lightVibrantSwatchView"
+        tools:text="light vibrant color" />
+
+    <TextView
+        android:id="@+id/mutedSwatchTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/mutedSwatchView"
+        app:layout_constraintEnd_toEndOf="@id/mutedSwatchView"
+        app:layout_constraintStart_toStartOf="@id/mutedSwatchView"
+        app:layout_constraintTop_toTopOf="@id/mutedSwatchView"
+        tools:text="muted swatch" />
+
+    <TextView
+        android:id="@+id/darkMutedSwatchTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/darkMutedSwatchView"
+        app:layout_constraintEnd_toEndOf="@id/darkMutedSwatchView"
+        app:layout_constraintStart_toStartOf="@id/darkMutedSwatchView"
+        app:layout_constraintTop_toTopOf="@id/darkMutedSwatchView"
+        tools:text="dark muted swatch" />
+
+    <TextView
+        android:id="@+id/lightMutedSwatchTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="3dp"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/lightMutedSwatchView"
+        app:layout_constraintEnd_toEndOf="@id/lightMutedSwatchView"
+        app:layout_constraintStart_toStartOf="@id/lightMutedSwatchView"
+        app:layout_constraintTop_toTopOf="@id/lightMutedSwatchView"
+        tools:text="light muted swatch" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -200,6 +200,14 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             binding.extractImageColorsFAB.id -> {
 
+                CoroutineScope(Dispatchers.Main).launch {
+
+                    extractColorsFromTheImage(
+                            applicationContext,
+                            imageDownloadLinksAndInfo.imageUrls.medium
+                    )
+                }
+
                 //todo : extract image colors
                 hideDownloadOptions()
             }
