@@ -10,7 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.EXTRACTED_COLORS_IMAGE_URL_KEY
@@ -51,6 +55,8 @@ class ExtractedColorsBottomSheetDialog : BottomSheetDialogFragment(), View.OnCli
 
         _binding = ExtractedColorsBottomSheetLayoutBinding.bind(view)
 
+        binding.progressBarCV.show()
+
         getPassedArguments()
 
         initListeners()
@@ -73,9 +79,7 @@ class ExtractedColorsBottomSheetDialog : BottomSheetDialogFragment(), View.OnCli
             } else {
 
                 Log.d(TAG, "getPassedArguments: Something went wrong in arguments")
-                showToasty(requireContext(), "Something went wrong!!!", ToastyType.ERROR)
-
-                dismiss()
+                showErrorMessageAndDismiss()
             }
         }
     }
@@ -124,8 +128,22 @@ class ExtractedColorsBottomSheetDialog : BottomSheetDialogFragment(), View.OnCli
             Glide.with(context)
                     .asBitmap()
                     .load(imageUrl)
+                    .addListener(object : RequestListener<Bitmap> {
+                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Bitmap>?, isFirstResource: Boolean): Boolean {
+
+                            binding.progressBarCV.hide()
+                            showErrorMessageAndDismiss()
+                            return false
+                        }
+
+                        override fun onResourceReady(resource: Bitmap?, model: Any?, target: Target<Bitmap>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
+                            //TODO("Not yet implemented")
+                            return false
+                        }
+                    })
                     .into(object : CustomTarget<Bitmap>() {
                         override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+
 
                             val paletteBuilder = Palette.Builder(resource)
 
@@ -157,6 +175,12 @@ class ExtractedColorsBottomSheetDialog : BottomSheetDialogFragment(), View.OnCli
                     })
 
         }
+    }
+
+    private fun showErrorMessageAndDismiss() {
+
+        showToasty(requireContext(), "Something went wrong!!!", ToastyType.ERROR)
+        dismiss()
     }
 
     private fun updateViews(swatchColors: SwatchColors) {
@@ -251,7 +275,7 @@ class ExtractedColorsBottomSheetDialog : BottomSheetDialogFragment(), View.OnCli
             binding.lightMutedSwatchTV.hide()
         }
 
-
+        binding.progressBarCV.hide()
     }
 
     companion object {
