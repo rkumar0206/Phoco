@@ -514,7 +514,8 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     }
 
     override fun onImageUserNameClicked(unsplashPhoto: UnsplashPhoto) {
-        //TODO("Not yet implemented")
+
+        openLinkInBrowser(requireContext(), unsplashPhoto.user.attributionUrl)
     }
 
     override fun onAddToFavouriteLongClicked(unsplashPhoto: UnsplashPhoto, position: Int) {
@@ -628,7 +629,8 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     }
 
     override fun onImageUserNameClicked(pixabayPhoto: PixabayPhoto) {
-        //TODO("Not yet implemented")
+
+        openLinkInBrowser(requireContext(), pixabayPhoto.attributionUrl)
     }
 
     override fun onAddToFavouriteLongClicked(pixabayPhoto: PixabayPhoto, position: Int) {
@@ -743,7 +745,8 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     }
 
     override fun onImageUserNameClicked(pexelPhoto: PexelPhoto) {
-        //TODO("Not yet implemented")
+
+        openLinkInBrowser(requireContext(), pexelPhoto.photographer_url)
     }
 
     override fun onAddToFavouriteLongClicked(pexelPhoto: PexelPhoto, position: Int) {

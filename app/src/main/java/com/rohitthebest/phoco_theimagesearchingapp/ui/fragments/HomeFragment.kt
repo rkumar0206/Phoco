@@ -326,7 +326,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
     override fun onImageUserNameClicked(unsplashPhoto: UnsplashPhoto) {
 
         Log.d(TAG, "onImageUserNameClicked: ")
-        //TODO("Not yet implemented")
+
+        openLinkInBrowser(requireContext(), unsplashPhoto.user.attributionUrl)
+
     }
 
 

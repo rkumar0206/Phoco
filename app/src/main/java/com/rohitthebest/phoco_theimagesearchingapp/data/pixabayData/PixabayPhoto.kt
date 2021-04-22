@@ -23,4 +23,6 @@ data class PixabayPhoto(
         val webformatHeight: Int,
         val webformatURL: String,
         val webformatWidth: Int
-)
+) {
+    val attributionUrl get() = "https://pixabay.com/users/$user-$user_id/"
+}

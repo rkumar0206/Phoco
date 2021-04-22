@@ -92,6 +92,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         wallpaperManager = WallpaperManager.getInstance(applicationContext)
 
+        enableOrDisableDownloadOptions(false)
     }
 
     private fun getImageList() {
@@ -209,7 +210,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                     }
                 }
 
-                //todo : extract image colors
                 hideDownloadOptions()
             }
 

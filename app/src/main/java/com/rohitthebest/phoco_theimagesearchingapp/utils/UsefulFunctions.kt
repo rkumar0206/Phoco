@@ -10,6 +10,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -517,6 +518,25 @@ fun copyToClipBoard(activity: Activity, text: String) {
     val clipData = ClipData.newPlainText("text", text)
 
     clipboardManager.setPrimaryClip(clipData)
+}
+
+fun openLinkInBrowser(context: Context, url: String?) {
+
+    if (context.isInternetAvailable()) {
+        url?.let {
+
+            try {
+                Log.d(TAG, "Loading Url in default browser.")
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(it))
+                context.startActivity(intent)
+            } catch (e: Exception) {
+                showToast(context, e.message.toString())
+                e.printStackTrace()
+            }
+        }
+    } else {
+        context.showNoInternetMessage()
+    }
 }
 
 
