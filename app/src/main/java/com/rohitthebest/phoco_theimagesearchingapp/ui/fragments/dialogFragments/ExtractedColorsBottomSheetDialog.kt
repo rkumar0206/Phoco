@@ -12,6 +12,7 @@ import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
@@ -74,6 +75,12 @@ class ExtractedColorsBottomSheetDialog : BottomSheetDialogFragment(), View.OnCli
             if (imageUrl.isValidString()) {
 
                 Log.d(TAG, "getPassedArguments: $imageUrl")
+
+                Glide.with(requireContext())
+                        .load(imageUrl)
+                        .error(R.drawable.ic_outline_error_outline_24)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(binding.extractedColorImage)
 
                 CoroutineScope(Dispatchers.Main).launch {
 
