@@ -47,7 +47,7 @@ class HomeRVAdapter(private var savedImagesIdList: List<String> = emptyList()) :
                             .error(R.drawable.ic_outline_account_circle_24)
                             .into(imageUserImage)
 
-                    imageUserNameTV.text = it.user.username
+                    imageUserNameTV.text = it.user.name
 
                     if (savedImagesIdList.isNotEmpty()) {
 

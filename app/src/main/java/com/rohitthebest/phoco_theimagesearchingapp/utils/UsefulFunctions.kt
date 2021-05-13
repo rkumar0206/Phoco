@@ -388,11 +388,15 @@ fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
                 apiInfo = APIsInfo(apiName, R.drawable.logo_unsplash)
                 imageId = unsplashPhoto.id
                 imageName = unsplashPhoto.alt_description ?: generateKey()
-                imageUrls = ImageDownloadLinksAndInfo.ImageUrls(unsplashPhoto.urls.small, unsplashPhoto.urls.regular, unsplashPhoto.links.download)
+                imageUrls = ImageDownloadLinksAndInfo.ImageUrls(
+                    unsplashPhoto.urls.small,
+                    unsplashPhoto.urls.regular,
+                    unsplashPhoto.links.download
+                )
                 userInfo = UserInfo(
-                        unsplashPhoto.user.name,
-                        unsplashPhoto.user.id,
-                        unsplashPhoto.user.profile_image.medium
+                    userName = unsplashPhoto.user.name,
+                    userIdOrUserName = unsplashPhoto.user.username,
+                    userImageUrl = unsplashPhoto.user.profile_image.medium
                 )
                 uid = ""
             }
@@ -434,9 +438,9 @@ fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
                 imageUrls = ImageDownloadLinksAndInfo
                     .ImageUrls(pexelPhoto.src.medium, pexelPhoto.src.large, pexelPhoto.src.original)
                 userInfo = UserInfo(
-                    pexelPhoto.photographer,
-                    pexelPhoto.photographer_id.toString(),
-                    pexelPhoto.photographer_url
+                    userName = pexelPhoto.photographer,
+                    userIdOrUserName = pexelPhoto.photographer_id.toString(),
+                    userImageUrl = pexelPhoto.photographer_url
                 )
                 uid = ""
             }

@@ -133,8 +133,20 @@ class CollectionWithSavedImagesAdapter :
 
                 if (checkForNullability()) {
 
-                    mListener!!.onDownloadImageBtnClicked(getItem(absoluteAdapterPosition), binding.downloadImageBtn)
+                    mListener!!.onDownloadImageBtnClicked(
+                        getItem(absoluteAdapterPosition),
+                        binding.downloadImageBtn
+                    )
                 }
+            }
+
+            binding.imageUserNameTV.setOnClickListener {
+
+                if (checkForNullability()) {
+
+                    mListener!!.onUserTextViewClicked(getItem(absoluteAdapterPosition))
+                }
+
             }
         }
 
@@ -179,6 +191,7 @@ class CollectionWithSavedImagesAdapter :
     interface OnClickListener {
 
         fun onItemClick(savedImage: SavedImage)
+        fun onUserTextViewClicked(savedImage: SavedImage)
         fun onDownloadImageBtnClicked(savedImage: SavedImage, view: View)
     }
 

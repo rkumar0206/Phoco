@@ -235,25 +235,58 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
         Log.d(TAG, "onItemClick: $savedImage")
 
         val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
-                savedImage.imageUrls,
-                receivedCollectionKey,  /*passing collection key to previewImageActivity instead of image
+            savedImage.imageUrls,
+            receivedCollectionKey,  /*passing collection key to previewImageActivity instead of image
                  name and next every thing will be handled in the PreviewImageActivity*/
-                SAVED_IMAGE_TAG,
-                savedImage.imageId
+            SAVED_IMAGE_TAG,
+            savedImage.imageId
         )
 
         val intent = Intent(requireContext(), PreviewImageActivity::class.java)
-        intent.putExtra(PREVIEW_IMAGE_MESSAGE_KEY, convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo))
+        intent.putExtra(
+            PREVIEW_IMAGE_MESSAGE_KEY,
+            convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
+        )
         startActivity(intent)
+    }
+
+    override fun onUserTextViewClicked(savedImage: SavedImage) {
+
+        when (savedImage.apiInfo.apiName) {
+
+            APIName.UNSPLASH -> {
+
+                val link =
+                    "https://unsplash.com/${savedImage.userInfo.userIdOrUserName}?utm_source=ImageSearchApp&utm_medium=referral"
+
+                openLinkInBrowser(requireContext(), link)
+            }
+
+            APIName.PEXELS -> {
+
+                openLinkInBrowser(requireContext(), savedImage.userInfo.userImageUrl)
+            }
+
+            APIName.PIXABAY -> {
+
+                val link =
+                    "https://pixabay.com/users/${savedImage.userInfo.userName}-${savedImage.userInfo.userIdOrUserName}/"
+                openLinkInBrowser(requireContext(), link)
+            }
+
+            else -> {
+                openLinkInBrowser(requireContext(), savedImage.imageUrls.original)
+            }
+        }
     }
 
     override fun onDownloadImageBtnClicked(savedImage: SavedImage, view: View) {
 
         val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
-                savedImage.imageUrls,
-                savedImage.imageName,
-                "",
-                ""
+            savedImage.imageUrls,
+            savedImage.imageName,
+            "",
+            ""
         )
 
         showDownloadOptionPopupMenu(
@@ -465,6 +498,10 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
         super.onDestroyView()
 
         _binding = null
+
+        //unregister listener here
+        backPressedDispatcherCallback.isEnabled = false
+        backPressedDispatcherCallback.remove()
     }
 
 }
