@@ -1,6 +1,7 @@
 package com.rohitthebest.phoco_theimagesearchingapp.data.phocoData
 
 data class PhocoUser(
+        val pk: Int,
         val created: String,
         val updated: String,
         val name: String,
