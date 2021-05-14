@@ -35,7 +35,7 @@ class WebPhotoViewModel @Inject constructor(
                         _webImage.postValue(Resources.Success(it.body()))
                     } else {
 
-                        _webImage.postValue(Resources.Error(it.errorBody().toString()))
+                        _webImage.postValue(Resources.Error(it.message()))
                     }
                 }
             }

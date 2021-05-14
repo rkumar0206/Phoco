@@ -44,7 +44,7 @@ class UnsplashViewModel @Inject constructor(
 
                     if (it.isSuccessful) {
 
-                        _unplashImageById.postValue(Resources.Success(it.body()))
+                        _unplashImageById.postValue(Resources.Success(it.body(), it.code().toString()))
                     } else {
 
                         _unplashImageById.postValue(Resources.Error(message = it.message()))
