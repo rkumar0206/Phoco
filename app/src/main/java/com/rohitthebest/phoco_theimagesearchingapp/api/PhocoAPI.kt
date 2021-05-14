@@ -6,11 +6,12 @@ import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.SignUp
 import retrofit2.Response
 import retrofit2.http.*
 
-data class User(
+data class UserResponse(
+        val pk: Int,
         val username: String,
         val email: String,
         val first_name: String,
-        val second_name: String?
+        val last_name: String?
 )
 
 data class Tokens(
@@ -22,10 +23,10 @@ interface PhocoAPI {
 
     //----------------------------- Sign up -----------------------------------
 
-    @POST("/signup/")
+    @POST("/auth/signup/")
     suspend fun signUpUser(
             @Body signUp: SignUp
-    ): Response<User>   // status 201 created
+    ): Response<UserResponse>   // status 201 created
 
     //-------------------------------------------------------------------------------
 
@@ -33,7 +34,7 @@ interface PhocoAPI {
     //------------------------------ Log In ---------------------------------------
 
     @FormUrlEncoded
-    @POST("/login/")
+    @POST("/auth/login/")
     suspend fun loginUser(
             @Field("username") username: String,
             @Field("password") password: String
@@ -43,8 +44,8 @@ interface PhocoAPI {
     //------------------------------ refresh tokens --------------------------------------
 
     @FormUrlEncoded
-    @POST("/login/refresh/")
-    suspend fun getRefreshToken(
+    @POST("/auth/login/refresh/")
+    suspend fun getNewTokens(
             @Field("refresh") refreshToken: String
     ): Response<Tokens>
     //-------------------------------------------------------------------------------
@@ -64,15 +65,15 @@ interface PhocoAPI {
     //--------------------------- Update User details --------------------------------------
 
     @FormUrlEncoded
-    @PUT("/update_user_detail/{pk}/")
+    @PUT("/auth/update_user_detail/{pk}/")
     suspend fun updateUser(
             @Path("pk") primaryKey: Int,
             @Field("username") username: String,
             @Field("email") email: String,
             @Field("first_name") firstName: String,
-            @Field("last_name") lastName: String = "",
+            @Field("last_name") lastName: String? = "",
             @Header("Authorization") accessToken: String
-    ): Response<User>
+    ): Response<UserResponse>
 
     //-------------------------------------------------------------------------------
 
@@ -80,14 +81,14 @@ interface PhocoAPI {
     //------------------------------ Change user password ---------------------------------
 
     @FormUrlEncoded
-    @PUT("/change_password/{pk}/")
+    @PUT("/auth/change_password/{pk}/")
     suspend fun changeUserPassword(
-            @Path("pk") primaryKey: String,
+            @Path("pk") primaryKey: Int,
             @Header("Authorization") accessToken: String,
             @Field("old_password") oldPassword: String,
             @Field("password") newPassword: String,
             @Field("password2") confirmPassword: String
-    ): Response<User>   // status 200OK
+    ): Response<UserResponse>   // status 200OK
 
     //-------------------------------------------------------------------------------
 
