@@ -188,7 +188,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
                 android:layout_marginEnd="16dp"
-                android:text="Sign Up"
+                android:text="@string/sign_up"
                 android:textAllCaps="false" />
 
 
@@ -199,7 +199,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:padding="4dp"
-                android:text="Already have an account? Login"
+                android:text="@string/already_have_an_account_login"
                 android:textColor="@color/text_color" />
 
             <View
