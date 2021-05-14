@@ -12,6 +12,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.PhocoUser
 import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.SignUp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
@@ -111,7 +112,7 @@ class PhocoViewModel @Inject constructor(
         }
     }
 
-    fun getPhocoUser(primaryKey: Int, accessToken: String) {
+    fun getPhocoUser(primaryKey: Int? = null, username: String? = null, accessToken: String) {
 
         try {
 
@@ -119,23 +120,43 @@ class PhocoViewModel @Inject constructor(
 
                 _phocoPhocoUserResponse.postValue(Resources.Loading())
 
-                repository.getPhocoUser(primaryKey = primaryKey, accessToken).let {
+                if (primaryKey != null) {
 
-                    if (it.isSuccessful) {
+                    repository.getPhocoUserByPrimaryKey(primaryKey = primaryKey, accessToken).let {
 
-                        _phocoPhocoUserResponse.postValue(Resources.Success(
-                                it.body(),
-                                it.code().toString()
-                        ))
-                    } else {
+                        handlePhocoUserValue(it)
+                    }
 
-                        _phocoPhocoUserResponse.postValue(Resources.Error(it.message()))
+                } else {
+
+                    username?.let {
+
+                        repository.getPhocoUserByUsername(it, accessToken).let { response ->
+
+                            handlePhocoUserValue(response)
+                        }
                     }
                 }
+
             }
 
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
+    }
+
+    private fun handlePhocoUserValue(response: Response<PhocoUser>) {
+
+        if (response.isSuccessful) {
+
+            _phocoPhocoUserResponse.postValue(Resources.Success(
+                    response.body(),
+                    response.code().toString()
+            ))
+        } else {
+
+            _phocoPhocoUserResponse.postValue(Resources.Error(response.message()))
+        }
+
     }
 }

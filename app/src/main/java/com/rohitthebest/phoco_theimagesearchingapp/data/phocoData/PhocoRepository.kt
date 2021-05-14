@@ -18,7 +18,11 @@ class PhocoRepository @Inject constructor(
 
     suspend fun getNewTokens(refreshToken: String) = phocoAPI.getNewTokens(refreshToken)
 
-    suspend fun getPhocoUser(primaryKey: Int, accessToken: String) = phocoAPI.getPhocoUser(primaryKey, accessToken)
+    suspend fun getPhocoUserByPrimaryKey(primaryKey: Int, accessToken: String) =
+            phocoAPI.getPhocoUserByPrimaryKey(primaryKey, accessToken)
+
+    suspend fun getPhocoUserByUsername(username: String, accessToken: String) =
+            phocoAPI.getPhocoUserByUsername(username, accessToken)
 
     suspend fun updateUserDetails(userResponse: UserResponse, accessToken: String) =
             phocoAPI.updateUser(

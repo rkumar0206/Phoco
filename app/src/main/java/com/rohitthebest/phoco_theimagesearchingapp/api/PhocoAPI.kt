@@ -53,9 +53,18 @@ interface PhocoAPI {
 
     //------------------------------- User Details -----------------------------------
 
+    // call when only primary key of the user is available
     @GET("/user_detail/{pk}/")
-    suspend fun getPhocoUser(
+    suspend fun getPhocoUserByPrimaryKey(
             @Path("pk") primaryKey: Int,
+            @Header("Authorization") accessToken: String
+    ): Response<PhocoUser>
+
+
+    // call at the time after the login and getting the access token
+    @GET("/user_detail/{username}/")
+    suspend fun getPhocoUserByUsername(
+            @Path("username") username: String,
             @Header("Authorization") accessToken: String
     ): Response<PhocoUser>
 
