@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.api.UserResponse
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
@@ -29,7 +30,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         _binding = FragmentProfileBinding.bind(view)
 
-
+        findNavController().navigate(R.id.action_profileFragment_to_signUpFragment)
     }
 
     private fun observeSignUpResponse() {

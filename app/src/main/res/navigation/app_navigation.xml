@@ -12,7 +12,10 @@
         tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_homeFragment_to_chooseFromCollectionsFragment"
-            app:destination="@id/chooseFromCollectionsFragment" />
+            app:destination="@id/chooseFromCollectionsFragment"
+
+
+            />
     </fragment>
     <fragment
         android:id="@+id/favouritesFragment"
@@ -32,7 +35,15 @@
         android:id="@+id/profileFragment"
         android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.ProfileFragment"
         android:label="ProfileFragment"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profileFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
     <fragment
         android:id="@+id/searchFragment"
         android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.SearchFragment"
@@ -85,5 +96,14 @@
         <action
             android:id="@+id/action_collectionFragmentWithSavedImages_to_addCollectionFragment"
             app:destination="@id/addCollectionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.SignUpFragment"
+        android:label="fragment_signup"
+        tools:layout="@layout/fragment_signup">
+        <action
+            android:id="@+id/action_signUpFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
     </fragment>
 </navigation>

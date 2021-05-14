@@ -17,4 +17,12 @@
         <item name="fontFamily">@font/sumana</item>
         <item name="actionModeCloseDrawable">@drawable/ic_baseline_close_24</item>
     </style>
+
+    <style name="SignUpTextInputLayoutStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+
+        <item name="boxStrokeColor">@color/button_color</item>
+
+    </style>
+
+
 </resources>
