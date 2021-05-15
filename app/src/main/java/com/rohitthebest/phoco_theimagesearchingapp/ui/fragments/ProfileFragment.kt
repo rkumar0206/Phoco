@@ -60,6 +60,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         }
 
         observeTokenResponse()
+        observePhocoUserResponse()
 
         initListeners()
         textWatchers()
@@ -215,8 +216,31 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                     Log.d(TAG, "observeTokenResponse: ${it.data}")
 
-                    // save the tokens
-                    // get the phoco user info
+                    authTokens = AuthToken(
+                        it.data?.refreshToken.toString(),
+                        it.data?.accessToken.toString(),
+                        System.currentTimeMillis()
+                    )
+
+                    //todo: save the tokens
+
+
+                    // getting the user info
+
+                    authTokens?.let { tokens ->
+
+                        if (requireContext().isInternetAvailable()) {
+
+                            phocoViewModel.getPhocoUser(
+                                primaryKey = null,
+                                username = binding.loginUsernameET.editText?.text.toString().trim(),
+                                accessToken = "Bearer ${tokens.accessToken}"
+                            )
+                        } else {
+                            requireContext().showNoInternetMessage()
+                        }
+                    }
+
                 }
 
                 else -> {
@@ -224,6 +248,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                     Log.d(TAG, "observeTokenResponse: Error occurred")
 
                     Log.d(TAG, "observeTokenResponse: Error : ${it.message}")
+
+                    binding.loginUsernameET.editText?.error =
+                        "No active account found with the given credential"
+                    binding.loginUsernameET.editText?.showKeyboard(requireActivity())
                 }
             }
         })
@@ -233,22 +261,29 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         phocoViewModel.phocoPhocoUserResponse.observe(viewLifecycleOwner, {
 
-
             when (it) {
 
                 is Resources.Loading -> {
 
+                    Log.d(TAG, "observePhocoUserResponse: Loading...")
                 }
 
                 is Resources.Success -> {
 
+                    Log.d(TAG, "observePhocoUserResponse: Phoco User received")
+
+                    Log.d(TAG, "observePhocoUserResponse: ${it.data}")
+
+                    //todo :  save the user
                 }
 
                 else -> {
 
+                    Log.d(TAG, "observePhocoUserResponse: Error occurred")
+
+                    Log.d(TAG, "observePhocoUserResponse: error : ${it.message}")
                 }
             }
-
         })
     }
 
