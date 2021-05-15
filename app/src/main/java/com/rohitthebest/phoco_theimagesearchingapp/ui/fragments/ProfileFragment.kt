@@ -2,10 +2,17 @@ package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.AuthToken
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
@@ -34,6 +41,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
         _binding = FragmentProfileBinding.bind(view)
 
+        setUpSignUpTextViewClick()
+
         authTokens = getSavedAuthToken(requireActivity())
 
         if (authTokens == null) {
@@ -53,6 +62,41 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
             // else show the login screen again
         }
+    }
+
+    private fun setUpSignUpTextViewClick() {
+
+        val text = getString(R.string.don_t_have_an_account_sign_up)
+
+        val startIndex = 23
+        val endIndex = text.length
+
+        val spannableString = SpannableString(text)
+
+        val signUpClickableSpan = object : ClickableSpan() {
+
+            override fun onClick(widget: View) {
+
+                // navigate to signup page
+                findNavController().navigate(R.id.action_profileFragment_to_signUpFragment)
+            }
+
+            override fun updateDrawState(ds: TextPaint) {
+                super.updateDrawState(ds)
+
+                ds.color = ContextCompat.getColor(requireContext(), R.color.color_pink)
+                ds.isUnderlineText = false
+            }
+        }
+        spannableString.setSpan(
+            signUpClickableSpan,
+            startIndex,
+            endIndex,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        binding.dontHaveAccountTV.text = spannableString
+        binding.dontHaveAccountTV.movementMethod = LinkMovementMethod.getInstance()
     }
 
     private fun observeSignUpResponse() {

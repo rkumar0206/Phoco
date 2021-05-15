@@ -56,6 +56,10 @@ class MainActivity : AppCompatActivity() {
                     showBottomNav()
                     handleButtons(R.id.searchFragment)
                 }
+                R.id.signUpFragment -> {
+
+                    showBottomNav()
+                }
 
                 else -> hideBottomNav()
             }

@@ -18,7 +18,10 @@ class SignUpFragment : Fragment(R.layout.fragment_signup) {
 
         _binding = FragmentSignupBinding.bind(view)
 
+        binding.backBtn.setOnClickListener {
 
+            requireActivity().onBackPressed()
+        }
     }
 
     override fun onDestroyView() {
