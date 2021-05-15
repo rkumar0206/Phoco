@@ -100,7 +100,23 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         observePhocoUserResponse()
 
         initListeners()
+        initProfileToolbarListeners()
         textWatchers()
+    }
+
+    private fun initProfileToolbarListeners() {
+
+        binding.profileToolbar.setNavigationOnClickListener {
+
+            requireActivity().onBackPressed()
+        }
+
+        binding.profileToolbar.menu.findItem(R.id.edit_profile).setOnMenuItemClickListener {
+
+            showToast(requireContext(), "Edit button clicked")
+            true
+        }
+
     }
 
     private fun textWatchers() {
