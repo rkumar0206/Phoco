@@ -27,7 +27,7 @@ private const val TAG = "ProfileFragment"
 
 @AndroidEntryPoint
 @SuppressLint("SetTextI18n")
-class ProfileFragment : Fragment(R.layout.fragment_profile) {
+class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListener {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
@@ -62,7 +62,33 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
 
             // else show the login screen again
         }
+
+        initListeners()
     }
+
+    private fun initListeners() {
+
+        binding.loginBtn.setOnClickListener(this)
+        binding.forgotPasswordTV.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+
+        when (v?.id) {
+
+            binding.loginBtn.id -> {
+
+                // login the user after the validation
+            }
+
+            binding.forgotPasswordTV.id -> {
+
+                // open webview and send the email
+            }
+        }
+
+    }
+
 
     private fun setUpSignUpTextViewClick() {
 
