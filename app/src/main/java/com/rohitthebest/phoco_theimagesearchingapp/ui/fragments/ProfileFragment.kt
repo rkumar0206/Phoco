@@ -59,6 +59,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
             // else show the login screen again
         }
 
+        observeTokenResponse()
+
         initListeners()
         textWatchers()
     }
@@ -96,9 +98,19 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                 if (validateFields()) {
 
-                    showToast(requireContext(), "Everything is OK")
+                    Log.d(TAG, "onClick: Validation successful")
+
+                    if (requireContext().isInternetAvailable()) {
+
+                        phocoViewModel.loginUser(
+                            binding.loginUsernameET.editText?.text.toString().trim(),
+                            binding.loginPasswordET.editText?.text.toString().trim()
+                        )
+                    } else {
+
+                        requireContext().showNoInternetMessage()
+                    }
                 }
-                // login the user after the validation
             }
 
             binding.forgotPasswordTV.id -> {
@@ -146,21 +158,21 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
     private fun validateFields(): Boolean {
 
-        if (!binding.loginUsernameET.editText?.text.toString().isValidString()) {
+        if (!binding.loginUsernameET.editText?.text.toString().trim().isValidString()) {
 
             binding.loginUsernameET.editText?.error = "Please specify username"
             return false
         }
 
-        if (!binding.loginPasswordET.editText?.text.toString().isValidString()) {
+        if (!binding.loginPasswordET.editText?.text.toString().trim().isValidString()) {
 
             binding.loginPasswordET.editText?.showKeyboard(requireActivity())
             binding.loginPasswordET.error = "Please enter the password"
             return false
         }
 
-        return binding.loginUsernameET.editText?.text.toString().isValidString()
-                && binding.loginPasswordET.editText?.text.toString().isValidString()
+        return binding.loginUsernameET.editText?.text.toString().trim().isValidString()
+                && binding.loginPasswordET.editText?.text.toString().trim().isValidString()
     }
 
     private fun observeSignUpResponse() {
@@ -193,15 +205,25 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                 is Resources.Loading -> {
 
+                    Log.d(TAG, "observeTokenResponse: Loading....")
+                    // show loading ui
                 }
 
                 is Resources.Success -> {
 
+                    Log.d(TAG, "observeTokenResponse: Login Successful")
+
+                    Log.d(TAG, "observeTokenResponse: ${it.data}")
+
+                    // save the tokens
+                    // get the phoco user info
                 }
 
                 else -> {
 
+                    Log.d(TAG, "observeTokenResponse: Error occurred")
 
+                    Log.d(TAG, "observeTokenResponse: Error : ${it.message}")
                 }
             }
         })
