@@ -589,3 +589,7 @@ fun getSavedAuthToken(activity: Activity): AuthToken? {
 }
 
 
+fun calculateNumberOfDays(startDateTimestamp: Long, endDateTimestamp: Long): Int =
+    ((endDateTimestamp - startDateTimestamp) / (1000 * 60 * 60 * 24)).toInt()
+
+

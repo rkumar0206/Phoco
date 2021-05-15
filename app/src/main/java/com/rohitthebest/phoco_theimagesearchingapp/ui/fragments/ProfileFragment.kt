@@ -50,13 +50,30 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
             Log.d(TAG, "onViewCreated: auth token is not null")
 
-            binding.loginCL.hide()
-
             // check if last updated date for getting the tokens is not more than 15 days
 
-            // if not : refresh the token
+            authTokens?.let {
 
-            // else show the login screen again
+                if (calculateNumberOfDays(
+                        it.dateWhenTokenReceived,
+                        System.currentTimeMillis()
+                    ) <= 15
+                ) {
+
+                    binding.loginCL.hide()
+                    Log.d(TAG, "onViewCreated: getting new tokens using refresh token")
+                    phocoViewModel.getNewTokens(it.refreshToken)
+                } else {
+
+                    Log.d(
+                        TAG,
+                        "onViewCreated: number of days is greater than 15 and login is required"
+                    )
+
+                    //login again to receive new refresh token and access token
+                    binding.loginCL.show()
+                }
+            }
         }
 
         observeTokenResponse()
@@ -176,31 +193,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                 && binding.loginPasswordET.editText?.text.toString().trim().isValidString()
     }
 
-    private fun observeSignUpResponse() {
-
-        phocoViewModel.phocoUserResponseSignUp.observe(viewLifecycleOwner, {
-
-            when (it) {
-
-                is Resources.Loading -> {
-
-                }
-
-                is Resources.Success -> {
-
-                }
-
-                else -> {
-
-                }
-            }
-        })
-    }
-
     private fun observeTokenResponse() {
 
         phocoViewModel.phocoTokenResponse.observe(viewLifecycleOwner, {
-
 
             when (it) {
 
@@ -218,23 +213,23 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                     authTokens = AuthToken(
                         it.data?.refreshToken.toString(),
-                        it.data?.accessToken.toString(),
+                        "Bearer " + it.data?.accessToken.toString(),
                         System.currentTimeMillis()
                     )
-
-                    //todo: save the tokens
-
 
                     // getting the user info
 
                     authTokens?.let { tokens ->
+
+                        // saving the auth tokens to shared preference
+                        saveAuthTokenInSharedPreferences(requireActivity(), tokens)
 
                         if (requireContext().isInternetAvailable()) {
 
                             phocoViewModel.getPhocoUser(
                                 primaryKey = null,
                                 username = binding.loginUsernameET.editText?.text.toString().trim(),
-                                accessToken = "Bearer ${tokens.accessToken}"
+                                accessToken = tokens.accessToken
                             )
                         } else {
                             requireContext().showNoInternetMessage()
