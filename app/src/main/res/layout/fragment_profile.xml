@@ -166,6 +166,7 @@
             android:layout_height="100dp"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
+            android:padding="5dp"
             app:cardCornerRadius="10000dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
@@ -173,11 +174,11 @@
 
             <ImageView
                 android:id="@+id/profileImageIV"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:scaleType="centerCrop"
-                tools:srcCompat="@tools:sample/avatars" />
+                app:srcCompat="@drawable/ic_round_account_circle_24" />
         </com.google.android.material.card.MaterialCardView>
 
         <TextView

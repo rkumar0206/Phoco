@@ -11,9 +11,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.AuthToken
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
+import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.PhocoUser
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentProfileBinding
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PhocoViewModel
@@ -31,6 +34,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
     private val phocoViewModel by viewModels<PhocoViewModel>()
 
     private var authTokens: AuthToken? = null
+    private var phocoUser: PhocoUser? = null
+
+    private var isLoggedInBefore = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,6 +52,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
             Log.d(TAG, "onViewCreated: auth token is null")
 
             binding.loginCL.show()
+            binding.profileCL.hide()
+
+            isLoggedInBefore = false
         } else {
 
             Log.d(TAG, "onViewCreated: auth token is not null")
@@ -61,7 +70,18 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                     binding.loginCL.hide()
                     Log.d(TAG, "onViewCreated: getting new tokens using refresh token")
-                    phocoViewModel.getNewTokens(it.refreshToken)
+
+                    //todo : remove the block comment after developemnt mode
+                    /*phocoViewModel.getNewTokens(it.refreshToken)*/
+
+                    binding.profileCL.show()
+
+                    isLoggedInBefore = true
+
+                    phocoUser = getUserProfileData(requireActivity())
+
+                    phocoUser?.let { user -> updateUI(user) }
+
                 } else {
 
                     Log.d(
@@ -71,6 +91,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                     //login again to receive new refresh token and access token
                     binding.loginCL.show()
+                    binding.profileCL.hide()
                 }
             }
         }
@@ -216,7 +237,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                         System.currentTimeMillis()
                     )
 
-                    // getting the user info
 
                     authTokens?.let { tokens ->
 
@@ -225,9 +245,11 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                         if (requireContext().isInternetAvailable()) {
 
+                            // getting the user info
                             phocoViewModel.getPhocoUser(
                                 primaryKey = null,
-                                username = binding.loginUsernameET.editText?.text.toString().trim(),
+                                username = if (isLoggedInBefore) phocoUser?.username
+                                else binding.loginUsernameET.editText?.text.toString().trim(),
                                 accessToken = tokens.accessToken
                             )
                         } else {
@@ -273,8 +295,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                     phocoUser?.let { user ->
 
                         saveUserProfileSharedPreferences(requireActivity(), user)
-
                         Log.d(TAG, "observePhocoUserResponse: user saved in shared preference")
+
+                        updateUI(user)
                     }
 
                 }
@@ -289,6 +312,21 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                 }
             }
         })
+    }
+
+    private fun updateUI(phocoUser: PhocoUser) {
+
+        binding.loginCL.hide()
+        binding.profileCL.show()
+
+        binding.nameOfTheUserTV.text = phocoUser.name
+        binding.profileUsernameTV.text = phocoUser.username
+
+        Glide.with(this)
+            .load(phocoUser.user_image_url)
+            .placeholder(R.drawable.ic_round_account_circle_24)
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .into(binding.profileImageIV)
     }
 
 
