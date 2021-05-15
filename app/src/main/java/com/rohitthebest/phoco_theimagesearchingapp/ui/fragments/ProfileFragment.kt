@@ -2,9 +2,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.TextPaint
+import android.text.*
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.Log
@@ -17,9 +15,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.AuthToken
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentProfileBinding
-import com.rohitthebest.phoco_theimagesearchingapp.utils.getSavedAuthToken
-import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
-import com.rohitthebest.phoco_theimagesearchingapp.utils.show
+import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PhocoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -64,6 +60,26 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         }
 
         initListeners()
+        textWatchers()
+    }
+
+    private fun textWatchers() {
+
+        binding.loginPasswordET.editText?.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+                if (s?.isEmpty()!!) {
+
+                    binding.loginPasswordET.error = "Please enter the password"
+                } else {
+
+                    binding.loginPasswordET.error = null
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
 
     private fun initListeners() {
@@ -78,6 +94,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
             binding.loginBtn.id -> {
 
+                if (validateFields()) {
+
+                    showToast(requireContext(), "Everything is OK")
+                }
                 // login the user after the validation
             }
 
@@ -88,7 +108,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         }
 
     }
-
 
     private fun setUpSignUpTextViewClick() {
 
@@ -123,6 +142,25 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         binding.dontHaveAccountTV.text = spannableString
         binding.dontHaveAccountTV.movementMethod = LinkMovementMethod.getInstance()
+    }
+
+    private fun validateFields(): Boolean {
+
+        if (!binding.loginUsernameET.editText?.text.toString().isValidString()) {
+
+            binding.loginUsernameET.editText?.error = "Please specify username"
+            return false
+        }
+
+        if (!binding.loginPasswordET.editText?.text.toString().isValidString()) {
+
+            binding.loginPasswordET.editText?.showKeyboard(requireActivity())
+            binding.loginPasswordET.error = "Please enter the password"
+            return false
+        }
+
+        return binding.loginUsernameET.editText?.text.toString().isValidString()
+                && binding.loginPasswordET.editText?.text.toString().isValidString()
     }
 
     private fun observeSignUpResponse() {
