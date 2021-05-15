@@ -20,13 +20,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.rohitthebest.phoco_theimagesearchingapp.Constants.AUTH_TOKEN_SHARED_PREFERENCE_KEY
-import com.rohitthebest.phoco_theimagesearchingapp.Constants.AUTH_TOKEN_SHARED_PREFERENCE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.NO_INTERNET_MESSAGE
 import com.rohitthebest.phoco_theimagesearchingapp.R
-import com.rohitthebest.phoco_theimagesearchingapp.data.AuthToken
 import com.rohitthebest.phoco_theimagesearchingapp.data.pexelsData.PexelPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
@@ -545,46 +540,6 @@ fun openLinkInBrowser(context: Context, url: String?) {
         }
     } else {
         context.showNoInternetMessage()
-    }
-}
-
-fun saveAuthTokenInSharedPreferences(
-    activity: Activity,
-    authToken: AuthToken
-) {
-
-    val sharedPreference =
-        activity.getSharedPreferences(AUTH_TOKEN_SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
-
-    val edit = sharedPreference.edit()
-
-    val gson = Gson()
-
-    val authTokenJson = gson.toJson(authToken)
-
-    edit.putString(AUTH_TOKEN_SHARED_PREFERENCE_KEY, authTokenJson)
-
-    edit.apply()
-}
-
-fun getSavedAuthToken(activity: Activity): AuthToken? {
-
-    val sharedPreference =
-        activity.getSharedPreferences(AUTH_TOKEN_SHARED_PREFERENCE_NAME, Context.MODE_PRIVATE)
-
-    val authTokenJsonString = sharedPreference.getString(AUTH_TOKEN_SHARED_PREFERENCE_KEY, "")
-
-    return if (authTokenJsonString != null && authTokenJsonString.isValidString()) {
-
-        val gson = Gson()
-
-        val type = object : TypeToken<AuthToken>() {}.type
-
-        gson.fromJson(authTokenJsonString, type)
-
-    } else {
-
-        null
     }
 }
 
