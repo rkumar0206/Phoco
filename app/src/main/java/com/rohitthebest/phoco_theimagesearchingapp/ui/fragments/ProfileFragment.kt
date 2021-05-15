@@ -51,13 +51,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
             Log.d(TAG, "onViewCreated: auth token is not null")
 
             // check if last updated date for getting the tokens is not more than 15 days
-
             authTokens?.let {
 
                 if (calculateNumberOfDays(
                         it.dateWhenTokenReceived,
                         System.currentTimeMillis()
-                    ) <= 15
+                    ) < 15
                 ) {
 
                     binding.loginCL.hide()
@@ -269,7 +268,15 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                     Log.d(TAG, "observePhocoUserResponse: ${it.data}")
 
-                    //todo :  save the user
+                    val phocoUser = it.data
+
+                    phocoUser?.let { user ->
+
+                        saveUserProfileSharedPreferences(requireActivity(), user)
+
+                        Log.d(TAG, "observePhocoUserResponse: user saved in shared preference")
+                    }
+
                 }
 
                 else -> {
@@ -277,6 +284,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                     Log.d(TAG, "observePhocoUserResponse: Error occurred")
 
                     Log.d(TAG, "observePhocoUserResponse: error : ${it.message}")
+
+                    showToast(requireContext(), it.message.toString())
                 }
             }
         })
