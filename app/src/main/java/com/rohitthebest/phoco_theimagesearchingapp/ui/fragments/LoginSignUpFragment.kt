@@ -1,6 +1,5 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.text.*
 import android.text.method.LinkMovementMethod
@@ -11,116 +10,96 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.AuthToken
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
-import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.PhocoUser
-import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentProfileBinding
+import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentLoginSignupBinding
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PhocoViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
-private const val TAG = "ProfileFragment"
+private const val TAG = "LoginSignUpFragment"
 
 @AndroidEntryPoint
-@SuppressLint("SetTextI18n")
-class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListener {
-
-    private var _binding: FragmentProfileBinding? = null
-    private val binding get() = _binding!!
+class LoginSignUpFragment : Fragment(R.layout.fragment_login_signup), View.OnClickListener {
 
     private val phocoViewModel by viewModels<PhocoViewModel>()
 
-    private var authTokens: AuthToken? = null
-    private var phocoUser: PhocoUser? = null
+    private var _binding: FragmentLoginSignupBinding? = null
+    private val binding get() = _binding!!
 
-    private var isLoggedInBefore = false
+    private var authTokens: AuthToken? = null
+
+    private var isLoginPageVisible = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        _binding = FragmentProfileBinding.bind(view)
+        _binding = FragmentLoginSignupBinding.bind(view)
 
         setUpSignUpTextViewClick()
+        setUpLoginTextViewClick()
 
         authTokens = getSavedAuthToken(requireActivity())
 
-        if (authTokens == null) {
+        if (authTokens != null) {
 
-            Log.d(TAG, "onViewCreated: auth token is null")
-
-            binding.loginCL.show()
-            binding.profileCL.hide()
-
-            isLoggedInBefore = false
-        } else {
-
-            Log.d(TAG, "onViewCreated: auth token is not null")
-
-            // check if last updated date for getting the tokens is not more than 15 days
-            authTokens?.let {
-
-                if (calculateNumberOfDays(
-                        it.dateWhenTokenReceived,
-                        System.currentTimeMillis()
-                    ) < 15
-                ) {
-
-                    binding.loginCL.hide()
-                    Log.d(TAG, "onViewCreated: getting new tokens using refresh token")
-
-                    //todo : remove the block comment after developemnt mode
-                    /*phocoViewModel.getNewTokens(it.refreshToken)*/
-
-                    binding.profileCL.show()
-
-                    isLoggedInBefore = true
-
-                    phocoUser = getUserProfileData(requireActivity())
-
-                    phocoUser?.let { user -> updateUI(user) }
-
-                } else {
-
-                    Log.d(
-                        TAG,
-                        "onViewCreated: number of days is greater than 15 and login is required"
-                    )
-
-                    //login again to receive new refresh token and access token
-                    binding.loginCL.show()
-                    binding.profileCL.hide()
-                }
-            }
+            findNavController().navigate(R.id.action_loginSignUpFragment_to_profileFragment)
         }
 
         observeTokenResponse()
         observePhocoUserResponse()
+        observeSignUpResponse()
 
         initListeners()
-        initProfileToolbarListeners()
         textWatchers()
     }
 
-    private fun initProfileToolbarListeners() {
 
-        binding.profileToolbar.setNavigationOnClickListener {
+    private fun initListeners() {
 
-            requireActivity().onBackPressed()
+        binding.loginBtn.setOnClickListener(this)
+        binding.signUpBtn.setOnClickListener(this)
+        binding.backBtn.setOnClickListener(this)   // show loginCL
+    }
+
+    override fun onClick(v: View?) {
+
+        when (v?.id) {
+
+            binding.loginBtn.id -> {
+
+                if (requireContext().isInternetAvailable()) {
+
+                    if (validateLoginFields()) {
+
+                        // todo : call login function from phocoViewModel
+                    }
+
+                } else {
+
+                    requireContext().showNoInternetMessage()
+                }
+            }
+
+            binding.signUpBtn.id -> {
+
+                //todo : validate fields and call signup function from phocoViewModel
+            }
+
+            binding.backBtn.id -> {
+
+                if (!isLoginPageVisible) {
+
+                    // todo : show the loginCL
+                }
+            }
         }
-
-        binding.profileToolbar.menu.findItem(R.id.edit_profile).setOnMenuItemClickListener {
-
-            showToast(requireContext(), "Edit button clicked")
-            true
-        }
-
     }
 
     private fun textWatchers() {
 
+        // log in
         binding.loginPasswordET.editText?.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -136,42 +115,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
             override fun afterTextChanged(s: Editable?) {}
         })
-    }
 
-    private fun initListeners() {
+        //sign up
 
-        binding.loginBtn.setOnClickListener(this)
-        binding.forgotPasswordTV.setOnClickListener(this)
-    }
-
-    override fun onClick(v: View?) {
-
-        when (v?.id) {
-
-            binding.loginBtn.id -> {
-
-                if (validateFields()) {
-
-                    Log.d(TAG, "onClick: Validation successful")
-
-                    if (requireContext().isInternetAvailable()) {
-
-                        phocoViewModel.loginUser(
-                            binding.loginUsernameET.editText?.text.toString().trim(),
-                            binding.loginPasswordET.editText?.text.toString().trim()
-                        )
-                    } else {
-
-                        requireContext().showNoInternetMessage()
-                    }
-                }
-            }
-
-            binding.forgotPasswordTV.id -> {
-
-                // open webview and send the email
-            }
-        }
+        //todo :  initialize sign up textWatcher
 
     }
 
@@ -188,8 +135,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
             override fun onClick(widget: View) {
 
-                // navigate to signup page
-                findNavController().navigate(R.id.action_profileFragment_to_signUpFragment)
+                hideLoginCL()
             }
 
             override fun updateDrawState(ds: TextPaint) {
@@ -210,7 +156,43 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         binding.dontHaveAccountTV.movementMethod = LinkMovementMethod.getInstance()
     }
 
-    private fun validateFields(): Boolean {
+    private fun setUpLoginTextViewClick() {
+
+        val text = getString(R.string.already_have_an_account_login)
+
+        val startIndex = 25
+        val endIndex = text.length
+
+        val spannableString = SpannableString(text)
+
+        val loginClickableSpan = object : ClickableSpan() {
+
+            override fun onClick(widget: View) {
+
+                showLoginCL()
+            }
+
+            override fun updateDrawState(ds: TextPaint) {
+                super.updateDrawState(ds)
+
+                ds.color = ContextCompat.getColor(requireContext(), R.color.color_pink)
+                ds.isUnderlineText = false
+            }
+        }
+
+        spannableString.setSpan(
+            loginClickableSpan,
+            startIndex,
+            endIndex,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        binding.alreadyHaveAnAccoutnTV.text = spannableString
+        binding.alreadyHaveAnAccoutnTV.movementMethod = LinkMovementMethod.getInstance()
+
+    }
+
+    private fun validateLoginFields(): Boolean {
 
         if (!binding.loginUsernameET.editText?.text.toString().trim().isValidString()) {
 
@@ -239,10 +221,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                     Log.d(TAG, "observeTokenResponse: Loading....")
 
-                    if (!isLoggedInBefore) {
-
-                        // show loading animation
-                    }
+                    // todo : show loading view
                 }
 
                 is Resources.Success -> {
@@ -268,15 +247,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                             // getting the user info
                             phocoViewModel.getPhocoUser(
                                 primaryKey = null,
-                                username = if (isLoggedInBefore) phocoUser?.username
-                                else binding.loginUsernameET.editText?.text.toString().trim(),
+                                username = binding.loginUsernameET.editText?.text.toString().trim(),
                                 accessToken = tokens.accessToken
                             )
                         } else {
                             requireContext().showNoInternetMessage()
                         }
                     }
-
                 }
 
                 else -> {
@@ -293,6 +270,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         })
     }
 
+
     private fun observePhocoUserResponse() {
 
         phocoViewModel.phocoPhocoUserResponse.observe(viewLifecycleOwner, {
@@ -302,9 +280,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                 is Resources.Loading -> {
 
                     Log.d(TAG, "observePhocoUserResponse: Loading...")
+
+                    //todo : show loading view
                 }
 
                 is Resources.Success -> {
+
+                    // todo : hide loading view
 
                     Log.d(TAG, "observePhocoUserResponse: Phoco User received")
 
@@ -314,19 +296,17 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                     phocoUser?.let { user ->
 
-                        saveUserProfileSharedPreferences(requireActivity(), user)
                         Log.d(TAG, "observePhocoUserResponse: user saved in shared preference")
+                        saveUserProfileSharedPreferences(requireActivity(), user)
 
-                        updateUI(user)
+                        findNavController().navigate(R.id.action_loginSignUpFragment_to_profileFragment)
                     }
 
                 }
 
                 else -> {
 
-                    Log.d(TAG, "observePhocoUserResponse: Error occurred")
-
-                    Log.d(TAG, "observePhocoUserResponse: error : ${it.message}")
+                    Log.d(TAG, "observePhocoUserResponse: error occurred: ${it.message}")
 
                     showToast(requireContext(), it.message.toString())
                 }
@@ -334,21 +314,57 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         })
     }
 
-    private fun updateUI(phocoUser: PhocoUser) {
+    private fun observeSignUpResponse() {
 
-        binding.loginCL.hide()
-        binding.profileCL.show()
+        phocoViewModel.phocoUserResponseSignUp.observe(viewLifecycleOwner, {
 
-        binding.nameOfTheUserTV.text = phocoUser.name
-        binding.profileUsernameTV.text = phocoUser.username
+            when (it) {
 
-        Glide.with(this)
-            .load(phocoUser.user_image_url)
-            .placeholder(R.drawable.ic_round_account_circle_24)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .into(binding.profileImageIV)
+                is Resources.Loading -> {
+
+                }
+
+                is Resources.Success -> {
+
+                }
+
+                else -> {
+
+                }
+            }
+        })
     }
 
+    private fun showLoginCL() {
+
+        try {
+            isLoginPageVisible = !isLoginPageVisible
+
+
+            // todo : perform some animation
+            binding.signupCL.hide()
+            binding.loginCL.show()
+        } catch (e: IllegalStateException) {
+
+            e.printStackTrace()
+        }
+    }
+
+    private fun hideLoginCL() {
+
+        try {
+            isLoginPageVisible = !isLoginPageVisible
+
+
+            // todo : perform some animation
+            binding.loginCL.hide()
+            binding.signupCL.show()
+
+        } catch (e: IllegalStateException) {
+
+            e.printStackTrace()
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
