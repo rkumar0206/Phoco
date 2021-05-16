@@ -2,15 +2,10 @@ package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.text.*
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.rohitthebest.phoco_theimagesearchingapp.R
@@ -43,16 +38,11 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         _binding = FragmentProfileBinding.bind(view)
 
-        setUpSignUpTextViewClick()
-
         authTokens = getSavedAuthToken(requireActivity())
 
         if (authTokens == null) {
 
-            Log.d(TAG, "onViewCreated: auth token is null")
-
-            binding.loginCL.show()
-            binding.profileCL.hide()
+            // todo : navigate to loginsignup fragment
 
             isLoggedInBefore = false
         } else {
@@ -68,14 +58,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                     ) < 15
                 ) {
 
-                    binding.loginCL.hide()
-                    Log.d(TAG, "onViewCreated: getting new tokens using refresh token")
-
                     //todo : remove the block comment after developemnt mode
                     /*phocoViewModel.getNewTokens(it.refreshToken)*/
-
-                    binding.profileCL.show()
-
                     isLoggedInBefore = true
 
                     phocoUser = getUserProfileData(requireActivity())
@@ -90,8 +74,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                     )
 
                     //login again to receive new refresh token and access token
-                    binding.loginCL.show()
-                    binding.profileCL.hide()
+                    // todo : navigate to loginsignup fragment
                 }
             }
         }
@@ -100,133 +83,28 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         observePhocoUserResponse()
 
         initListeners()
-        initProfileToolbarListeners()
-        textWatchers()
     }
 
-    private fun initProfileToolbarListeners() {
 
-        binding.profileToolbar.setNavigationOnClickListener {
-
-            requireActivity().onBackPressed()
-        }
-
-        binding.profileToolbar.menu.findItem(R.id.edit_profile).setOnMenuItemClickListener {
-
-            showToast(requireContext(), "Edit button clicked")
-            true
-        }
-
-    }
-
-    private fun textWatchers() {
-
-        binding.loginPasswordET.editText?.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                if (s?.isEmpty()!!) {
-
-                    binding.loginPasswordET.error = "Please enter the password"
-                } else {
-
-                    binding.loginPasswordET.error = null
-                }
-            }
-
-            override fun afterTextChanged(s: Editable?) {}
-        })
-    }
 
     private fun initListeners() {
 
-        binding.loginBtn.setOnClickListener(this)
-        binding.forgotPasswordTV.setOnClickListener(this)
+        binding.backButton.setOnClickListener(this)
+        binding.editProfileBtn.setOnClickListener(this)
+        binding.followBtn.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
 
         when (v?.id) {
 
-            binding.loginBtn.id -> {
 
-                if (validateFields()) {
+            binding.backButton.id -> {
 
-                    Log.d(TAG, "onClick: Validation successful")
-
-                    if (requireContext().isInternetAvailable()) {
-
-                        phocoViewModel.loginUser(
-                            binding.loginUsernameET.editText?.text.toString().trim(),
-                            binding.loginPasswordET.editText?.text.toString().trim()
-                        )
-                    } else {
-
-                        requireContext().showNoInternetMessage()
-                    }
-                }
-            }
-
-            binding.forgotPasswordTV.id -> {
-
-                // open webview and send the email
+                requireActivity().onBackPressed()
             }
         }
 
-    }
-
-    private fun setUpSignUpTextViewClick() {
-
-        val text = getString(R.string.don_t_have_an_account_sign_up)
-
-        val startIndex = 23
-        val endIndex = text.length
-
-        val spannableString = SpannableString(text)
-
-        val signUpClickableSpan = object : ClickableSpan() {
-
-            override fun onClick(widget: View) {
-
-                // navigate to signup page
-                findNavController().navigate(R.id.action_profileFragment_to_signUpFragment)
-            }
-
-            override fun updateDrawState(ds: TextPaint) {
-                super.updateDrawState(ds)
-
-                ds.color = ContextCompat.getColor(requireContext(), R.color.color_pink)
-                ds.isUnderlineText = false
-            }
-        }
-        spannableString.setSpan(
-            signUpClickableSpan,
-            startIndex,
-            endIndex,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-
-        binding.dontHaveAccountTV.text = spannableString
-        binding.dontHaveAccountTV.movementMethod = LinkMovementMethod.getInstance()
-    }
-
-    private fun validateFields(): Boolean {
-
-        if (!binding.loginUsernameET.editText?.text.toString().trim().isValidString()) {
-
-            binding.loginUsernameET.editText?.error = "Please specify username"
-            return false
-        }
-
-        if (!binding.loginPasswordET.editText?.text.toString().trim().isValidString()) {
-
-            binding.loginPasswordET.editText?.showKeyboard(requireActivity())
-            binding.loginPasswordET.error = "Please enter the password"
-            return false
-        }
-
-        return binding.loginUsernameET.editText?.text.toString().trim().isValidString()
-                && binding.loginPasswordET.editText?.text.toString().trim().isValidString()
     }
 
     private fun observeTokenResponse() {
@@ -241,7 +119,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                     if (!isLoggedInBefore) {
 
-                        // show loading animation
+                        //todo : show loading animation
                     }
                 }
 
@@ -268,8 +146,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                             // getting the user info
                             phocoViewModel.getPhocoUser(
                                 primaryKey = null,
-                                username = if (isLoggedInBefore) phocoUser?.username
-                                else binding.loginUsernameET.editText?.text.toString().trim(),
+                                username = phocoUser?.username,
                                 accessToken = tokens.accessToken
                             )
                         } else {
@@ -285,9 +162,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                     Log.d(TAG, "observeTokenResponse: Error : ${it.message}")
 
-                    binding.loginUsernameET.editText?.error =
-                        "No active account found with the given credential"
-                    binding.loginUsernameET.editText?.showKeyboard(requireActivity())
                 }
             }
         })
@@ -335,9 +209,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
     }
 
     private fun updateUI(phocoUser: PhocoUser) {
-
-        binding.loginCL.hide()
-        binding.profileCL.show()
 
         binding.nameOfTheUserTV.text = phocoUser.name
         binding.profileUsernameTV.text = phocoUser.username
