@@ -73,7 +73,10 @@ class LoginSignUpFragment : Fragment(R.layout.fragment_login_signup), View.OnCli
 
                     if (validateLoginFields()) {
 
-                        // todo : call login function from phocoViewModel
+                        phocoViewModel.loginUser(
+                            binding.loginUsernameET.editText?.text.toString().trim(),
+                            binding.loginPasswordET.editText?.text.toString().trim()
+                        )
                     }
 
                 } else {
@@ -269,7 +272,6 @@ class LoginSignUpFragment : Fragment(R.layout.fragment_login_signup), View.OnCli
             }
         })
     }
-
 
     private fun observePhocoUserResponse() {
 

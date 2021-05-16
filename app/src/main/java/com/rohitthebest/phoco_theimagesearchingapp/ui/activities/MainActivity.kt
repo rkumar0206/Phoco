@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                     showBottomNav()
                     handleButtons(R.id.searchFragment)
                 }
-                R.id.signUpFragment -> {
+                R.id.loginSignUpFragment -> {
 
                     showBottomNav()
                 }

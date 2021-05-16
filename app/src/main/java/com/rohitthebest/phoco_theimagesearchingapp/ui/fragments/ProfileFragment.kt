@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.rohitthebest.phoco_theimagesearchingapp.R
@@ -42,8 +43,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         if (authTokens == null) {
 
-            // todo : navigate to loginsignup fragment
-
+            Log.d(TAG, "onViewCreated: auth token was null")
+            findNavController().navigate(R.id.action_profileFragment_to_loginSignUpFragment)
             isLoggedInBefore = false
         } else {
 
@@ -52,14 +53,24 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
             // check if last updated date for getting the tokens is not more than 15 days
             authTokens?.let {
 
+                Log.d(
+                    TAG,
+                    "onViewCreated: Number of days = ${
+                        calculateNumberOfDays(
+                            it.dateWhenTokenReceived,
+                            System.currentTimeMillis()
+                        )
+                    }"
+                )
+
                 if (calculateNumberOfDays(
                         it.dateWhenTokenReceived,
                         System.currentTimeMillis()
                     ) < 15
                 ) {
 
-                    //todo : remove the block comment after developemnt mode
-                    /*phocoViewModel.getNewTokens(it.refreshToken)*/
+
+                    //phocoViewModel.getNewTokens(it.refreshToken)
                     isLoggedInBefore = true
 
                     phocoUser = getUserProfileData(requireActivity())
@@ -74,7 +85,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                     )
 
                     //login again to receive new refresh token and access token
-                    // todo : navigate to loginsignup fragment
+                    findNavController().navigate(R.id.action_profileFragment_to_loginSignUpFragment)
                 }
             }
         }
@@ -98,10 +109,19 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         when (v?.id) {
 
-
             binding.backButton.id -> {
 
                 requireActivity().onBackPressed()
+            }
+
+            binding.editProfileBtn.id -> {
+
+                //todo : open edit profile fragment
+            }
+
+            binding.followBtn.id -> {
+
+                //todo : follow the user
             }
         }
 

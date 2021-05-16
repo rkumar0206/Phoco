@@ -2,15 +2,17 @@ package com.rohitthebest.phoco_theimagesearchingapp.utils
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.rohitthebest.phoco_theimagesearchingapp.Constants
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.AUTH_TOKEN_SHARED_PREFERENCE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.AUTH_TOKEN_SHARED_PREFERENCE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PHOCO_USER_DATA_SHARED_PREFERENCE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PHOCO_USER_DATA_SHARED_PREFERENCE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.data.AuthToken
 import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.PhocoUser
 
+private const val TAG = "SharedPreferencesData"
 
 val gson = Gson()
 
@@ -29,7 +31,7 @@ fun saveAuthTokenInSharedPreferences(
 
     val authTokenJson = gson.toJson(authToken)
 
-    edit.putString(Constants.AUTH_TOKEN_SHARED_PREFERENCE_KEY, authTokenJson)
+    edit.putString(AUTH_TOKEN_SHARED_PREFERENCE_KEY, authTokenJson)
 
     edit.apply()
 }
@@ -43,7 +45,7 @@ fun getSavedAuthToken(activity: Activity): AuthToken? {
         )
 
     val authTokenJsonString =
-        sharedPreference.getString(Constants.AUTH_TOKEN_SHARED_PREFERENCE_KEY, "")
+        sharedPreference.getString(AUTH_TOKEN_SHARED_PREFERENCE_KEY, "")
 
     return if (authTokenJsonString != null && authTokenJsonString.isValidString()) {
 
@@ -55,6 +57,23 @@ fun getSavedAuthToken(activity: Activity): AuthToken? {
 
         null
     }
+}
+
+fun deleteAuthTokensFromSharedPreference(activity: Activity) {
+
+    val sharedPreference =
+        activity.getSharedPreferences(
+            AUTH_TOKEN_SHARED_PREFERENCE_NAME,
+            Context.MODE_PRIVATE
+        )
+
+    val edit = sharedPreference.edit()
+
+    edit.clear()
+
+    edit.apply()
+
+    Log.d(TAG, "deleteAuthTokensFromSharedPreference: deleted")
 }
 
 fun saveUserProfileSharedPreferences(
@@ -94,4 +113,21 @@ fun getUserProfileData(activity: Activity): PhocoUser? {
 
         null
     }
+}
+
+fun deleteUserProfileDataFromSharedPreference(activity: Activity) {
+
+    val sharedPreference =
+        activity.getSharedPreferences(
+            PHOCO_USER_DATA_SHARED_PREFERENCE_NAME,
+            Context.MODE_PRIVATE
+        )
+
+    val edit = sharedPreference.edit()
+
+    edit.clear()
+
+    edit.apply()
+
+    Log.d(TAG, "deleteUserProfileDataFromSharedPreference: deleted")
 }
