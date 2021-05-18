@@ -232,6 +232,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         binding.nameOfTheUserTV.text = phocoUser.name
         binding.profileUsernameTV.text = phocoUser.username
+        binding.numberOfFollowersTV.text = phocoUser.followers.toString()
+        binding.numberOfFollowingTV.text = phocoUser.following.toString()
 
         Glide.with(this)
             .load(phocoUser.user_image_url)

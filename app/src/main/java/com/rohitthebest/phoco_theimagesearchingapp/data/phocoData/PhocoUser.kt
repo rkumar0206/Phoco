@@ -9,5 +9,7 @@ data class PhocoUser(
         val user: Int,
         val user_image_url: String,
         val user_profile_url: String,
-        val username: String
+        val username: String,
+        val followers: Int,
+        val following: Int
 )

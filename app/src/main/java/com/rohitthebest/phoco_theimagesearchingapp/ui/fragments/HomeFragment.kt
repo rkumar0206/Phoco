@@ -77,6 +77,9 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         }
 
         observeForIfSavedImageAddedToTheCollection()
+
+        //deleteUserProfileDataFromSharedPreference(requireActivity())
+        //deleteAuthTokensFromSharedPreference(requireActivity())
     }
 
     private fun getSavedImagesIdList() {
