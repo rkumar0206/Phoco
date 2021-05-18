@@ -1,23 +1,12 @@
 package com.rohitthebest.phoco_theimagesearchingapp.api
 
-import com.google.gson.annotations.SerializedName
 import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.PhocoUser
 import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.SignUp
+import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.Tokens
+import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.UserResponse
 import retrofit2.Response
 import retrofit2.http.*
 
-data class UserResponse(
-        val pk: Int,
-        val username: String,
-        val email: String,
-        val first_name: String,
-        val last_name: String?
-)
-
-data class Tokens(
-        @SerializedName("refresh") val refreshToken: String,
-        @SerializedName("access") val accessToken: String
-)
 
 interface PhocoAPI {
 
@@ -92,11 +81,11 @@ interface PhocoAPI {
     @FormUrlEncoded
     @PUT("/auth/change_password/{pk}/")
     suspend fun changeUserPassword(
-            @Path("pk") primaryKey: Int,
-            @Header("Authorization") accessToken: String,
-            @Field("old_password") oldPassword: String,
-            @Field("password") newPassword: String,
-            @Field("password2") confirmPassword: String
+        @Path("pk") primaryKey: Int,
+        @Header("Authorization") accessToken: String,
+        @Field("old_password") oldPassword: String,
+        @Field("password") newPassword: String,
+        @Field("password2") confirmPassword: String
     ): Response<UserResponse>   // status 200OK
 
     //-------------------------------------------------------------------------------
@@ -105,4 +94,35 @@ interface PhocoAPI {
     // reset password
     // logout
 
+
+    //------------------------------- Follower / Following ----------------------------------
+
+    @FormUrlEncoded
+    @POST("/follow/")
+    suspend fun followUser(
+        @Header("Authorization") accessToken: String,
+        @Field("follower_user_pk") follower_user_pk: Int,
+        @Field("following_user_pk") following_user_pk: Int
+    )
+
+
+    @GET("/user_followers/{pk}/")
+    suspend fun getUserFollowers(
+        @Path("pk") userPrimaryKey: Int,
+        @Header("Authorization") accessToken: String
+    ): Response<PhocoUser>
+
+
+    @GET("/user_following/{pk}/")
+    suspend fun getUserFollowing(
+        @Path("pk") userPrimaryKey: Int,
+        @Header("Authorization") accessToken: String
+    ): Response<PhocoUser>
+
+    @DELETE("/unfollow_user/{follower}/{following}/")
+    suspend fun unfollowUser(
+        @Header("Authorization") accessToken: String,
+        @Path("follower") follower_user_pk: Int,
+        @Path("following") following_user_pk: Int
+    )
 }
