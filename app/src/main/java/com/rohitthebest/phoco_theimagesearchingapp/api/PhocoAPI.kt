@@ -1,9 +1,6 @@
 package com.rohitthebest.phoco_theimagesearchingapp.api
 
-import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.PhocoUser
-import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.SignUp
-import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.Tokens
-import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.UserResponse
+import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.*
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -103,26 +100,26 @@ interface PhocoAPI {
         @Header("Authorization") accessToken: String,
         @Field("follower_user_pk") follower_user_pk: Int,
         @Field("following_user_pk") following_user_pk: Int
-    )
+    ): Response<Follow>
 
 
     @GET("/user_followers/{pk}/")
     suspend fun getUserFollowers(
         @Path("pk") userPrimaryKey: Int,
         @Header("Authorization") accessToken: String
-    ): Response<PhocoUser>
+    ): Response<List<PhocoUser>>
 
 
     @GET("/user_following/{pk}/")
     suspend fun getUserFollowing(
         @Path("pk") userPrimaryKey: Int,
         @Header("Authorization") accessToken: String
-    ): Response<PhocoUser>
+    ): Response<List<PhocoUser>>
 
     @DELETE("/unfollow_user/{follower}/{following}/")
     suspend fun unfollowUser(
         @Header("Authorization") accessToken: String,
         @Path("follower") follower_user_pk: Int,
         @Path("following") following_user_pk: Int
-    )
+    ): Response<String?>   // testing required
 }

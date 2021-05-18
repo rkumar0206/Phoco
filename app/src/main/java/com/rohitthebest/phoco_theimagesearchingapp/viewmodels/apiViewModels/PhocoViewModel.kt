@@ -4,12 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.rohitthebest.phoco_theimagesearchingapp.api.Tokens
-import com.rohitthebest.phoco_theimagesearchingapp.api.UserResponse
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
-import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.PhocoRepository
-import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.PhocoUser
-import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.SignUp
+import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Response
@@ -20,6 +16,7 @@ class PhocoViewModel @Inject constructor(
         private val repository: PhocoRepository
 ) : ViewModel() {
 
+    //authentication and user related vars
     private val _phocoUserResponseSignUp = MutableLiveData<Resources<UserResponse>>()
     private val _phocoTokenResponse = MutableLiveData<Resources<Tokens>>()
     private val _phocoPhocoUserResponse = MutableLiveData<Resources<PhocoUser>>()
@@ -27,6 +24,18 @@ class PhocoViewModel @Inject constructor(
     val phocoUserResponseSignUp: LiveData<Resources<UserResponse>> get() = _phocoUserResponseSignUp
     val phocoTokenResponse: LiveData<Resources<Tokens>> get() = _phocoTokenResponse
     val phocoPhocoUserResponse: LiveData<Resources<PhocoUser>> get() = _phocoPhocoUserResponse
+
+    // follow related vars
+    private val _followersList = MutableLiveData<Resources<List<PhocoUser>>>()
+    private val _followingList = MutableLiveData<Resources<List<PhocoUser>>>()
+    private val _followUser = MutableLiveData<Resources<Follow>>()
+    private val _unfollowUser = MutableLiveData<Resources<String?>>()
+
+    val followersList: LiveData<Resources<List<PhocoUser>>> get() = _followersList
+    val followingList: LiveData<Resources<List<PhocoUser>>> get() = _followingList
+    val followUser: LiveData<Resources<Follow>> get() = _followUser
+    val unfollowUser: LiveData<Resources<String?>> get() = _unfollowUser
+
 
     fun signUpUser(signUp: SignUp) {
 
@@ -149,14 +158,120 @@ class PhocoViewModel @Inject constructor(
 
         if (response.isSuccessful) {
 
-            _phocoPhocoUserResponse.postValue(Resources.Success(
+            _phocoPhocoUserResponse.postValue(
+                Resources.Success(
                     response.body(),
                     response.code().toString()
-            ))
+                )
+            )
         } else {
 
             _phocoPhocoUserResponse.postValue(Resources.Error(response.message()))
         }
 
+    }
+
+    fun getFollowersListOfUser(accessToken: String, userPrimaryKey: Int) {
+
+        try {
+
+            viewModelScope.launch {
+
+                _followersList.postValue(Resources.Loading())
+
+                repository.getUserFollowers(accessToken, userPrimaryKey).let {
+
+                    if (it.isSuccessful) {
+
+                        _followersList.postValue(Resources.Success(it.body(), it.code().toString()))
+                    } else {
+
+                        _followersList.postValue(Resources.Error(it.message()))
+                    }
+                }
+
+            }
+
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun getFollowingListOfUser(accessToken: String, userPrimaryKey: Int) {
+
+        try {
+
+            viewModelScope.launch {
+
+                _followingList.postValue(Resources.Loading())
+
+                repository.getUserFollowers(accessToken, userPrimaryKey).let {
+
+                    if (it.isSuccessful) {
+
+                        _followingList.postValue(Resources.Success(it.body(), it.code().toString()))
+                    } else {
+
+                        _followingList.postValue(Resources.Error(it.message()))
+                    }
+                }
+
+            }
+
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
+    fun followTheUser(accessToken: String, follower_user_pk: Int, following_user_pk: Int) {
+
+        try {
+
+            viewModelScope.launch {
+
+                _followUser.postValue(Resources.Loading())
+
+                repository.followUser(accessToken, follower_user_pk, following_user_pk).let {
+
+                    if (it.isSuccessful) {
+
+                        _followUser.postValue(Resources.Success(it.body(), it.code().toString()))
+                    } else {
+
+                        _followUser.postValue(Resources.Error(it.message()))
+                    }
+                }
+
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
+    fun unfollowTheUser(accessToken: String, follower_user_pk: Int, following_user_pk: Int) {
+
+        try {
+
+            viewModelScope.launch {
+
+                _unfollowUser.postValue(Resources.Loading())
+
+                repository.unfollowUser(accessToken, follower_user_pk, following_user_pk).let {
+
+                    if (it.isSuccessful) {
+
+                        _unfollowUser.postValue(Resources.Success("", it.code().toString()))
+                    } else {
+
+                        _unfollowUser.postValue(Resources.Error(it.message()))
+                    }
+                }
+
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
     }
 }
