@@ -42,4 +42,9 @@
     <string name="password_login">Password</string>
     <string name="don_t_have_an_account_sign_up">Don\'t have an account? Sign up</string>
     <string name="forgot_password">Forgot password?</string>
+    <string name="follow">Follow</string>
+    <string name="followers">Followers</string>
+    <string name="photos">Photos</string>
+    <string name="likes">Likes</string>
+    <string name="following">Following</string>
 </resources>
