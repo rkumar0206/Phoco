@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "903856270790",
+    "project_id": "phoco-a3f2e",
+    "storage_bucket": "phoco-a3f2e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:903856270790:android:da43d75278858bfe8456c7",
+        "android_client_info": {
+          "package_name": "com.rohitthebest.phoco_theimagesearchingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "903856270790-c5b4jtmeam2b1gthsdtn3da3ks92jma8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJHh8pLsib6DHnn-olWPD9U9C8jOua5Jk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "903856270790-c5b4jtmeam2b1gthsdtn3da3ks92jma8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
