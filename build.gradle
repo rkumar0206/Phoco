@@ -11,7 +11,7 @@ buildscript {
 
         //Dagger-Hilt
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.33-beta'
-        classpath 'com.google.gms:google-services:4.3.8'
+
 
         //Safe Args
         def nav_version = "2.3.0-beta01"
