@@ -8,7 +8,12 @@ import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -36,7 +41,16 @@ class PhocoViewModel @Inject constructor(
     val followUser: LiveData<Resources<Follow>> get() = _followUser
     val unfollowUser: LiveData<Resources<String?>> get() = _unfollowUser
 
+    // user's image related vars
+    private val _imageList = MutableLiveData<Resources<List<PhocoImageItem>>>()
+    private val _uploadImage = MutableLiveData<Resources<PhocoImageItem>>()
 
+    val imageList: LiveData<Resources<List<PhocoImageItem>>> get() = _imageList
+    val uploadImage: LiveData<Resources<PhocoImageItem>> get() = _uploadImage
+
+    /*start function*/
+
+    //user authentication related
     fun signUpUser(signUp: SignUp) {
 
         try {
@@ -45,14 +59,16 @@ class PhocoViewModel @Inject constructor(
 
                 _phocoUserResponseSignUp.postValue(Resources.Loading())
 
-                repository.signUp(signUp).let {
+                repository.signUp(signUp).also {
 
                     if (it.isSuccessful) {
 
-                        _phocoUserResponseSignUp.postValue(Resources.Success(
+                        _phocoUserResponseSignUp.postValue(
+                            Resources.Success(
                                 it.body(),
                                 it.code().toString()
-                        ))
+                            )
+                        )
                     } else {
 
                         _phocoUserResponseSignUp.postValue(Resources.Error(it.message()))
@@ -64,7 +80,6 @@ class PhocoViewModel @Inject constructor(
             e.printStackTrace()
         }
     }
-
     fun loginUser(username: String, password: String) {
 
         try {
@@ -73,14 +88,16 @@ class PhocoViewModel @Inject constructor(
 
                 _phocoTokenResponse.postValue(Resources.Loading())
 
-                repository.loin(username, password).let {
+                repository.loin(username, password).also {
 
                     if (it.isSuccessful) {
 
-                        _phocoTokenResponse.postValue(Resources.Success(
+                        _phocoTokenResponse.postValue(
+                            Resources.Success(
                                 it.body(),
                                 it.code().toString()
-                        ))
+                            )
+                        )
                     } else {
 
                         _phocoTokenResponse.postValue(Resources.Error(it.message()))
@@ -92,7 +109,6 @@ class PhocoViewModel @Inject constructor(
             e.printStackTrace()
         }
     }
-
     fun getNewTokens(refreshToken: String) {
 
         try {
@@ -101,14 +117,16 @@ class PhocoViewModel @Inject constructor(
 
                 _phocoTokenResponse.postValue(Resources.Loading())
 
-                repository.getNewTokens(refreshToken).let {
+                repository.getNewTokens(refreshToken).also {
 
                     if (it.isSuccessful) {
 
-                        _phocoTokenResponse.postValue(Resources.Success(
+                        _phocoTokenResponse.postValue(
+                            Resources.Success(
                                 it.body(),
                                 it.code().toString()
-                        ))
+                            )
+                        )
                     } else {
 
                         _phocoTokenResponse.postValue(Resources.Error(it.code().toString()))
@@ -120,7 +138,6 @@ class PhocoViewModel @Inject constructor(
             e.printStackTrace()
         }
     }
-
     fun getPhocoUser(primaryKey: Int? = null, username: String? = null, accessToken: String) {
 
         try {
@@ -131,7 +148,7 @@ class PhocoViewModel @Inject constructor(
 
                 if (primaryKey != null) {
 
-                    repository.getPhocoUserByPrimaryKey(primaryKey = primaryKey, accessToken).let {
+                    repository.getPhocoUserByPrimaryKey(primaryKey = primaryKey, accessToken).also {
 
                         handlePhocoUserValue(it)
                     }
@@ -153,7 +170,6 @@ class PhocoViewModel @Inject constructor(
             e.printStackTrace()
         }
     }
-
     private fun handlePhocoUserValue(response: Response<PhocoUser>) {
 
         if (response.isSuccessful) {
@@ -171,6 +187,7 @@ class PhocoViewModel @Inject constructor(
 
     }
 
+    // user follow and following related
     fun getFollowersListOfUser(accessToken: String, userPrimaryKey: Int) {
 
         try {
@@ -179,7 +196,7 @@ class PhocoViewModel @Inject constructor(
 
                 _followersList.postValue(Resources.Loading())
 
-                repository.getUserFollowers(accessToken, userPrimaryKey).let {
+                repository.getUserFollowers(accessToken, userPrimaryKey).also {
 
                     if (it.isSuccessful) {
 
@@ -196,7 +213,6 @@ class PhocoViewModel @Inject constructor(
             e.printStackTrace()
         }
     }
-
     fun getFollowingListOfUser(accessToken: String, userPrimaryKey: Int) {
 
         try {
@@ -205,7 +221,7 @@ class PhocoViewModel @Inject constructor(
 
                 _followingList.postValue(Resources.Loading())
 
-                repository.getUserFollowing(accessToken, userPrimaryKey).let {
+                repository.getUserFollowing(accessToken, userPrimaryKey).also {
 
                     if (it.isSuccessful) {
 
@@ -223,7 +239,6 @@ class PhocoViewModel @Inject constructor(
         }
 
     }
-
     fun followTheUser(accessToken: String, follower_user_pk: Int, following_user_pk: Int) {
 
         try {
@@ -232,7 +247,7 @@ class PhocoViewModel @Inject constructor(
 
                 _followUser.postValue(Resources.Loading())
 
-                repository.followUser(accessToken, follower_user_pk, following_user_pk).let {
+                repository.followUser(accessToken, follower_user_pk, following_user_pk).also {
 
                     if (it.isSuccessful) {
 
@@ -249,7 +264,6 @@ class PhocoViewModel @Inject constructor(
         }
 
     }
-
     fun unfollowTheUser(accessToken: String, follower_user_pk: Int, following_user_pk: Int) {
 
         try {
@@ -258,7 +272,7 @@ class PhocoViewModel @Inject constructor(
 
                 _unfollowUser.postValue(Resources.Loading())
 
-                repository.unfollowUser(accessToken, follower_user_pk, following_user_pk).let {
+                repository.unfollowUser(accessToken, follower_user_pk, following_user_pk).also {
 
                     if (it.isSuccessful) {
 
@@ -274,4 +288,82 @@ class PhocoViewModel @Inject constructor(
             e.printStackTrace()
         }
     }
+
+    //user's image related
+    fun getImageList(accessToken: String, username: String) {
+
+        try {
+
+            viewModelScope.launch {
+
+                repository.getUserPhocoImages(accessToken, username).also {
+
+                    _imageList.postValue(Resources.Loading())
+
+                    if (it.isSuccessful) {
+
+                        _imageList.postValue(Resources.Success(it.body(), it.code().toString()))
+                    } else {
+
+                        _imageList.postValue(Resources.Error(it.message()))
+                    }
+                }
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            _imageList.postValue(Resources.Error("Something went wrong"))
+        }
+
+    }
+
+    fun uploadImage(
+        accessToken: String,
+        file: File,
+        imageDescription: String = "",
+        userPK: String
+    ) {
+
+        try {
+
+            viewModelScope.launch {
+
+                _uploadImage.postValue(Resources.Loading())
+
+                val requestImageFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+
+                val imageMultipart = MultipartBody.Part.createFormData(
+                    "file",
+                    file.name,
+                    requestImageFile
+                )
+
+                val imageDescriptionRequestBody =
+                    imageDescription.toRequestBody("text/plain".toMediaTypeOrNull())
+                val userPkRequestBody = userPK.toRequestBody("text/plain".toMediaTypeOrNull())
+
+                repository.postImage(
+                    accessToken,
+                    imageMultipart,
+                    imageDescriptionRequestBody,
+                    userPkRequestBody
+                ).also {
+
+                    if (it.isSuccessful) {
+
+                        _uploadImage.postValue(Resources.Success(it.body(), it.code().toString()))
+                    } else {
+
+                        _uploadImage.postValue(Resources.Error(it.message()))
+                    }
+                }
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+    }
+
+    /*end functions*/
 }
