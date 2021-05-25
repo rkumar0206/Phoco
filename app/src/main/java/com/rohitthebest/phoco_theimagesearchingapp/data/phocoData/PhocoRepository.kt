@@ -1,6 +1,8 @@
 package com.rohitthebest.phoco_theimagesearchingapp.data.phocoData
 
 import com.rohitthebest.phoco_theimagesearchingapp.api.PhocoAPI
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -55,4 +57,12 @@ class PhocoRepository @Inject constructor(
 
     suspend fun getUserPhocoImages(accessToken: String, username: String) =
         phocoAPI.getUserPhocoImages(accessToken, username)
+
+    suspend fun postImage(
+        accessToken: String,
+        image: MultipartBody.Part,
+        imageDescription: RequestBody,
+        phocoUserPk: RequestBody
+    ) = phocoAPI.postImage(accessToken, image, imageDescription, phocoUserPk)
+
 }
