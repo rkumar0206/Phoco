@@ -1,6 +1,8 @@
 package com.rohitthebest.phoco_theimagesearchingapp.api
 
 import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.*
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -122,4 +124,21 @@ interface PhocoAPI {
         @Path("follower") follower_user_pk: Int,
         @Path("following") following_user_pk: Int
     ): Response<String?>   // testing required
+
+
+    @GET("/images/{username}")
+    suspend fun getUserPhocoImages(
+        @Header("Authorization") accessToken: String,
+        @Path("username") username: String
+    ): Response<List<PhocoImageItem>>
+
+
+    @Multipart
+    @POST("/images/")
+    suspend fun postImage(
+        @Header("Authorization") accessToken: String,
+        @Part image: MultipartBody.Part,
+        @Part("image_description") imageDescription: RequestBody,
+        @Part("phoco_user") user: RequestBody
+    ): Response<PhocoImageItem>
 }

@@ -205,7 +205,7 @@ class PhocoViewModel @Inject constructor(
 
                 _followingList.postValue(Resources.Loading())
 
-                repository.getUserFollowers(accessToken, userPrimaryKey).let {
+                repository.getUserFollowing(accessToken, userPrimaryKey).let {
 
                     if (it.isSuccessful) {
 

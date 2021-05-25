@@ -52,4 +52,7 @@ class PhocoRepository @Inject constructor(
 
     suspend fun unfollowUser(accessToken: String, follower_user_pk: Int, following_user_pk: Int) =
         phocoAPI.unfollowUser(accessToken, follower_user_pk, following_user_pk)
+
+    suspend fun getUserPhocoImages(accessToken: String, username: String) =
+        phocoAPI.getUserPhocoImages(accessToken, username)
 }

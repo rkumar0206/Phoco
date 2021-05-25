@@ -204,7 +204,7 @@
                         android:padding="5dp"
                         android:text="@string/photos"
                         android:textColor="@color/text_color"
-                        android:textSize="12dp"
+                        android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="@+id/textView7"
                         app:layout_constraintStart_toStartOf="@+id/textView7"
                         app:layout_constraintTop_toBottomOf="@+id/textView7" />
@@ -216,7 +216,7 @@
                         android:padding="5dp"
                         android:text="@string/followers"
                         android:textColor="@color/text_color"
-                        android:textSize="12dp"
+                        android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="@+id/numberOfFollowersTV"
                         app:layout_constraintStart_toStartOf="@+id/numberOfFollowersTV"
                         app:layout_constraintTop_toBottomOf="@+id/textView7" />
@@ -226,9 +226,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="5dp"
-                        android:text="Following"
+                        android:text="@string/following"
                         android:textColor="@color/text_color"
-                        android:textSize="12dp"
+                        android:textSize="12sp"
                         app:layout_constraintEnd_toEndOf="@+id/numberOfFollowingTV"
                         app:layout_constraintStart_toStartOf="@+id/numberOfFollowingTV"
                         app:layout_constraintTop_toBottomOf="@+id/textView7" />
@@ -349,6 +349,18 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/uploadImageFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:contentDescription="@string/fabbutton"
+        android:focusable="true"
+        android:src="@drawable/ic_baseline_add_24"
+        android:tooltipText="Upload image" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
