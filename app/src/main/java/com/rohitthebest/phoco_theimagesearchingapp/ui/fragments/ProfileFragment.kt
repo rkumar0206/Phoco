@@ -101,6 +101,24 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         initListeners()
     }
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+
+        if (isGranted) {
+            Log.i(TAG, "Permission granted: ")
+        } else {
+            Log.i(TAG, "Permission denied: ")
+        }
+    }
+
+
+    private val chooseImageLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) {
+
+        showToast(requireContext(), it.toString())
+    }
 
 
     private fun initListeners() {
@@ -137,10 +155,12 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                 if (checkForPermissionsGranted()) {
 
-                    chooseImage()
+                    chooseImageLauncher.launch(
+                        "image/*"
+                    )
                 } else {
 
-                    onClickRequestPermission()
+                    onRequestPermission()
                 }
             }
 
@@ -159,18 +179,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-
-        if (isGranted) {
-            Log.i(TAG, "Permission granted: ")
-        } else {
-            Log.i(TAG, "Permission denied: ")
-        }
-    }
-
-    private fun onClickRequestPermission() {
+    private fun onRequestPermission() {
 
         when {
 
@@ -210,11 +219,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                 )
             }
         }
-    }
-
-    private fun chooseImage() {
-
-        showToast(requireContext(), "Select image")
     }
 
     private fun observeTokenResponse() {
