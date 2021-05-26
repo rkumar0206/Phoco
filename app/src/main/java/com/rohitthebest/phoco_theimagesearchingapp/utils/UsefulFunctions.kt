@@ -91,17 +91,33 @@ fun showToasty(
 }
 
 fun showSnackBar(
-        view: View,
-        message: String = "",
-        duration: Int = Snackbar.LENGTH_SHORT,
-        textColor: String = "#779dfe"
+    view: View,
+    message: String = "",
+    duration: Int = Snackbar.LENGTH_SHORT,
+    textColor: String = "#779dfe"
 ) {
 
     Log.d(TAG, "showSnackBar: $message")
 
     Snackbar.make(view, message, duration)
-            .setTextColor(Color.parseColor(textColor))
-            .show()
+        .setTextColor(Color.parseColor(textColor))
+        .show()
+}
+
+fun View.showSnackbar(
+    msg: String,
+    length: Int = Snackbar.LENGTH_LONG,
+    actionMessage: CharSequence?,
+    action: (View) -> Unit
+) {
+    val snackbar = Snackbar.make(this, msg, length)
+    if (actionMessage != null) {
+        snackbar.setAction(actionMessage) {
+            action(this)
+        }.show()
+    } else {
+        snackbar.show()
+    }
 }
 
 fun View.hide() {
@@ -546,5 +562,7 @@ fun openLinkInBrowser(context: Context, url: String?) {
 
 fun calculateNumberOfDays(startDateTimestamp: Long, endDateTimestamp: Long): Int =
     ((endDateTimestamp - startDateTimestamp) / (1000 * 60 * 60 * 24)).toInt()
+
+
 
 

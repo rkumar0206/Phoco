@@ -1,9 +1,14 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -103,6 +108,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         binding.backButton.setOnClickListener(this)
         binding.editProfileBtn.setOnClickListener(this)
         binding.followBtn.setOnClickListener(this)
+        binding.uploadImageFAB.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -119,12 +125,96 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                 //todo : open edit profile fragment
             }
 
+            binding.uploadImageFAB.id -> {
+
+                /*todo : upload image
+                *
+                * 1. open chooser for choosing image
+                * 2. after selecting image convert the uri to file
+                * 3. call the uploadImage function of PhocoViewModel
+                * 4. Observe the response
+                * */
+
+                if (checkForPermissionsGranted()) {
+
+                    chooseImage()
+                } else {
+
+                    onClickRequestPermission()
+                }
+            }
+
             binding.followBtn.id -> {
 
-                //todo : follow the user
+                //todo : follow or unfollow the user
             }
         }
 
+    }
+
+    private fun checkForPermissionsGranted(): Boolean {
+
+        return ContextCompat.checkSelfPermission(
+            requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+
+        if (isGranted) {
+            Log.i(TAG, "Permission granted: ")
+        } else {
+            Log.i(TAG, "Permission denied: ")
+        }
+    }
+
+    private fun onClickRequestPermission() {
+
+        when {
+
+            // if permission is already granted
+            ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED -> {
+
+                binding.root.showSnackbar(
+                    "Permission is granted",
+                    actionMessage = null
+                ) {}
+            }
+
+            // if the app deems that they should show the request permission rationale
+
+            ActivityCompat.shouldShowRequestPermissionRationale(
+                requireActivity(),
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) -> {
+
+                binding.root.showSnackbar(
+                    "Permission is required for selecting image from your storage.",
+                    actionMessage = "Ok"
+                ) {
+
+                    requestPermissionLauncher.launch(
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    )
+                }
+            }
+
+            // if permission hasn't been asked yet.
+            else -> {
+                requestPermissionLauncher.launch(
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                )
+            }
+        }
+    }
+
+    private fun chooseImage() {
+
+        showToast(requireContext(), "Select image")
     }
 
     private fun observeTokenResponse() {
