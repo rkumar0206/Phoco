@@ -4,7 +4,6 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -13,6 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.AuthToken
@@ -22,9 +22,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentProfileBi
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PhocoViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import kotlinx.coroutines.launch
 
 private const val TAG = "ProfileFragment"
 
@@ -78,7 +76,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                 ) {
 
 
-                    phocoViewModel.getNewTokens(it.refreshToken)
+                    //phocoViewModel.getNewTokens(it.refreshToken)
                     isLoggedInBefore = true
 
                     phocoUser = getUserProfileData(requireActivity())
@@ -122,49 +120,35 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         ActivityResultContracts.GetContent()
     ) { uri ->
 
-        val parcelFileDescriptor = requireContext().contentResolver.openFileDescriptor(
-            uri, "r", null
-        )
+        lifecycleScope.launch {
 
-        val cursor = requireContext().contentResolver.query(
-            uri,
-            null,
-            null,
-            null,
-            null
-        )
+            val file = uri.getFile(requireContext())
 
-        cursor?.use {
-
-            val nameIndex = it.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
-            val sizeIndex = it.getColumnIndex(MediaStore.Images.Media.SIZE)
-            it.moveToFirst()
-
-            Log.d(TAG, "name: ${it.getString(nameIndex)}")
-            Log.d(TAG, "size: ${it.getLong(sizeIndex)}")
-
-            val inputStream = FileInputStream(parcelFileDescriptor?.fileDescriptor)
-            val file = File(requireContext().cacheDir, it.getString(nameIndex))
-
-            val outputStream = FileOutputStream(file)
-            inputStream.copyTo(outputStream)
-
-            Log.d(TAG, "fileName: ${file.name}")
-            Log.d(TAG, "fileLength: ${file.length()}")
+            Log.d(TAG, "fileName: ${file?.name}")
+            Log.d(TAG, "fileLength: ${file?.length()}")
 
             authTokens?.let { accessToken ->
 
                 Log.d(TAG, ": start of upload image")
 
-                phocoViewModel.uploadImage(
-                    accessToken.accessToken,
-                    file.name,
-                    file,
-                    file.name,
-                    phocoUser?.pk.toString()
-                )
+                file?.let { file ->
 
+                    // todo : check for the size of the file (must be greater then 4 MB)
+                    // todo : preview the image
+                    // todo : after upload button is clicked then only upload the image
+
+/*
+                    phocoViewModel.uploadImage(
+                        accessToken.accessToken,
+                        file.name,
+                        file,
+                        file.name,
+                        phocoUser?.pk.toString()
+                    )
+*/
+                }
             }
+
         }
     }
 

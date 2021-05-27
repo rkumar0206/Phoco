@@ -11,6 +11,7 @@ import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -32,6 +33,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -562,6 +566,50 @@ fun openLinkInBrowser(context: Context, url: String?) {
 
 fun calculateNumberOfDays(startDateTimestamp: Long, endDateTimestamp: Long): Int =
     ((endDateTimestamp - startDateTimestamp) / (1000 * 60 * 60 * 24)).toInt()
+
+suspend fun getFileNameFromUri(context: Context, uri: Uri): String? {
+
+    return withContext(Dispatchers.IO) {
+
+        val cursor = context.contentResolver.query(
+            uri,
+            null,
+            null,
+            null,
+            null
+        )
+
+        cursor?.use {
+
+            val nameIndex = it.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+
+            it.moveToFirst()
+            it.getString(nameIndex)
+        }
+
+    }
+}
+
+suspend fun Uri.getFile(context: Context): File? {
+
+    return withContext(Dispatchers.Main) {
+
+        getFileNameFromUri(context, this@getFile)?.let { name ->
+
+            val parcelFileDescriptor = context.contentResolver.openFileDescriptor(
+                this@getFile, "r", null
+            )
+
+            val inputStream = FileInputStream(parcelFileDescriptor?.fileDescriptor)
+            val file = File(context.cacheDir, name)
+
+            val outputStream = FileOutputStream(file)
+            inputStream.copyTo(outputStream)
+
+            file
+        }
+    }
+}
 
 
 
