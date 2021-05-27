@@ -1,24 +1,27 @@
 package com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.*
+import com.rohitthebest.phoco_theimagesearchingapp.utils.CustomRequestBodyForFileUpload
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 import java.io.File
 import javax.inject.Inject
 
+private const val TAG = "PhocoViewModel"
+
 @HiltViewModel
 class PhocoViewModel @Inject constructor(
-        private val repository: PhocoRepository
+    private val repository: PhocoRepository
 ) : ViewModel() {
 
     //authentication and user related vars
@@ -328,19 +331,39 @@ class PhocoViewModel @Inject constructor(
 
             viewModelScope.launch {
 
+                Log.d(TAG, "uploadImage: started")
+
                 _uploadImage.postValue(Resources.Loading())
 
-                val requestImageFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+                // without progress update
+                //val requestImageFile = file.asRequestBody("image/*".toMediaTypeOrNull())
+
+                val requestImageFile = CustomRequestBodyForFileUpload(
+                    file,
+                    "image/*",
+                    this
+                )
+
+
+                Log.d(TAG, "uploadImage: filename : ${file.name}")
 
                 val imageMultipart = MultipartBody.Part.createFormData(
-                    "file",
+                    "image",
                     file.name,
                     requestImageFile
                 )
 
+                Log.d(TAG, "uploadImage : ImageMultipart : $imageMultipart")
+
                 val imageDescriptionRequestBody =
                     imageDescription.toRequestBody("text/plain".toMediaTypeOrNull())
+                Log.d(
+                    TAG,
+                    "uploadImage : imageDescriptionRequestBody : $imageDescriptionRequestBody"
+                )
+
                 val userPkRequestBody = userPK.toRequestBody("text/plain".toMediaTypeOrNull())
+                Log.d(TAG, "uploadImage : userPkRequestBody : $userPkRequestBody")
 
                 repository.postImage(
                     accessToken,
@@ -351,10 +374,16 @@ class PhocoViewModel @Inject constructor(
 
                     if (it.isSuccessful) {
 
+                        Log.d(TAG, "uploadImage: Success : ${it.code()} ${it.message()}")
                         _uploadImage.postValue(Resources.Success(it.body(), it.code().toString()))
                     } else {
 
-                        _uploadImage.postValue(Resources.Error(it.message()))
+                        Log.d(TAG, "uploadImage: Error : ${it.code()} ${it.message()}")
+                        _uploadImage.postValue(
+                            Resources.Error(
+                                it.code().toString() + " " + it.message()
+                            )
+                        )
                     }
                 }
             }

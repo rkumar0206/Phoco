@@ -4,16 +4,16 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.data.AuthToken
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
@@ -22,6 +22,9 @@ import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentProfileBi
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PhocoViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
 
 private const val TAG = "ProfileFragment"
 
@@ -75,7 +78,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                 ) {
 
 
-                    //phocoViewModel.getNewTokens(it.refreshToken)
+                    phocoViewModel.getNewTokens(it.refreshToken)
                     isLoggedInBefore = true
 
                     phocoUser = getUserProfileData(requireActivity())
@@ -97,9 +100,11 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         observeTokenResponse()
         observePhocoUserResponse()
+        observeUploadImageResponse()
 
         initListeners()
     }
+
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -115,11 +120,52 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
     private val chooseImageLauncher = registerForActivityResult(
         ActivityResultContracts.GetContent()
-    ) {
+    ) { uri ->
 
-        showToast(requireContext(), it.toString())
+        val parcelFileDescriptor = requireContext().contentResolver.openFileDescriptor(
+            uri, "r", null
+        )
+
+        val cursor = requireContext().contentResolver.query(
+            uri,
+            null,
+            null,
+            null,
+            null
+        )
+
+        cursor?.use {
+
+            val nameIndex = it.getColumnIndex(MediaStore.Images.Media.DISPLAY_NAME)
+            val sizeIndex = it.getColumnIndex(MediaStore.Images.Media.SIZE)
+            it.moveToFirst()
+
+            Log.d(TAG, "name: ${it.getString(nameIndex)}")
+            Log.d(TAG, "size: ${it.getLong(sizeIndex)}")
+
+            val inputStream = FileInputStream(parcelFileDescriptor?.fileDescriptor)
+            val file = File(requireContext().cacheDir, it.getString(nameIndex))
+
+            val outputStream = FileOutputStream(file)
+            inputStream.copyTo(outputStream)
+
+            Log.d(TAG, "fileName: ${file.name}")
+            Log.d(TAG, "fileLength: ${file.length()}")
+
+            authTokens?.let { accessToken ->
+
+                Log.d(TAG, ": start of upload image")
+
+                phocoViewModel.uploadImage(
+                    accessToken.accessToken,
+                    file,
+                    file.name,
+                    phocoUser?.pk.toString()
+                )
+
+            }
+        }
     }
-
 
     private fun initListeners() {
 
@@ -322,6 +368,36 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         })
     }
 
+    private fun observeUploadImageResponse() {
+
+        phocoViewModel.uploadImage.observe(viewLifecycleOwner, {
+
+            when (it) {
+
+                is Resources.Loading -> {
+
+                    Log.d(TAG, "observeUploadImageResponse: Loading")
+                }
+
+                is Resources.Success -> {
+
+                    Log.d(TAG, "observeUploadImageResponse: Success")
+
+                    val data = it.data
+
+                    Log.d(TAG, "observeUploadImageResponse: $data")
+                }
+
+                else -> {
+
+                    Log.d(TAG, "observeUploadImageResponse: Error")
+                    showToast(requireContext(), it.message.toString(), Toast.LENGTH_LONG)
+                }
+            }
+
+        })
+    }
+
     private fun updateUI(phocoUser: PhocoUser) {
 
         binding.nameOfTheUserTV.text = phocoUser.name
@@ -329,11 +405,11 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         binding.numberOfFollowersTV.text = phocoUser.followers.toString()
         binding.numberOfFollowingTV.text = phocoUser.following.toString()
 
-        Glide.with(this)
-            .load(phocoUser.user_image_url)
-            .placeholder(R.drawable.ic_round_account_circle_24)
-            .transition(DrawableTransitionOptions.withCrossFade())
-            .into(binding.profileImageIV)
+        /*  Glide.with(this)
+              .load(phocoUser.user_image_url)
+              .placeholder(R.drawable.ic_round_account_circle_24)
+              .transition(DrawableTransitionOptions.withCrossFade())
+              .into(binding.profileImageIV)*/
     }
 
 
