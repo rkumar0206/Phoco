@@ -7,11 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.*
-import com.rohitthebest.phoco_theimagesearchingapp.utils.CustomRequestBodyForFileUpload
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import retrofit2.Response
 import java.io.File
@@ -322,6 +322,8 @@ class PhocoViewModel @Inject constructor(
 
     fun uploadImage(
         accessToken: String,
+        imageName: String,
+        /*fileRequestBody: RequestBody,*/
         file: File,
         imageDescription: String = "",
         userPK: String
@@ -336,20 +338,11 @@ class PhocoViewModel @Inject constructor(
                 _uploadImage.postValue(Resources.Loading())
 
                 // without progress update
-                //val requestImageFile = file.asRequestBody("image/*".toMediaTypeOrNull())
-
-                val requestImageFile = CustomRequestBodyForFileUpload(
-                    file,
-                    "image/*",
-                    this
-                )
-
-
-                Log.d(TAG, "uploadImage: filename : ${file.name}")
+                val requestImageFile = file.asRequestBody("image/*".toMediaTypeOrNull())
 
                 val imageMultipart = MultipartBody.Part.createFormData(
-                    "image",
-                    file.name,
+                    "image",  // field name as in API
+                    imageName,
                     requestImageFile
                 )
 

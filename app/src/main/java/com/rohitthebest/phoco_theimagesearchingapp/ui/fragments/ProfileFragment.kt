@@ -158,6 +158,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                 phocoViewModel.uploadImage(
                     accessToken.accessToken,
+                    file.name,
                     file,
                     file.name,
                     phocoUser?.pk.toString()
@@ -166,6 +167,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
             }
         }
     }
+
 
     private fun initListeners() {
 
@@ -190,14 +192,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
             }
 
             binding.uploadImageFAB.id -> {
-
-                /*todo : upload image
-                *
-                * 1. open chooser for choosing image
-                * 2. after selecting image convert the uri to file
-                * 3. call the uploadImage function of PhocoViewModel
-                * 4. Observe the response
-                * */
 
                 if (checkForPermissionsGranted()) {
 
@@ -386,6 +380,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                     val data = it.data
 
                     Log.d(TAG, "observeUploadImageResponse: $data")
+
+                    showToast(requireContext(), "${it.data}")
                 }
 
                 else -> {
@@ -418,4 +414,5 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         _binding = null
     }
+
 }

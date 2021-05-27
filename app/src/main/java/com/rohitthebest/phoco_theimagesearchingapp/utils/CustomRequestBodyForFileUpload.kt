@@ -2,12 +2,15 @@ package com.rohitthebest.phoco_theimagesearchingapp.utils
 
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okio.BufferedSink
 import java.io.File
 import java.io.FileInputStream
+
+private const val TAG = "CustomRequestBodyForFil"
 
 class CustomRequestBodyForFileUpload(
     private val file: File,
@@ -37,12 +40,15 @@ class CustomRequestBodyForFileUpload(
             var read: Int
             val handler = Handler(Looper.getMainLooper())
 
+            Log.d(TAG, "writeTo: Total Length : $length")
+
             while (inputStream.read(buffer).also { read = it } != -1) {
 
-                handler.post(ProgressUpdater(uploaded, length))
+                //Log.d(TAG, "writeTo: Uploaded : $uploaded")
 
                 uploaded += read
                 sink.write(buffer, 0, read)
+                handler.post(ProgressUpdater(uploaded, length))
             }
         }
 
@@ -51,6 +57,7 @@ class CustomRequestBodyForFileUpload(
     interface UploadCallback {
 
         fun onProgressUpdate(percentage: Int)
+
     }
 
     inner class ProgressUpdater(
@@ -59,7 +66,9 @@ class CustomRequestBodyForFileUpload(
     ) : Runnable {
         override fun run() {
 
-            callback.onProgressUpdate((100 * uploaded / totalSize).toInt())
+            val progress = (100 * uploaded / totalSize).toInt()
+            Log.d(TAG, "run: progress : $progress")
+            callback.onProgressUpdate(progress)
         }
     }
 }
