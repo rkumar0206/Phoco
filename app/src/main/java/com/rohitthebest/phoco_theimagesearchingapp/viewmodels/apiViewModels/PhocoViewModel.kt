@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.rohitthebest.phoco_theimagesearchingapp.api.PhocoImageResponse
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,10 +46,10 @@ class PhocoViewModel @Inject constructor(
     val unfollowUser: LiveData<Resources<String?>> get() = _unfollowUser
 
     // user's image related vars
-    private val _imageList = MutableLiveData<Resources<List<PhocoImageItem>>>()
+    private val _imageList = MutableLiveData<Resources<PhocoImageResponse>>()
     private val _uploadImage = MutableLiveData<Resources<PhocoImageItem>>()
 
-    val imageList: LiveData<Resources<List<PhocoImageItem>>> get() = _imageList
+    val imageList: LiveData<Resources<PhocoImageResponse>> get() = _imageList
     val uploadImage: LiveData<Resources<PhocoImageItem>> get() = _uploadImage
 
     /*start function*/
@@ -293,7 +294,7 @@ class PhocoViewModel @Inject constructor(
     }
 
     //user's image related
-    fun getImageList(accessToken: String, username: String) {
+    fun getUserImageList(accessToken: String, username: String) {
 
         try {
 

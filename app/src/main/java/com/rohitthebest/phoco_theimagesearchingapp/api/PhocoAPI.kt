@@ -125,12 +125,18 @@ interface PhocoAPI {
         @Path("following") following_user_pk: Int
     ): Response<String?>   // testing required
 
+    //-------------------------------------------------------------------------------
+
+
+    //------------------------------- Image Related ----------------------------------
 
     @GET("/images/{username}")
     suspend fun getUserPhocoImages(
         @Header("Authorization") accessToken: String,
-        @Path("username") username: String
-    ): Response<List<PhocoImageItem>>
+        @Path("username") username: String,
+        @Query("page") page: Int,
+        @Query("per_page") per_page: Int
+    ): Response<PhocoImageResponse>
 
 
     @Multipart
@@ -141,4 +147,8 @@ interface PhocoAPI {
         @Part("image_description") imageDescription: RequestBody,
         @Part("phoco_user") user: RequestBody
     ): Response<PhocoImageItem>
+
+    //-------------------------------------------------------------------------------
+
+
 }
