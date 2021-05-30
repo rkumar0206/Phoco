@@ -1,5 +1,7 @@
 package com.rohitthebest.phoco_theimagesearchingapp.data.phocoData
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import com.rohitthebest.phoco_theimagesearchingapp.api.PhocoAPI
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -55,8 +57,14 @@ class PhocoRepository @Inject constructor(
     suspend fun unfollowUser(accessToken: String, follower_user_pk: Int, following_user_pk: Int) =
         phocoAPI.unfollowUser(accessToken, follower_user_pk, following_user_pk)
 
-    suspend fun getUserPhocoImages(accessToken: String, username: String) =
-        phocoAPI.getUserPhocoImages(accessToken, username)
+    fun getUserPhocoImages(accessToken: String, username: String) =
+        Pager(
+            config = PagingConfig(
+                pageSize = 15,
+                maxSize = 100
+            ),
+            pagingSourceFactory = { PhocoPagingSource(phocoAPI, accessToken, username) }
+        )
 
     suspend fun postImage(
         accessToken: String,
