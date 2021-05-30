@@ -64,7 +64,7 @@ class PhocoRepository @Inject constructor(
                 maxSize = 100
             ),
             pagingSourceFactory = { PhocoPagingSource(phocoAPI, accessToken, username) }
-        )
+        ).flow
 
     suspend fun postImage(
         accessToken: String,

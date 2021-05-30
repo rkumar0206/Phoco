@@ -1,11 +1,8 @@
 package com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.rohitthebest.phoco_theimagesearchingapp.api.PhocoImageResponse
+import androidx.lifecycle.*
+import androidx.paging.cachedIn
 import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -46,13 +43,9 @@ class PhocoViewModel @Inject constructor(
     val unfollowUser: LiveData<Resources<String?>> get() = _unfollowUser
 
     // user's image related vars
-    private val _imageList = MutableLiveData<Resources<PhocoImageResponse>>()
     private val _uploadImage = MutableLiveData<Resources<PhocoImageItem>>()
-
-    val imageList: LiveData<Resources<PhocoImageResponse>> get() = _imageList
     val uploadImage: LiveData<Resources<PhocoImageItem>> get() = _uploadImage
 
-    /*start function*/
 
     //user authentication related
     fun signUpUser(signUp: SignUp) {
@@ -191,6 +184,7 @@ class PhocoViewModel @Inject constructor(
 
     }
 
+
     // user follow and following related
     fun getFollowersListOfUser(accessToken: String, userPrimaryKey: Int) {
 
@@ -294,32 +288,8 @@ class PhocoViewModel @Inject constructor(
     }
 
     //user's image related
-    fun getUserImageList(accessToken: String, username: String) {
-
-        try {
-
-            viewModelScope.launch {
-
-                repository.getUserPhocoImages(accessToken, username).also {
-
-                    _imageList.postValue(Resources.Loading())
-
-                    if (it.isSuccessful) {
-
-                        _imageList.postValue(Resources.Success(it.body(), it.code().toString()))
-                    } else {
-
-                        _imageList.postValue(Resources.Error(it.message()))
-                    }
-                }
-            }
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-            _imageList.postValue(Resources.Error("Something went wrong"))
-        }
-
-    }
+    fun getUserImageList(accessToken: String, username: String) =
+        repository.getUserPhocoImages(accessToken, username).asLiveData().cachedIn(viewModelScope)
 
     fun uploadImage(
         accessToken: String,
@@ -388,5 +358,4 @@ class PhocoViewModel @Inject constructor(
 
     }
 
-    /*end functions*/
 }
