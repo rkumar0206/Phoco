@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -41,14 +42,23 @@ class UnsplashSearchResultsAdapter(var savedImageIdList: List<String> = emptyLis
                     //displaying the actual image
                     setUpAndShowImageInImageView(unsplashPhoto)
 
+                    val aspectRatio = unsplashPhoto.width.toFloat() / unsplashPhoto.height.toFloat()
+
+                    ConstraintSet().apply {
+
+                        clone(root)
+                        setDimensionRatio(image.id, aspectRatio.toString())
+                        applyTo(root)
+                    }
+
                     //displaying the user image
                     Glide.with(binding.view)
-                            .load(unsplashPhoto.user.profile_image.small)
-                            .centerInside()
-                            .error(R.drawable.ic_outline_account_circle_24)
-                            .into(imageUserImage)
+                        .load(unsplashPhoto.user.profile_image.small)
+                        .centerInside()
+                        .error(R.drawable.ic_outline_account_circle_24)
+                        .into(imageUserImage)
 
-                    imageUserNameTV.text = it.user.username
+                    imageUserNameTV.text = unsplashPhoto.user.username
 
                     if (savedImageIdList.isNotEmpty()) {
 

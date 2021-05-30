@@ -419,6 +419,8 @@ fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
                     userImageUrl = unsplashPhoto.user.profile_image.medium
                 )
                 uid = ""
+                width = unsplashPhoto.width
+                height = unsplashPhoto.height
             }
         }
 
@@ -443,6 +445,8 @@ fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
                     pixabayPhoto.userImageURL
                 )
                 uid = ""
+                width = pixabayPhoto.imageWidth
+                height = pixabayPhoto.imageHeight
             }
         }
 
@@ -463,6 +467,8 @@ fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
                     userImageUrl = pexelPhoto.photographer_url
                 )
                 uid = ""
+                width = pexelPhoto.width
+                height = pexelPhoto.height
             }
         }
 

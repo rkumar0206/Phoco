@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -38,11 +39,22 @@ class WebImageAdapter() :
                     //displaying the actual image
                     setUpAndShowImageInImageView(it)
 
+                    val aspectRatio =
+                        webPhoto.height?.toFloat()
+                            ?.let { it1 -> webPhoto.width?.toFloat()?.div(it1) }
+
+                    ConstraintSet().apply {
+
+                        clone(root)
+                        setDimensionRatio(image.id, aspectRatio.toString())
+                        applyTo(root)
+                    }
+
                     //displaying the user image
                     Glide.with(binding.view)
-                            .load(R.drawable.ic_baseline_web_24)
-                            .centerInside()
-                            .into(imageUserImage)
+                        .load(R.drawable.ic_baseline_web_24)
+                        .centerInside()
+                        .into(imageUserImage)
 
                     imageUserNameTV.text = "Visit website"
 

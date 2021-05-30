@@ -7,27 +7,31 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.ImageDownloadLinksAndIn
 
 @Entity(tableName = "saved_image_table")
 data class SavedImage(
-        @PrimaryKey(autoGenerate = false) var key: String,
-        var collectionKey: String = "",
-        val timeStamp: Long = System.currentTimeMillis(),
-        var apiInfo: APIsInfo,
-        var imageName: String,
-        var imageId: String = "",  //this is the image id given by the API
-        var imageUrls: ImageDownloadLinksAndInfo.ImageUrls,
-        var userInfo: UserInfo,
-        var uid: String = ""
+    @PrimaryKey(autoGenerate = false) var key: String,
+    var collectionKey: String = "",
+    val timeStamp: Long = System.currentTimeMillis(),
+    var apiInfo: APIsInfo,
+    var imageName: String,
+    var imageId: String = "",  //this is the image id given by the API,
+    var width: Int,
+    var height: Int,
+    var imageUrls: ImageDownloadLinksAndInfo.ImageUrls,
+    var userInfo: UserInfo,
+    var uid: String = ""
 ) {
 
     constructor() : this(
-            "",
-            "",
-            System.currentTimeMillis(),
-            APIsInfo(),
-            "",
-            "",
-            ImageDownloadLinksAndInfo.ImageUrls(),
-            UserInfo(),
-            ""
+        "",
+        "",
+        System.currentTimeMillis(),
+        APIsInfo(),
+        "",
+        "",
+        0,
+        0,
+        ImageDownloadLinksAndInfo.ImageUrls(),
+        UserInfo(),
+        ""
 
     )
 }

@@ -14,7 +14,6 @@ data class UnsplashPhoto(
         val urls: UnsplashPhotoUrls,
         val links: Links,
         val user: UnsplashUser,
-        var isImageSavedInCollection : Boolean = false
 ) {
 
     data class UnsplashPhotoUrls(

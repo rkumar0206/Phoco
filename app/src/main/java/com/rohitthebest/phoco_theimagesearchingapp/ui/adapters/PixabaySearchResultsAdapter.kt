@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -40,12 +41,22 @@ class PixabaySearchResultsAdapter(var savedImageIdList: List<String> = emptyList
                     //displaying the actual image
                     setUpAndShowImageInImageView(it)
 
+                    val aspectRatio =
+                        pixabayPhoto.imageWidth.toFloat() / pixabayPhoto.imageHeight.toFloat()
+
+                    ConstraintSet().apply {
+
+                        clone(root)
+                        setDimensionRatio(image.id, aspectRatio.toString())
+                        applyTo(root)
+                    }
+
                     //displaying the user image
                     Glide.with(binding.view)
-                            .load(pixabayPhoto.userImageURL)
-                            .centerInside()
-                            .error(R.drawable.ic_outline_account_circle_24)
-                            .into(imageUserImage)
+                        .load(pixabayPhoto.userImageURL)
+                        .centerInside()
+                        .error(R.drawable.ic_outline_account_circle_24)
+                        .into(imageUserImage)
 
                     imageUserNameTV.text = it.user
 

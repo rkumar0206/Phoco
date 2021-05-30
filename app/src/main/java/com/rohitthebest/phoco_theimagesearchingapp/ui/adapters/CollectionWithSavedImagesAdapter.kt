@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.isVisible
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.SelectionTracker
@@ -38,6 +39,15 @@ class CollectionWithSavedImagesAdapter :
             savedImage?.let {
 
                 setUpAndShowImageInImageView(it.imageUrls.medium)
+
+                val aspectRatio = savedImage.width.toFloat() / savedImage.height.toFloat()
+
+                ConstraintSet().apply {
+
+                    clone(root)
+                    setDimensionRatio(image.id, aspectRatio.toString())
+                    applyTo(root)
+                }
 
                 //displaying the user image
                 Glide.with(binding.view)

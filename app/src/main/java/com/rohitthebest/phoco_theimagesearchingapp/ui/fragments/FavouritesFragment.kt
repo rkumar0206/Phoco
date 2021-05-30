@@ -81,6 +81,7 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite), CollectionsAda
                 } catch (e: IndexOutOfBoundsException) {
                     e.printStackTrace()
                 }
+
             }
         })
     }

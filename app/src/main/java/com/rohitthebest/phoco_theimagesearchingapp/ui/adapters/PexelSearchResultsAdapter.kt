@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -40,6 +41,15 @@ class PexelSearchResultsAdapter(var savedImageIdList: List<String> = emptyList()
 
                     //displaying the actual image
                     setUpAndShowImageInImageView(it)
+
+                    val aspectRatio = pexelPhoto.width.toFloat() / pexelPhoto.height.toFloat()
+
+                    ConstraintSet().apply {
+
+                        clone(root)
+                        setDimensionRatio(image.id, aspectRatio.toString())
+                        applyTo(root)
+                    }
 
                     //displaying the user image
                     Glide.with(binding.view)
