@@ -76,7 +76,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                 ) {
 
 
-                    //phocoViewModel.getNewTokens(it.refreshToken)
+                    phocoViewModel.getNewTokens(it.refreshToken)
                     isLoggedInBefore = true
 
                     phocoUser = getUserProfileData(requireActivity())
@@ -102,7 +102,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         initListeners()
     }
-
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -322,7 +321,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                     Log.d(TAG, "observePhocoUserResponse: ${it.data}")
 
-                    val phocoUser = it.data
+                    phocoUser = it.data
 
                     phocoUser?.let { user ->
 
@@ -330,6 +329,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                         Log.d(TAG, "observePhocoUserResponse: user saved in shared preference")
 
                         updateUI(user)
+                        observeUserImageResponse()
                     }
 
                 }
@@ -343,6 +343,17 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                     showToast(requireContext(), it.message.toString())
                 }
             }
+        })
+    }
+
+    private fun observeUserImageResponse() {
+
+        phocoViewModel.getUserImageList(
+            authTokens?.accessToken!!,
+            phocoUser?.username!!
+        ).observe(viewLifecycleOwner, {
+
+            Log.d(TAG, "observeUserImageResponse: $it")
         })
     }
 
@@ -391,7 +402,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
               .transition(DrawableTransitionOptions.withCrossFade())
               .into(binding.profileImageIV)*/
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()
