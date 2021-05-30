@@ -9,8 +9,8 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.AUTH_TOKEN_SHARED_P
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.AUTH_TOKEN_SHARED_PREFERENCE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PHOCO_USER_DATA_SHARED_PREFERENCE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PHOCO_USER_DATA_SHARED_PREFERENCE_NAME
-import com.rohitthebest.phoco_theimagesearchingapp.data.AuthToken
-import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.PhocoUser
+import com.rohitthebest.phoco_theimagesearchingapp.remote.AuthToken
+import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.PhocoUser
 
 private const val TAG = "SharedPreferencesData"
 

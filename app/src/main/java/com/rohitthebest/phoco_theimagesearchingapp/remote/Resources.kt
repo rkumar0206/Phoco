@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.data
+package com.rohitthebest.phoco_theimagesearchingapp.remote
 
 sealed class Resources<T>(
         val data: T? = null,

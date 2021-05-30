@@ -3,8 +3,8 @@ package com.rohitthebest.phoco_theimagesearchingapp.database
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.UserInfo
+import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.utils.APIsInfo
 import com.rohitthebest.phoco_theimagesearchingapp.utils.ImageDownloadLinksAndInfo
 

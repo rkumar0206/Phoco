@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData
+package com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

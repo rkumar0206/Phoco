@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData
+package com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData
 
 data class PixabayPhoto(
         val comments: Int,

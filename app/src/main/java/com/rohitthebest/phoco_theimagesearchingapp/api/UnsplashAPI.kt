@@ -1,7 +1,7 @@
 package com.rohitthebest.phoco_theimagesearchingapp.api
 
 import com.rohitthebest.phoco_theimagesearchingapp.BuildConfig.UNSPLASH_CLIENT_ID
-import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Headers

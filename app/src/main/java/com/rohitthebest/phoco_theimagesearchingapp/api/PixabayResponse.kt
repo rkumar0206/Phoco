@@ -1,6 +1,6 @@
 package com.rohitthebest.phoco_theimagesearchingapp.api
 
-import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData.PixabayPhoto
 
 data class PixabayResponse(
         val hits: List<PixabayPhoto>,

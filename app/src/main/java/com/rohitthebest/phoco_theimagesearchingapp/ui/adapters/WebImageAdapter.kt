@@ -15,8 +15,8 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.rohitthebest.phoco_theimagesearchingapp.R
-import com.rohitthebest.phoco_theimagesearchingapp.data.mohitImagApiData.WebPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.PhotoItemForRvBinding
+import com.rohitthebest.phoco_theimagesearchingapp.remote.mohitImagApiData.WebPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 

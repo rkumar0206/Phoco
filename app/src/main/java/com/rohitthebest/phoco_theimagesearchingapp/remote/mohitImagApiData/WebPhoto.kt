@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.data.mohitImagApiData
+package com.rohitthebest.phoco_theimagesearchingapp.remote.mohitImagApiData
 
 data class WebPhoto(
         val height: String?,   //height of the image

@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData
+package com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState

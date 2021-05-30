@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.data.phocoData
+package com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig

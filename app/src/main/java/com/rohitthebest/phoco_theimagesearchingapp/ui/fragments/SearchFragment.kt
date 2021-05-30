@@ -20,12 +20,12 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNSPLASH
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_WEB
 import com.rohitthebest.phoco_theimagesearchingapp.R
-import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
-import com.rohitthebest.phoco_theimagesearchingapp.data.mohitImagApiData.WebPhoto
-import com.rohitthebest.phoco_theimagesearchingapp.data.pexelsData.PexelPhoto
-import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
-import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentSearchBinding
+import com.rohitthebest.phoco_theimagesearchingapp.remote.Resources
+import com.rohitthebest.phoco_theimagesearchingapp.remote.mohitImagApiData.WebPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData.PexelPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData.PixabayPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.ui.activities.PreviewImageActivity
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*

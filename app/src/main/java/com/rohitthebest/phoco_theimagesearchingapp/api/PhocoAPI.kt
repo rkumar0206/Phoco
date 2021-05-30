@@ -1,6 +1,6 @@
 package com.rohitthebest.phoco_theimagesearchingapp.api
 
-import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.*
+import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Response

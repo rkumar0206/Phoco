@@ -3,7 +3,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.repositories.UnsplashPhotoRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

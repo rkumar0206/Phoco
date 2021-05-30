@@ -3,8 +3,8 @@ package com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels
 import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
-import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
-import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.*
+import com.rohitthebest.phoco_theimagesearchingapp.remote.Resources
+import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull

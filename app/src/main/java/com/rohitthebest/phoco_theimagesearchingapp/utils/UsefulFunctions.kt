@@ -23,11 +23,11 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.NO_INTERNET_MESSAGE
 import com.rohitthebest.phoco_theimagesearchingapp.R
-import com.rohitthebest.phoco_theimagesearchingapp.data.pexelsData.PexelPhoto
-import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
-import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.UserInfo
+import com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData.PexelPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData.PixabayPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

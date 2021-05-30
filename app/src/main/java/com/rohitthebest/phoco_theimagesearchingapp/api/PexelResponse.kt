@@ -1,6 +1,6 @@
 package com.rohitthebest.phoco_theimagesearchingapp.api
 
-import com.rohitthebest.phoco_theimagesearchingapp.data.pexelsData.PexelPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData.PexelPhoto
 
 data class PexelResponse(
         val next_page: String,

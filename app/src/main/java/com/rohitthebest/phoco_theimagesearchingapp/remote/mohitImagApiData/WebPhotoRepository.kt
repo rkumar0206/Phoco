@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.data.mohitImagApiData
+package com.rohitthebest.phoco_theimagesearchingapp.remote.mohitImagApiData
 
 import com.rohitthebest.phoco_theimagesearchingapp.api.MohitImageAPI
 import javax.inject.Inject

@@ -2,9 +2,9 @@ package com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels
 
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
-import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
-import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
-import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayRepository
+import com.rohitthebest.phoco_theimagesearchingapp.remote.Resources
+import com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData.PixabayPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData.PixabayRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.data
+package com.rohitthebest.phoco_theimagesearchingapp.remote
 
 data class AuthToken(
     var refreshToken: String,

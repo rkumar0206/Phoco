@@ -15,10 +15,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.rohitthebest.phoco_theimagesearchingapp.R
-import com.rohitthebest.phoco_theimagesearchingapp.data.AuthToken
-import com.rohitthebest.phoco_theimagesearchingapp.data.Resources
-import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.PhocoUser
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentProfileBinding
+import com.rohitthebest.phoco_theimagesearchingapp.remote.AuthToken
+import com.rohitthebest.phoco_theimagesearchingapp.remote.Resources
+import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.PhocoUser
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PhocoViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -354,6 +354,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         ).observe(viewLifecycleOwner, {
 
             Log.d(TAG, "observeUserImageResponse: $it")
+            //todo :  send this paging data to the recycler view
         })
     }
 

@@ -1,7 +1,7 @@
 package com.rohitthebest.phoco_theimagesearchingapp.api
 
 import com.rohitthebest.phoco_theimagesearchingapp.BuildConfig
-import com.rohitthebest.phoco_theimagesearchingapp.data.pixabayData.PixabayPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData.PixabayPhoto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

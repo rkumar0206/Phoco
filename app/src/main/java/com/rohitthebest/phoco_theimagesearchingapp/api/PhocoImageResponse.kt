@@ -1,6 +1,6 @@
 package com.rohitthebest.phoco_theimagesearchingapp.api
 
-import com.rohitthebest.phoco_theimagesearchingapp.data.phocoData.PhocoImageItem
+import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.PhocoImageItem
 
 data class PhocoImageResponse(
     val count: Int,

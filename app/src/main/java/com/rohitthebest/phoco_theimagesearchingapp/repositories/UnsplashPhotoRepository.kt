@@ -1,7 +1,7 @@
 package com.rohitthebest.phoco_theimagesearchingapp.repositories
 
-import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.database.dao.UnsplashPhotoDao
+import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
 import javax.inject.Inject
 import javax.inject.Singleton
 

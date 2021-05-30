@@ -1,7 +1,7 @@
 package com.rohitthebest.phoco_theimagesearchingapp.database.dao
 
 import androidx.room.*
-import com.rohitthebest.phoco_theimagesearchingapp.data.unsplashData.UnsplashPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
 import kotlinx.coroutines.flow.Flow
 
 @Dao

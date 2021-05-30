@@ -2,7 +2,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels
 
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
-import com.rohitthebest.phoco_theimagesearchingapp.data.pexelsData.PexelRepository
+import com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData.PexelRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

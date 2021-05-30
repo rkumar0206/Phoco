@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.data.phocoData
+package com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData
 
 import com.google.gson.annotations.SerializedName
 
