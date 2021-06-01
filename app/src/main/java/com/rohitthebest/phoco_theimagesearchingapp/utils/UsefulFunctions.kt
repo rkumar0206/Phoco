@@ -15,10 +15,16 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.NO_INTERNET_MESSAGE
@@ -617,6 +623,51 @@ suspend fun Uri.getFile(context: Context): File? {
     }
 }
 
+
+inline fun setImageToImageViewUsingGlide(
+    context: Context,
+    imageView: ImageView,
+    imageUrl: String?,
+    crossinline onLoadFailed: () -> Unit,
+    crossinline onResourceReady: () -> Unit
+) {
+
+    Glide.with(context)
+        .load(imageUrl)
+        .apply {
+            this.error(R.drawable.ic_outline_error_outline_24)
+            this.centerCrop()
+        }
+        .listener(object : RequestListener<Drawable> {
+
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any?,
+                target: Target<Drawable>?,
+                isFirstResource: Boolean
+            ): Boolean {
+
+                onLoadFailed()
+                return false
+            }
+
+            override fun onResourceReady(
+                resource: Drawable?,
+                model: Any?,
+                target: Target<Drawable>?,
+                dataSource: DataSource?,
+                isFirstResource: Boolean
+            ): Boolean {
+
+                onResourceReady()
+                return false
+            }
+
+        })
+        .transition(DrawableTransitionOptions.withCrossFade())
+        .into(imageView)
+
+}
 
 
 

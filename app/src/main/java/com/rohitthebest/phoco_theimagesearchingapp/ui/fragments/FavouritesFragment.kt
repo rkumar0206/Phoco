@@ -143,5 +143,4 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite), CollectionsAda
 
         _binding = null
     }
-
 }

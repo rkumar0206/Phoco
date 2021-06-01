@@ -1,6 +1,5 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.adapters
 
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,15 +8,11 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.PhotoItemForRvBinding
 import com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData.PixabayPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
+import com.rohitthebest.phoco_theimagesearchingapp.utils.setImageToImageViewUsingGlide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 
 class PixabaySearchResultsAdapter(var savedImageIdList: List<String> = emptyList()) :
@@ -77,29 +72,17 @@ class PixabaySearchResultsAdapter(var savedImageIdList: List<String> = emptyList
 
         private fun setUpAndShowImageInImageView(pixabayPhoto: PixabayPhoto) {
 
-            Glide.with(binding.view)
-                    .load(pixabayPhoto.webformatURL)
-                    .apply {
-                        this.error(R.drawable.ic_outline_error_outline_24)
-                        this.centerCrop()
-                    }
-                    .listener(object : RequestListener<Drawable> {
-
-                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-
-                            showReloadBtn()
-                            return false
-                        }
-
-                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                            hideReloadBtn()
-                            return false
-                        }
-
-                    })
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(binding.image)
-
+            setImageToImageViewUsingGlide(
+                binding.root.context,
+                binding.image,
+                pixabayPhoto.webformatURL,
+                {
+                    showReloadBtn()
+                },
+                {
+                    hideReloadBtn()
+                }
+            )
         }
 
         private fun showReloadBtn() {

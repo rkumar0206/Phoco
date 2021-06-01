@@ -1,6 +1,5 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.adapters
 
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,19 +8,19 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.PhotoItemForRvBinding
 import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
+import com.rohitthebest.phoco_theimagesearchingapp.utils.setImageToImageViewUsingGlide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 
+private const val TAG = "UnsplashSearchResultsAd"
+
 class UnsplashSearchResultsAdapter(var savedImageIdList: List<String> = emptyList()) :
-        PagingDataAdapter<UnsplashPhoto, UnsplashSearchResultsAdapter.UnsplashSearchViewHolder>(DiffUtilCallback()) {
+    PagingDataAdapter<UnsplashPhoto, UnsplashSearchResultsAdapter.UnsplashSearchViewHolder>(
+        DiffUtilCallback()
+    ) {
 
     private var mListener: OnClickListener? = null
 
@@ -30,8 +29,8 @@ class UnsplashSearchResultsAdapter(var savedImageIdList: List<String> = emptyLis
         this.savedImageIdList = list
     }
 
-    inner class UnsplashSearchViewHolder(val binding: PhotoItemForRvBinding)
-        : RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
+    inner class UnsplashSearchViewHolder(val binding: PhotoItemForRvBinding) :
+        RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
 
         fun setData(unsplashPhoto: UnsplashPhoto?) {
 
@@ -77,28 +76,18 @@ class UnsplashSearchResultsAdapter(var savedImageIdList: List<String> = emptyLis
         //displaying the actual image
         private fun setUpAndShowImageInImageView(unsplashPhoto: UnsplashPhoto) {
 
-            Glide.with(binding.view)
-                    .load(unsplashPhoto.urls.regular)
-                    .apply {
-                        this.error(R.drawable.ic_outline_error_outline_24)
-                        this.centerCrop()
-                    }
-                    .listener(object : RequestListener<Drawable> {
+            setImageToImageViewUsingGlide(
+                binding.root.context,
+                binding.image,
+                unsplashPhoto.urls.regular,
+                {
+                    showReloadBtn()
+                },
+                {
 
-                        override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-
-                            showReloadBtn()
-                            return false
-                        }
-
-                        override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-                            hideReloadBtn()
-                            return false
-                        }
-
-                    })
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(binding.image)
+                    hideReloadBtn()
+                }
+            )
 
         }
 
