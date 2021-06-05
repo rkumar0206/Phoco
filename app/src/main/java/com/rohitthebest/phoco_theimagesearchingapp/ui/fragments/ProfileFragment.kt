@@ -14,11 +14,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentProfileBinding
 import com.rohitthebest.phoco_theimagesearchingapp.remote.AuthToken
 import com.rohitthebest.phoco_theimagesearchingapp.remote.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.PhocoUser
+import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.phocoAdapters.PhocoImageAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PhocoViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,6 +43,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
     private var isLoggedInBefore = false
 
+    private lateinit var phocoImageAdapter: PhocoImageAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -47,11 +52,42 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         authTokens = getSavedAuthToken(requireActivity())
 
+        checkIfAuthTokensExpired()
+
+        observeTokenResponse()
+        observePhocoUserResponse()
+        observeUploadImageResponse()
+
+        initListeners()
+
+        phocoImageAdapter = PhocoImageAdapter(shouldShowFavouriteButton = false)
+
+        setUpPhocoImageRecyclerView()
+    }
+
+    private fun setUpPhocoImageRecyclerView() {
+
+        try {
+
+            binding.photosRV.show()
+            binding.photosRV.apply {
+
+                setHasFixedSize(true)
+                adapter = phocoImageAdapter
+                layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun checkIfAuthTokensExpired() {
+
         if (authTokens == null) {
 
             Log.d(TAG, "onViewCreated: auth token was null")
             findNavController().navigate(R.id.action_profileFragment_to_loginSignUpFragment)
-            isLoggedInBefore = false
         } else {
 
             Log.d(TAG, "onViewCreated: auth token is not null")
@@ -59,22 +95,15 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
             // check if last updated date for getting the tokens is not more than 15 days
             authTokens?.let {
 
+                val numberOfDays =
+                    calculateNumberOfDays(it.dateWhenTokenReceived, System.currentTimeMillis())
+
                 Log.d(
                     TAG,
-                    "onViewCreated: Number of days = ${
-                        calculateNumberOfDays(
-                            it.dateWhenTokenReceived,
-                            System.currentTimeMillis()
-                        )
-                    }"
+                    "onViewCreated: Number of days = $numberOfDays"
                 )
 
-                if (calculateNumberOfDays(
-                        it.dateWhenTokenReceived,
-                        System.currentTimeMillis()
-                    ) < 15
-                ) {
-
+                if (numberOfDays < 15) {
 
                     phocoViewModel.getNewTokens(it.refreshToken)
                     isLoggedInBefore = true
@@ -95,12 +124,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                 }
             }
         }
-
-        observeTokenResponse()
-        observePhocoUserResponse()
-        observeUploadImageResponse()
-
-        initListeners()
     }
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -154,25 +177,25 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
     private fun initListeners() {
 
-        binding.backButton.setOnClickListener(this)
-        binding.editProfileBtn.setOnClickListener(this)
+        //binding.backButton.setOnClickListener(this)
+        //binding.editProfileBtn.setOnClickListener(this)
         binding.followBtn.setOnClickListener(this)
-        binding.uploadImageFAB.setOnClickListener(this)
+        //binding.uploadImageFAB.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
 
         when (v?.id) {
 
-            binding.backButton.id -> {
+            /* binding.backButton.id -> {
 
-                requireActivity().onBackPressed()
-            }
+                 requireActivity().onBackPressed()
+             }
 
-            binding.editProfileBtn.id -> {
+             binding.editProfileBtn.id -> {
 
-                //todo : open edit profile fragment
-            }
+                 //todo : open edit profile fragment
+             }*/
 
             binding.uploadImageFAB.id -> {
 
@@ -354,7 +377,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         ).observe(viewLifecycleOwner, {
 
             Log.d(TAG, "observeUserImageResponse: $it")
-            //todo :  send this paging data to the recycler view
+
+            setUpPhocoImageRecyclerView()
+            phocoImageAdapter.submitData(viewLifecycleOwner.lifecycle, it)
+
         })
     }
 

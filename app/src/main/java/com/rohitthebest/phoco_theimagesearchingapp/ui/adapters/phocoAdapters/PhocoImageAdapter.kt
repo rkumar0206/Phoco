@@ -47,7 +47,6 @@ class PhocoImageAdapter(
                         setDimensionRatio(image.id, aspectRatio.toString())
                         applyTo(root)
                     }
-
                     //displaying the user image
                     Glide.with(binding.view)
                         .load(R.drawable.ic_outline_account_circle_24)

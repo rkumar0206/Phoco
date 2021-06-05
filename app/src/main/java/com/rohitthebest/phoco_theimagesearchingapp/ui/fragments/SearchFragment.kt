@@ -139,6 +139,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
         unsplashViewModel.unsplashSearchResult.observe(viewLifecycleOwner, {
 
+            Log.d(TAG, "observeUnsplashSearchResult: $it")
             unsplashSearchAdapter.submitData(viewLifecycleOwner.lifecycle, it)
             binding.noResultsFoundTV.hide()
 
