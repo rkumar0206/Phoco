@@ -2,6 +2,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.NETWORK_PAGE_SIZE_UNSPLASH
 import com.rohitthebest.phoco_theimagesearchingapp.api.UnsplashAPI
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,8 +15,8 @@ class UnsplashRepository @Inject constructor(
     fun getSearchResultsFromUnsplash(query: String) = Pager(
 
             config = PagingConfig(
-                    pageSize = 20,
-                    maxSize = 100
+                pageSize = NETWORK_PAGE_SIZE_UNSPLASH,
+                maxSize = 100
             ),
             pagingSourceFactory = { UnsplashPagingSource(unsplashApi, query) }
     ).flow

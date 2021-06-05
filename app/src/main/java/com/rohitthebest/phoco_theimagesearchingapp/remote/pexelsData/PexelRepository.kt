@@ -2,6 +2,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.NETWORK_PAGE_SIZE_PEXEL
 import com.rohitthebest.phoco_theimagesearchingapp.api.PexelAPI
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,7 +14,7 @@ class PexelRepository @Inject constructor(
 
     fun getSearchResultFromThePexelApi(searchString: String) = Pager(
         PagingConfig(
-            pageSize = 20,
+            pageSize = NETWORK_PAGE_SIZE_PEXEL,
             maxSize = 100
         ),
         pagingSourceFactory = { PexelPagingSource(searchString, pexelAPI) }

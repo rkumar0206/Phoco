@@ -2,6 +2,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.NETWORK_PAGE_SIZE_UNSPLASH
 import com.rohitthebest.phoco_theimagesearchingapp.api.UnsplashAPI
 import retrofit2.HttpException
 import java.io.IOException
@@ -24,7 +25,7 @@ class UnsplashPagingSource(
             LoadResult.Page(
                     data = photo,
                     prevKey = if (position == 1) null else position - 1,
-                    nextKey = if (photo.isEmpty()) null else position + 1
+                nextKey = if (photo.isEmpty()) null else position + (params.loadSize / NETWORK_PAGE_SIZE_UNSPLASH)
             )
 
         } catch (e: IOException) {

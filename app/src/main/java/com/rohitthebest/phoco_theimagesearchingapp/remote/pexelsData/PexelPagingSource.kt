@@ -2,6 +2,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.NETWORK_PAGE_SIZE_PEXEL
 import com.rohitthebest.phoco_theimagesearchingapp.api.PexelAPI
 import retrofit2.HttpException
 import java.io.IOException
@@ -24,7 +25,7 @@ class PexelPagingSource(
             LoadResult.Page(
                 data = photo,
                 prevKey = if (position == 1) null else position - 1,
-                nextKey = if (photo.isEmpty()) null else position + 1
+                nextKey = if (photo.isEmpty()) null else position + (params.loadSize / NETWORK_PAGE_SIZE_PEXEL)
             )
 
         } catch (e: IOException) {

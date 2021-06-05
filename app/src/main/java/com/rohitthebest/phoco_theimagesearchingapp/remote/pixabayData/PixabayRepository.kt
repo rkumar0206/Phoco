@@ -2,6 +2,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.NETWORK_PAGE_SIZE_PIXABAY
 import com.rohitthebest.phoco_theimagesearchingapp.api.PixabayAPI
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,8 +15,8 @@ class PixabayRepository @Inject constructor(
     fun getSearchResultsFromPixabayAPI(searchQuery: String) = Pager(
 
             PagingConfig(
-                    pageSize = 20,
-                    maxSize = 100
+                pageSize = NETWORK_PAGE_SIZE_PIXABAY,
+                maxSize = 100
             ),
             pagingSourceFactory = { PixabayPagingSource(pixabayAPI, searchQuery) }
     ).flow

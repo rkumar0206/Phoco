@@ -41,5 +41,8 @@ object Constants {
     const val COLLECTION_WITH_SAVED_IMAGES_SELECTION_ID = "jkvbskjvbjkvbkjvbbfjdvnjkvn"
     const val EXTRACTED_COLORS_IMAGE_URL_KEY = "fjvnsdkkebvubjbhjbhjbHB"
 
-    const val NETWORK_PAGE_SIZE = 10
+    const val NETWORK_PAGE_SIZE_PHOCO = 10
+    const val NETWORK_PAGE_SIZE_UNSPLASH = 30
+    const val NETWORK_PAGE_SIZE_PEXEL = 20
+    const val NETWORK_PAGE_SIZE_PIXABAY = 20
 }

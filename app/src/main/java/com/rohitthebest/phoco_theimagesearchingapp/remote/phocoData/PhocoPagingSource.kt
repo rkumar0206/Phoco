@@ -2,7 +2,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.rohitthebest.phoco_theimagesearchingapp.Constants.NETWORK_PAGE_SIZE
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.NETWORK_PAGE_SIZE_PHOCO
 import com.rohitthebest.phoco_theimagesearchingapp.api.PhocoAPI
 import retrofit2.HttpException
 import java.io.IOException
@@ -31,7 +31,7 @@ class PhocoPagingSource(
             LoadResult.Page(
                 data = photos!!,
                 prevKey = if (position == 1) null else position - 1,
-                nextKey = if (photos.isEmpty()) null else position + (params.loadSize / NETWORK_PAGE_SIZE)
+                nextKey = if (photos.isEmpty()) null else position + (params.loadSize / NETWORK_PAGE_SIZE_PHOCO)
             )
 
         } catch (e: IOException) {

@@ -2,7 +2,7 @@ package com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.rohitthebest.phoco_theimagesearchingapp.Constants.NETWORK_PAGE_SIZE
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.NETWORK_PAGE_SIZE_PHOCO
 import com.rohitthebest.phoco_theimagesearchingapp.api.PhocoAPI
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -61,7 +61,7 @@ class PhocoRepository @Inject constructor(
     fun getUserPhocoImages(accessToken: String, username: String) =
         Pager(
             config = PagingConfig(
-                pageSize = NETWORK_PAGE_SIZE,
+                pageSize = NETWORK_PAGE_SIZE_PHOCO,
                 maxSize = 100
             ),
             pagingSourceFactory = { PhocoPagingSource(phocoAPI, accessToken, username) }
