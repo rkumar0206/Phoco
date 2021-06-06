@@ -7,16 +7,29 @@
     android:background="@color/background_color"
     tools:context=".ui.activities.PreviewImageActivity">
 
-    <com.github.chrisbanes.photoview.PhotoView
-        android:id="@+id/previewImageIV"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/previewImageViewPager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <!--
+        <com.github.chrisbanes.photoview.PhotoView
+            android:id="@+id/previewImageIV"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+    -->
 
     <View
         android:id="@+id/reloadBackground"
@@ -24,11 +37,11 @@
         android:layout_height="0dp"
         android:background="#A1262432"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/previewImageIV"
-        app:layout_constraintEnd_toEndOf="@id/previewImageIV"
+        app:layout_constraintBottom_toBottomOf="@+id/previewImageViewPager"
+        app:layout_constraintEnd_toEndOf="@id/previewImageViewPager"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@id/previewImageIV"
-        app:layout_constraintTop_toTopOf="@+id/previewImageIV"
+        app:layout_constraintStart_toStartOf="@id/previewImageViewPager"
+        app:layout_constraintTop_toTopOf="@+id/previewImageViewPager"
         tools:visibility="visible" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

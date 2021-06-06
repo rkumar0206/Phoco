@@ -2,28 +2,22 @@ package com.rohitthebest.phoco_theimagesearchingapp.ui.activities
 
 import android.annotation.SuppressLint
 import android.app.WallpaperManager
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.Target
+import androidx.viewpager.widget.ViewPager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rohitthebest.phoco_theimagesearchingapp.Constants
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.EXTRACTED_COLORS_IMAGE_URL_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.HOME_FRAGMENT_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_TAG
-import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ActivityPreviewImageBinding
 import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.PreviewImageViewPagerAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.dialogFragments.ExtractedColorsBottomSheetDialog
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToImageDownloadLinksAndInfo
@@ -54,14 +48,18 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
     private var receivedCollectionKey = ""  // will be used only when image comes from collection
     private lateinit var receivedSavedImageList: List<SavedImage>
 
+    private lateinit var previewViewPagerAdapter: PreviewImageViewPagerAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityPreviewImageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        previewViewPagerAdapter = PreviewImageViewPagerAdapter(applicationContext, emptyList())
+
         imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_MESSAGE_KEY)
-                ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
+            ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
 
         when (imageDownloadLinksAndInfo.tag) {
 
@@ -80,13 +78,15 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             }
             else -> {
 
+                // preview only single image
+
                 binding.nextPreviewImageBtn.hide()
                 binding.previousPreviewImageBtn.hide()
                 binding.imageNumberTV.hide()
             }
         }
 
-        setImageInImageView()
+        //setImageInImageView()
 
         initListeners()
 
@@ -101,12 +101,47 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             homeImageList = it
 
-            currentImageIndex = homeImageList.indexOfFirst { image -> image.id == imageDownloadLinksAndInfo.imageId }
+            currentImageIndex =
+                homeImageList.indexOfFirst { image -> image.id == imageDownloadLinksAndInfo.imageId }
+
+            setUpPreviewImageViewPager(homeImageList.map { it.urls.regular })
 
             updateTheImageIndexNumberInTextView()
 
         })
     }
+
+    private fun setUpPreviewImageViewPager(imageUrlList: List<String>) {
+
+        previewViewPagerAdapter = PreviewImageViewPagerAdapter(
+            applicationContext, imageUrlList
+        )
+
+        binding.previewImageViewPager.adapter = previewViewPagerAdapter
+        binding.previewImageViewPager.currentItem = currentImageIndex
+
+        binding.previewImageViewPager.addOnPageChangeListener(
+            object : ViewPager.OnPageChangeListener {
+                override fun onPageScrolled(
+                    position: Int,
+                    positionOffset: Float,
+                    positionOffsetPixels: Int
+                ) {
+
+                }
+
+                override fun onPageSelected(position: Int) {
+
+                }
+
+                override fun onPageScrollStateChanged(state: Int) {
+                    //TODO("Not yet implemented")
+                }
+
+            }
+        )
+    }
+
 
     private fun getSavedImageListRelatedToPassedCollectionKey() {
 
@@ -116,7 +151,11 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
                 receivedSavedImageList = it
 
-                currentImageIndex = receivedSavedImageList.indexOfFirst { image -> image.imageId == imageDownloadLinksAndInfo.imageId }
+                currentImageIndex =
+                    receivedSavedImageList.indexOfFirst { image -> image.imageId == imageDownloadLinksAndInfo.imageId }
+
+                setUpPreviewImageViewPager(receivedSavedImageList.map { it.imageUrls.medium })
+
 
                 updateTheImageIndexNumberInTextView()
             })
@@ -125,14 +164,16 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             savedImageViewModel.getSavedImagesByCollectionKey(receivedCollectionKey).observe(
                     this, {
 
-                receivedSavedImageList = it
+                    receivedSavedImageList = it
 
-                currentImageIndex = receivedSavedImageList.indexOfFirst { image -> image.imageId == imageDownloadLinksAndInfo.imageId }
+                    currentImageIndex =
+                        receivedSavedImageList.indexOfFirst { image -> image.imageId == imageDownloadLinksAndInfo.imageId }
 
-                updateTheImageIndexNumberInTextView()
+                    setUpPreviewImageViewPager(receivedSavedImageList.map { it.imageUrls.medium })
+
+                    updateTheImageIndexNumberInTextView()
             })
         }
-
     }
 
     private fun initListeners() {
@@ -149,7 +190,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         binding.nextPreviewImageBtn.setOnClickListener(this)
         binding.previousPreviewImageBtn.setOnClickListener(this)
-        binding.previewImageIV.setOnClickListener(this)
+        //binding.previewImageIV.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -216,7 +257,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             binding.reloadFAB.id -> {
 
                 hideReloadBtn()
-                setImageInImageView()
+                //setImageInImageView()
 
                 hideDownloadOptions()
             }
@@ -253,6 +294,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             /*[END OF download quality options]*/
 
 
+/*
             binding.previewImageIV.id -> {
 
                 if (isFABOptionVisible && !isDownloadOptionsVisible) {
@@ -267,6 +309,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                     showFabButtonOptions()
                 }
             }
+*/
 
             binding.nextPreviewImageBtn.id -> {
 
@@ -375,7 +418,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             imageDownloadLinksAndInfo.imageName = currentImage.alt_description ?: ""
             imageDownloadLinksAndInfo.imageId = currentImage.id
 
-            setImageInImageView()
+            //setImageInImageView()
         } else {
 
             val currentImage = receivedSavedImageList[currentImageIndex]
@@ -386,7 +429,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             imageDownloadLinksAndInfo.imageName = currentImage.imageName
             imageDownloadLinksAndInfo.imageId = currentImage.imageId
 
-            setImageInImageView()
+            //setImageInImageView()
         }
     }
 
@@ -470,7 +513,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    private fun setImageInImageView() {
+    /*private fun setImageInImageView() {
 
         Log.d(TAG, "setImageInImageView: ")
 
@@ -497,7 +540,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(binding.previewImageIV)
 
-    }
+    }*/
 
     private fun showReloadBtn() {
 
