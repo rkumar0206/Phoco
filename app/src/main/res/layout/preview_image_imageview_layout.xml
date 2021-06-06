@@ -12,4 +12,35 @@
         android:scaleType="centerInside"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
+    <!-- <View
+         android:id="@+id/reloadBackground"
+         android:layout_width="wrap_content"
+         android:layout_height="0dp"
+         android:background="#A1262432"
+         android:visibility="gone"
+         app:layout_constraintBottom_toBottomOf="@+id/previewImageViewPager"
+         app:layout_constraintEnd_toEndOf="@id/previewImageViewPager"
+         app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="@id/previewImageViewPager"
+         app:layout_constraintTop_toTopOf="@+id/previewImageViewPager"
+         tools:visibility="visible" />
+
+     <com.google.android.material.floatingactionbutton.FloatingActionButton
+         android:id="@+id/reloadFAB"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:clickable="true"
+         android:contentDescription="@string/fabbutton"
+         android:focusable="true"
+         android:visibility="gone"
+         app:fabSize="normal"
+         app:layout_constraintBottom_toBottomOf="@id/reloadBackground"
+         app:layout_constraintEnd_toEndOf="@id/reloadBackground"
+         app:layout_constraintHorizontal_bias="0.5"
+         app:layout_constraintStart_toStartOf="@id/reloadBackground"
+         app:layout_constraintTop_toTopOf="@id/reloadBackground"
+         app:srcCompat="@drawable/ic_baseline_refresh_24"
+         tools:visibility="visible" />
+
+ -->
 </LinearLayout>

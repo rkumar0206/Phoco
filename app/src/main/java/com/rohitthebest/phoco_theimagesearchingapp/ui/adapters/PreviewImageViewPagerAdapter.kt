@@ -9,7 +9,6 @@ import androidx.viewpager.widget.PagerAdapter
 import com.github.chrisbanes.photoview.PhotoView
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.utils.setImageToImageViewUsingGlide
-import com.rohitthebest.phoco_theimagesearchingapp.utils.showToast
 import java.util.*
 
 class PreviewImageViewPagerAdapter(val context: Context, private val imageList: List<String>) :
@@ -31,11 +30,6 @@ class PreviewImageViewPagerAdapter(val context: Context, private val imageList: 
             mLayoutInflator.inflate(R.layout.preview_image_imageview_layout, container, false)
 
         val photoView = itemView.findViewById<PhotoView>(R.id.previewImageIV)
-
-        photoView.setOnClickListener {
-
-            showToast(context, "It's working")
-        }
 
         setImageToImageViewUsingGlide(
             context,

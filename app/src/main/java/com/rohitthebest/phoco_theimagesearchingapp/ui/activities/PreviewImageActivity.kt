@@ -24,7 +24,9 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companio
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val TAG = "PreviewImageActivity"
 
@@ -80,8 +82,10 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
                 // preview only single image
 
-                binding.nextPreviewImageBtn.hide()
-                binding.previousPreviewImageBtn.hide()
+                setUpPreviewImageViewPager(
+                    listOf(imageDownloadLinksAndInfo.imageUrls.medium)
+                )
+
                 binding.imageNumberTV.hide()
             }
         }
@@ -127,21 +131,21 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                     positionOffset: Float,
                     positionOffsetPixels: Int
                 ) {
-
                 }
 
                 override fun onPageSelected(position: Int) {
 
+                    Log.d(TAG, "onPageSelected: position : $position")
+
+                    currentImageIndex = position
+                    updateTheImageIndexNumberInTextView()
+                    updateImageDownloadInfo()
                 }
 
-                override fun onPageScrollStateChanged(state: Int) {
-                    //TODO("Not yet implemented")
-                }
-
+                override fun onPageScrollStateChanged(state: Int) {}
             }
         )
     }
-
 
     private fun getSavedImageListRelatedToPassedCollectionKey() {
 
@@ -181,16 +185,13 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         binding.downloadImageFAB.setOnClickListener(this)
         binding.setImageAsHomescreenFAB.setOnClickListener(this)
         binding.extractImageColorsFAB.setOnClickListener(this)
-        binding.reloadFAB.setOnClickListener(this)
         binding.shareImageFAB.setOnClickListener(this)
 
         binding.smallDownloadCV.setOnClickListener(this)
         binding.mediumDownloadCV.setOnClickListener(this)
         binding.originalDownloadCV.setOnClickListener(this)
 
-        binding.nextPreviewImageBtn.setOnClickListener(this)
-        binding.previousPreviewImageBtn.setOnClickListener(this)
-        //binding.previewImageIV.setOnClickListener(this)
+        binding.previewImageViewPager.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -254,14 +255,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 hideDownloadOptions()
             }
 
-            binding.reloadFAB.id -> {
-
-                hideReloadBtn()
-                //setImageInImageView()
-
-                hideDownloadOptions()
-            }
-
             binding.shareImageFAB.id -> {
 
                 shareAsText(this,
@@ -270,7 +263,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                         "Image download link")
                 hideDownloadOptions()
             }
-            /*[EBD OF FAB BUTTON CLICKS]*/
+            /*[END OF FAB BUTTON CLICKS]*/
 
 
             /*[START OF download quality options]*/
@@ -294,8 +287,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             /*[END OF download quality options]*/
 
 
-/*
-            binding.previewImageIV.id -> {
+            binding.previewImageViewPager.id -> {
 
                 if (isFABOptionVisible && !isDownloadOptionsVisible) {
 
@@ -309,90 +301,9 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                     showFabButtonOptions()
                 }
             }
-*/
-
-            binding.nextPreviewImageBtn.id -> {
-
-                handleNextImageBtn()
-                showClickEffect(binding.nextClickEffextView)
-            }
-
-            binding.previousPreviewImageBtn.id -> {
-
-                handlePreviousImageBtn()
-                showClickEffect(binding.previousClcikEffectView)
-            }
         }
     }
 
-
-    private fun showClickEffect(view: View) {
-
-        view.animate().alpha(1f).setDuration(600).start()
-
-        GlobalScope.launch {
-            delay(150)
-
-            withContext(Dispatchers.Main) {
-
-                view.animate().alpha(0f).setDuration(600).start()
-
-            }
-        }
-
-    }
-
-    private fun handleNextImageBtn() {
-
-        if (imageDownloadLinksAndInfo.tag == HOME_FRAGMENT_TAG) {
-
-            if (currentImageIndex < homeImageList.size - 1) {
-
-                currentImageIndex++
-
-            } else {
-                currentImageIndex = 0
-            }
-        } else {
-
-            if (currentImageIndex < receivedSavedImageList.size - 1) {
-
-                currentImageIndex++
-            } else {
-
-                currentImageIndex = 0
-            }
-        }
-
-        updateTheImageIndexNumberInTextView()
-        updateImageDownloadInfo()
-    }
-
-    private fun handlePreviousImageBtn() {
-
-        if (imageDownloadLinksAndInfo.tag == HOME_FRAGMENT_TAG) {
-
-            if (currentImageIndex > 0) {
-
-                currentImageIndex--
-            } else {
-
-                currentImageIndex = homeImageList.size - 1
-            }
-        } else {
-
-            if (currentImageIndex > 0) {
-
-                currentImageIndex--
-            } else {
-
-                currentImageIndex = receivedSavedImageList.size - 1
-            }
-        }
-
-        updateTheImageIndexNumberInTextView()
-        updateImageDownloadInfo()
-    }
 
     @SuppressLint("SetTextI18n")
     private fun updateTheImageIndexNumberInTextView() {
@@ -458,8 +369,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         isFABOptionVisible = !isFABOptionVisible
 
         binding.fabOptionButtonLL.animate().alpha(1f).setDuration(600).start()
-        binding.nextPreviewImageBtn.animate().alpha(1f).setDuration(600).start()
-        binding.previousPreviewImageBtn.animate().alpha(1f).setDuration(600).start()
         binding.imageNumberTV.animate().alpha(1f).setDuration(600).start()
         enableOrDisableFABOptions(true)
     }
@@ -470,8 +379,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             isFABOptionVisible = !isFABOptionVisible
             binding.fabOptionButtonLL.animate().alpha(0f).setDuration(600).start()
-            binding.nextPreviewImageBtn.animate().alpha(0f).setDuration(600).start()
-            binding.previousPreviewImageBtn.animate().alpha(0f).setDuration(600).start()
             binding.imageNumberTV.animate().alpha(0f).setDuration(600).start()
             enableOrDisableFABOptions(false)
         }
@@ -491,10 +398,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         binding.setImageAsHomescreenFAB.isEnabled = isEnable
         binding.extractImageColorsFAB.isEnabled = isEnable
         binding.shareImageFAB.isEnabled = isEnable
-        binding.nextPreviewImageBtn.isEnabled = isEnable
-        binding.previousPreviewImageBtn.isEnabled = isEnable
     }
-
 
     private fun downloadTheImage(imageUrl: String) {
 
@@ -512,47 +416,5 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         )
 
     }
-
-    /*private fun setImageInImageView() {
-
-        Log.d(TAG, "setImageInImageView: ")
-
-        Glide.with(this)
-                .load(imageDownloadLinksAndInfo.imageUrls.medium)
-                .apply {
-
-                    error(R.drawable.ic_outline_error_outline_24)
-                }
-                .listener(object : RequestListener<Drawable> {
-                    override fun onLoadFailed(e: GlideException?, model: Any?, target: Target<Drawable>?, isFirstResource: Boolean): Boolean {
-
-                        showReloadBtn()
-                        return false
-                    }
-
-                    override fun onResourceReady(resource: Drawable?, model: Any?, target: Target<Drawable>?, dataSource: DataSource?, isFirstResource: Boolean): Boolean {
-
-                        hideReloadBtn()
-                        return false
-                    }
-
-                })
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(binding.previewImageIV)
-
-    }*/
-
-    private fun showReloadBtn() {
-
-        binding.reloadBackground.show()
-        binding.reloadFAB.visibility = View.VISIBLE
-    }
-
-    private fun hideReloadBtn() {
-
-        binding.reloadBackground.hide()
-        binding.reloadFAB.visibility = View.GONE
-    }
-
 
 }
