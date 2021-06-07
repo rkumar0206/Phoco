@@ -7,7 +7,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rohitthebest.phoco_theimagesearchingapp.Constants
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.EXTRACTED_COLORS_IMAGE_URL_KEY
@@ -17,7 +17,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ActivityPreviewImageBinding
 import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
-import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.PreviewImageViewPagerAdapter
+import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.viewPagerAdapters.PreviewImageViewPagerAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.dialogFragments.ExtractedColorsBottomSheetDialog
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToImageDownloadLinksAndInfo
@@ -58,7 +58,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         binding = ActivityPreviewImageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        previewViewPagerAdapter = PreviewImageViewPagerAdapter(applicationContext, emptyList())
+        previewViewPagerAdapter = PreviewImageViewPagerAdapter(emptyList())
 
         imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_MESSAGE_KEY)
             ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
@@ -90,8 +90,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
 
-        //setImageInImageView()
-
         initListeners()
 
         wallpaperManager = WallpaperManager.getInstance(applicationContext)
@@ -118,22 +116,17 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
     private fun setUpPreviewImageViewPager(imageUrlList: List<String>) {
 
         previewViewPagerAdapter = PreviewImageViewPagerAdapter(
-            applicationContext, imageUrlList
+            imageUrlList
         )
 
         binding.previewImageViewPager.adapter = previewViewPagerAdapter
         binding.previewImageViewPager.currentItem = currentImageIndex
 
-        binding.previewImageViewPager.addOnPageChangeListener(
-            object : ViewPager.OnPageChangeListener {
-                override fun onPageScrolled(
-                    position: Int,
-                    positionOffset: Float,
-                    positionOffsetPixels: Int
-                ) {
-                }
+        binding.previewImageViewPager.registerOnPageChangeCallback(
+            object : ViewPager2.OnPageChangeCallback() {
 
                 override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
 
                     Log.d(TAG, "onPageSelected: position : $position")
 
@@ -141,8 +134,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                     updateTheImageIndexNumberInTextView()
                     updateImageDownloadInfo()
                 }
-
-                override fun onPageScrollStateChanged(state: Int) {}
             }
         )
     }
@@ -384,7 +375,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-
     private fun enableOrDisableDownloadOptions(isEnable: Boolean) {
 
         binding.smallDownloadCV.isEnabled = isEnable
@@ -405,16 +395,24 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         showToast(this, "Downloading Image")
 
         downloadFile(
-                this,
-                imageUrl,
-                if (imageDownloadLinksAndInfo.imageName != "" && !imageDownloadLinksAndInfo.imageName.contains(
-                                "/"
-                        )
+            this,
+            imageUrl,
+            if (imageDownloadLinksAndInfo.imageName != "" && !imageDownloadLinksAndInfo.imageName.contains(
+                    "/"
                 )
-                    "${imageDownloadLinksAndInfo.imageName}.jpg"
-                else "${generateKey()}.jpg"
+            )
+                "${imageDownloadLinksAndInfo.imageName}.jpg"
+            else "${generateKey()}.jpg"
         )
 
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        binding.previewImageViewPager.unregisterOnPageChangeCallback(
+            object : ViewPager2.OnPageChangeCallback() {}
+        )
     }
 
 }
