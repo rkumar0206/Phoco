@@ -14,10 +14,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentProfileBinding
+import com.rohitthebest.phoco_theimagesearchingapp.databinding.ProfileLayoutBinding
 import com.rohitthebest.phoco_theimagesearchingapp.remote.AuthToken
 import com.rohitthebest.phoco_theimagesearchingapp.remote.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.PhocoUser
@@ -44,11 +43,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
     private var isLoggedInBefore = false
 
     private lateinit var phocoImageAdapter: PhocoImageAdapter
+    private lateinit var includeBinding: ProfileLayoutBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentProfileBinding.bind(view)
+        includeBinding = binding.includeProfile
 
         authTokens = getSavedAuthToken(requireActivity())
 
@@ -62,9 +63,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         phocoImageAdapter = PhocoImageAdapter(shouldShowFavouriteButton = false)
 
-        setUpPhocoImageRecyclerView()
+        //setUpPhocoImageRecyclerView()
     }
 
+/*
     private fun setUpPhocoImageRecyclerView() {
 
         try {
@@ -81,6 +83,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
             e.printStackTrace()
         }
     }
+*/
 
     private fun checkIfAuthTokensExpired() {
 
@@ -105,7 +108,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                 if (numberOfDays < 15) {
 
-                    phocoViewModel.getNewTokens(it.refreshToken)
+                    //phocoViewModel.getNewTokens(it.refreshToken)
                     isLoggedInBefore = true
 
                     phocoUser = getUserProfileData(requireActivity())
@@ -177,27 +180,22 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
     private fun initListeners() {
 
-        //binding.backButton.setOnClickListener(this)
-        //binding.editProfileBtn.setOnClickListener(this)
-        binding.followBtn.setOnClickListener(this)
-        //binding.uploadImageFAB.setOnClickListener(this)
+        binding.followOrAddImageBtn.setOnClickListener(this)
+        includeBinding.addProfileImageBtn.setOnClickListener(this)
+        includeBinding.ivProfileImage.setOnClickListener(this)
+        includeBinding.llShots.setOnClickListener(this)
+        includeBinding.llFollowers.setOnClickListener(this)
+        includeBinding.llFollowing.setOnClickListener(this)
+        includeBinding.tvShotsHeader.setOnClickListener(this)
+        includeBinding.tvLikesHeader.setOnClickListener(this)
+        includeBinding.tvFollowingHeader.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
 
         when (v?.id) {
 
-            /* binding.backButton.id -> {
-
-                 requireActivity().onBackPressed()
-             }
-
-             binding.editProfileBtn.id -> {
-
-                 //todo : open edit profile fragment
-             }*/
-
-            binding.uploadImageFAB.id -> {
+            binding.followOrAddImageBtn.id -> {
 
                 if (checkForPermissionsGranted()) {
 
@@ -210,10 +208,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                 }
             }
 
-            binding.followBtn.id -> {
-
-                //todo : follow or unfollow the user
-            }
         }
 
     }
@@ -378,7 +372,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
             Log.d(TAG, "observeUserImageResponse: $it")
 
-            setUpPhocoImageRecyclerView()
+            //setUpPhocoImageRecyclerView()
             phocoImageAdapter.submitData(viewLifecycleOwner.lifecycle, it)
 
         })
@@ -418,10 +412,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
     private fun updateUI(phocoUser: PhocoUser) {
 
-        binding.nameOfTheUserTV.text = phocoUser.name
-        binding.profileUsernameTV.text = phocoUser.username
-        binding.numberOfFollowersTV.text = phocoUser.followers.toString()
-        binding.numberOfFollowingTV.text = phocoUser.following.toString()
+        includeBinding.tvName.text = phocoUser.name
+        includeBinding.tvBio.text = phocoUser.username  //todo : replace it with bio
+        includeBinding.tvNumberOfFollowers.text = phocoUser.followers.toString()
+        includeBinding.tvNumberOfFollowing.text = phocoUser.following.toString()
 
         /*  Glide.with(this)
               .load(phocoUser.user_image_url)

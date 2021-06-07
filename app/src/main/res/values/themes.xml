@@ -24,5 +24,12 @@
 
     </style>
 
+    <style name="BodyTextStyle" parent="TextAppearance.AppCompat.Body1">
+
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/secondary_text_color_white</item>
+        <item name="fontFamily">serif</item>
+    </style>
+
 
 </resources>
