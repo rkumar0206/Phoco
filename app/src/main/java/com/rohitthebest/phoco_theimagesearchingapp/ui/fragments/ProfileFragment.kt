@@ -19,8 +19,10 @@ import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentProfileBi
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ProfileLayoutBinding
 import com.rohitthebest.phoco_theimagesearchingapp.remote.AuthToken
 import com.rohitthebest.phoco_theimagesearchingapp.remote.Resources
+import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.PhocoImageItem
 import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.PhocoUser
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.phocoAdapters.PhocoImageAdapter
+import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.viewPagerAdapters.ProfileViewPagerAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PhocoViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,7 +32,8 @@ private const val TAG = "ProfileFragment"
 
 @AndroidEntryPoint
 @SuppressLint("SetTextI18n")
-class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListener {
+class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListener,
+    ProfileViewPagerAdapter.OnClickListener {
 
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
@@ -43,6 +46,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
     private var isLoggedInBefore = false
 
     private lateinit var phocoImageAdapter: PhocoImageAdapter
+    private lateinit var profileViewPagerAdapter: ProfileViewPagerAdapter
     private lateinit var includeBinding: ProfileLayoutBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -62,28 +66,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         initListeners()
 
         phocoImageAdapter = PhocoImageAdapter(shouldShowFavouriteButton = false)
-
-        //setUpPhocoImageRecyclerView()
+        profileViewPagerAdapter = ProfileViewPagerAdapter(emptyList())
     }
 
-/*
-    private fun setUpPhocoImageRecyclerView() {
-
-        try {
-
-            binding.photosRV.show()
-            binding.photosRV.apply {
-
-                setHasFixedSize(true)
-                adapter = phocoImageAdapter
-                layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
-            }
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-*/
 
     private fun checkIfAuthTokensExpired() {
 
@@ -373,9 +358,33 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
             Log.d(TAG, "observeUserImageResponse: $it")
 
             //setUpPhocoImageRecyclerView()
-            phocoImageAdapter.submitData(viewLifecycleOwner.lifecycle, it)
+            //phocoImageAdapter.submitData(viewLifecycleOwner.lifecycle, it)
 
+            profileViewPagerAdapter = ProfileViewPagerAdapter(listOf(it, it, it))
+            includeBinding.viewPagerImages.adapter = profileViewPagerAdapter
+            profileViewPagerAdapter.setOnClickListener(this)
         })
+    }
+
+    override fun onImageClicked(phocoImage: PhocoImageItem) {
+
+        showToast(requireContext(), phocoImage.image_description)
+    }
+
+    override fun onAddToFavouriteBtnClicked(phocoImage: PhocoImageItem, position: Int) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onDownloadImageBtnClicked(phocoImage: PhocoImageItem, view: View) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onImageUserNameClicked(phocoImage: PhocoImageItem) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onAddToFavouriteLongClicked(phocoImage: PhocoImageItem, position: Int) {
+        //TODO("Not yet implemented")
     }
 
     private fun observeUploadImageResponse() {
@@ -429,5 +438,4 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         _binding = null
     }
-
 }
