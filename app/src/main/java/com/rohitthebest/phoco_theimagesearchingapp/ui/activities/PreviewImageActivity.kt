@@ -85,8 +85,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 setUpPreviewImageViewPager(
                     listOf(imageDownloadLinksAndInfo.imageUrls.medium)
                 )
-
-                binding.imageNumberTV.hide()
             }
         }
 
@@ -299,12 +297,20 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
     @SuppressLint("SetTextI18n")
     private fun updateTheImageIndexNumberInTextView() {
 
-        if (imageDownloadLinksAndInfo.tag == HOME_FRAGMENT_TAG) {
+        when (imageDownloadLinksAndInfo.tag) {
+            HOME_FRAGMENT_TAG -> {
 
-            binding.imageNumberTV.text = "${currentImageIndex + 1} / ${homeImageList.size}"
-        } else {
+                binding.imageNumberTV.text = "${currentImageIndex + 1} / ${homeImageList.size}"
+            }
+            SAVED_IMAGE_TAG -> {
 
-            binding.imageNumberTV.text = "${currentImageIndex + 1} / ${receivedSavedImageList.size}"
+                binding.imageNumberTV.text =
+                    "${currentImageIndex + 1} / ${receivedSavedImageList.size}"
+            }
+            else -> {
+
+                binding.imageNumberTV.text = "1 / 1"
+            }
         }
     }
 
@@ -315,18 +321,26 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             val currentImage = homeImageList[currentImageIndex]
 
             imageDownloadLinksAndInfo.imageUrls = ImageDownloadLinksAndInfo
-                    .ImageUrls(currentImage.urls.small, currentImage.urls.regular, currentImage.links.download)
+                .ImageUrls(
+                    currentImage.urls.small,
+                    currentImage.urls.regular,
+                    currentImage.links.download
+                )
 
             imageDownloadLinksAndInfo.imageName = currentImage.alt_description ?: ""
             imageDownloadLinksAndInfo.imageId = currentImage.id
 
             //setImageInImageView()
-        } else {
+        } else if (imageDownloadLinksAndInfo.tag == SAVED_IMAGE_TAG) {
 
             val currentImage = receivedSavedImageList[currentImageIndex]
 
             imageDownloadLinksAndInfo.imageUrls = ImageDownloadLinksAndInfo
-                    .ImageUrls(currentImage.imageUrls.small, currentImage.imageUrls.medium, currentImage.imageUrls.original)
+                .ImageUrls(
+                    currentImage.imageUrls.small,
+                    currentImage.imageUrls.medium,
+                    currentImage.imageUrls.original
+                )
 
             imageDownloadLinksAndInfo.imageName = currentImage.imageName
             imageDownloadLinksAndInfo.imageId = currentImage.imageId
