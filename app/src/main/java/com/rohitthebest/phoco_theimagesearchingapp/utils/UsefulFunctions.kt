@@ -636,7 +636,6 @@ inline fun setImageToImageViewUsingGlide(
         .load(imageUrl)
         .apply {
             this.error(R.drawable.ic_outline_error_outline_24)
-            this.centerCrop()
         }
         .listener(object : RequestListener<Drawable> {
 
