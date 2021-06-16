@@ -352,7 +352,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         phocoViewModel.getUserImageList(
             authTokens?.accessToken!!,
-            phocoUser?.username!!
+            phocoUser?.pk!!
         ).observe(viewLifecycleOwner, {
 
             Log.d(TAG, "observeUserImageResponse: $it")

@@ -4,6 +4,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.NETWORK_PAGE_SIZE_PHOCO
 import com.rohitthebest.phoco_theimagesearchingapp.api.PhocoAPI
+import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.pagingSources.GettingImageListOptions
+import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.pagingSources.PhocoPagingSourceImages
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import javax.inject.Inject
@@ -58,13 +60,52 @@ class PhocoRepository @Inject constructor(
     suspend fun unfollowUser(accessToken: String, follower_user_pk: Int, following_user_pk: Int) =
         phocoAPI.unfollowUser(accessToken, follower_user_pk, following_user_pk)
 
-    fun getUserPhocoImages(accessToken: String, username: String) =
+    fun getUserPhocoImages(accessToken: String, user_pk: Int) =
         Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE_PHOCO,
                 maxSize = 100
             ),
-            pagingSourceFactory = { PhocoPagingSource(phocoAPI, accessToken, username) }
+            pagingSourceFactory = {
+                PhocoPagingSourceImages(
+                    phocoAPI,
+                    accessToken,
+                    user_pk,
+                    GettingImageListOptions.ALL_IMAGES
+                )
+            }
+        ).flow
+
+    fun getUserLikedImages(accessToken: String, user_pk: Int) =
+        Pager(
+            config = PagingConfig(
+                pageSize = NETWORK_PAGE_SIZE_PHOCO,
+                maxSize = 100
+            ),
+            pagingSourceFactory = {
+                PhocoPagingSourceImages(
+                    phocoAPI,
+                    accessToken,
+                    user_pk,
+                    GettingImageListOptions.LIKED_IMAGES
+                )
+            }
+        ).flow
+
+    fun getUserFollowingImages(accessToken: String, user_pk: Int) =
+        Pager(
+            config = PagingConfig(
+                pageSize = NETWORK_PAGE_SIZE_PHOCO,
+                maxSize = 100
+            ),
+            pagingSourceFactory = {
+                PhocoPagingSourceImages(
+                    phocoAPI,
+                    accessToken,
+                    user_pk,
+                    GettingImageListOptions.FOLLOWING_IMAGES
+                )
+            }
         ).flow
 
     suspend fun postImage(

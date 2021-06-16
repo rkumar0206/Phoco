@@ -1,16 +1,24 @@
-package com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData
+package com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.pagingSources
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.NETWORK_PAGE_SIZE_PHOCO
 import com.rohitthebest.phoco_theimagesearchingapp.api.PhocoAPI
+import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.PhocoImageItem
 import retrofit2.HttpException
 import java.io.IOException
 
-class PhocoPagingSource(
+enum class GettingImageListOptions {
+    ALL_IMAGES,
+    LIKED_IMAGES,
+    FOLLOWING_IMAGES
+}
+
+class PhocoPagingSourceImages(
     private val phocoImageAPI: PhocoAPI,
     private val accessToken: String,
-    private val username: String
+    private val user_pk: Int,
+    private val imageOption: GettingImageListOptions
 ) : PagingSource<Int, PhocoImageItem>() {
 
 
@@ -20,8 +28,33 @@ class PhocoPagingSource(
 
         return try {
 
-            val response =
-                phocoImageAPI.getUserPhocoImages(accessToken, username, position, params.loadSize)
+            val response = when (imageOption) {
+
+                GettingImageListOptions.ALL_IMAGES ->
+                    phocoImageAPI.getUserPhocoImages(
+                        accessToken,
+                        user_pk,
+                        position,
+                        params.loadSize
+                    )
+
+                GettingImageListOptions.LIKED_IMAGES ->
+                    phocoImageAPI.getUserLikedImages(
+                        accessToken,
+                        user_pk,
+                        position,
+                        params.loadSize
+                    )
+
+                GettingImageListOptions.FOLLOWING_IMAGES ->
+                    phocoImageAPI.getImagesBasedOnUserFollowing(
+                        accessToken,
+                        user_pk,
+                        position,
+                        params.loadSize
+                    )
+            }
+
 
             val photos =
                 if (response.isSuccessful) response.body()?.results else throw HttpException(

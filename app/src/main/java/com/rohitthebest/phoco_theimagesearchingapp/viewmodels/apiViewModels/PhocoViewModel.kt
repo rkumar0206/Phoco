@@ -288,8 +288,8 @@ class PhocoViewModel @Inject constructor(
     }
 
     //user's image related
-    fun getUserImageList(accessToken: String, username: String) =
-        repository.getUserPhocoImages(accessToken, username).asLiveData().cachedIn(viewModelScope)
+    fun getUserImageList(accessToken: String, user_pk: Int) =
+        repository.getUserPhocoImages(accessToken, user_pk).asLiveData().cachedIn(viewModelScope)
 
     fun uploadImage(
         accessToken: String,
