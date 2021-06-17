@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.PagingData
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentProfileBinding
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ProfileLayoutBinding
@@ -48,6 +49,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
     private lateinit var phocoImageAdapter: PhocoImageAdapter
     private lateinit var profileViewPagerAdapter: ProfileViewPagerAdapter
     private lateinit var includeBinding: ProfileLayoutBinding
+    private var imagesList: ArrayList<PagingData<PhocoImageItem>>? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -68,7 +70,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         phocoImageAdapter = PhocoImageAdapter(shouldShowFavouriteButton = false)
         profileViewPagerAdapter = ProfileViewPagerAdapter(emptyList())
     }
-
 
     private fun checkIfAuthTokensExpired() {
 

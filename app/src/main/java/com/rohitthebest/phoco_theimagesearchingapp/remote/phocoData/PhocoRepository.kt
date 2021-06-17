@@ -60,6 +60,8 @@ class PhocoRepository @Inject constructor(
     suspend fun unfollowUser(accessToken: String, follower_user_pk: Int, following_user_pk: Int) =
         phocoAPI.unfollowUser(accessToken, follower_user_pk, following_user_pk)
 
+    suspend fun verifyToken(token: String) = phocoAPI.verifyToken(token)
+
     fun getUserPhocoImages(accessToken: String, user_pk: Int) =
         Pager(
             config = PagingConfig(

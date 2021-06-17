@@ -29,13 +29,22 @@ interface PhocoAPI {
     ): Response<Tokens>
     //-------------------------------------------------------------------------------
 
-    //------------------------------ refresh tokens --------------------------------------
+    //------------------------------ tokens --------------------------------------
 
+    //get new tokens using the refresh tokens
     @FormUrlEncoded
     @POST("/auth/login/refresh/")
     suspend fun getNewTokens(
-            @Field("refresh") refreshToken: String
+        @Field("refresh") refreshToken: String
     ): Response<Tokens>
+
+    //verify token
+    @FormUrlEncoded
+    @POST("/auth/token_verify/")
+    suspend fun verifyToken(
+        @Field("token") token: String
+    ): Response<InvalidToken?>
+
     //-------------------------------------------------------------------------------
 
 
@@ -44,7 +53,7 @@ interface PhocoAPI {
     // call when only primary key of the user is available
     @GET("/user_detail/{pk}/")
     suspend fun getPhocoUserByPrimaryKey(
-            @Path("pk") primaryKey: Int,
+        @Path("pk") primaryKey: Int,
             @Header("Authorization") accessToken: String
     ): Response<PhocoUser>
 

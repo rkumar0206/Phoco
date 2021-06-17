@@ -46,6 +46,8 @@ class PhocoViewModel @Inject constructor(
     private val _uploadImage = MutableLiveData<Resources<PhocoImageItem>>()
     val uploadImage: LiveData<Resources<PhocoImageItem>> get() = _uploadImage
 
+    private val _verifyTokens = MutableLiveData<Resources<InvalidToken>>()
+    val verifyTokens: LiveData<Resources<InvalidToken>> get() = _verifyTokens
 
     //user authentication related
     fun signUpUser(signUp: SignUp) {
@@ -135,6 +137,47 @@ class PhocoViewModel @Inject constructor(
             e.printStackTrace()
         }
     }
+
+    fun verifyTokens(token: String) {
+
+        try {
+
+            viewModelScope.launch {
+
+                _verifyTokens.postValue(Resources.Loading())
+
+                repository.verifyToken(token).also {
+
+                    if (it.isSuccessful) {
+
+                        if (it.code() == 200) {
+
+                            _verifyTokens.postValue(
+                                Resources.Success(
+                                    null,
+                                    it.code().toString()
+                                )
+                            )
+                        } else {
+
+                            _verifyTokens.postValue(
+                                Resources.Success(
+                                    it.body(),
+                                    it.code().toString()
+                                )
+                            )
+                        }
+                    } else {
+
+                        _verifyTokens.postValue(Resources.Error(it.code().toString()))
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
     fun getPhocoUser(primaryKey: Int? = null, username: String? = null, accessToken: String) {
 
         try {
@@ -286,6 +329,7 @@ class PhocoViewModel @Inject constructor(
             e.printStackTrace()
         }
     }
+
 
     //user's image related
     fun getUserImageList(accessToken: String, user_pk: Int) =
