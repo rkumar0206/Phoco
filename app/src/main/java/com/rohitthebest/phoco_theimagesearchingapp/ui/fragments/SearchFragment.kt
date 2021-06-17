@@ -21,7 +21,6 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_WEB
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentSearchBinding
-import com.rohitthebest.phoco_theimagesearchingapp.remote.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.remote.mohitImagApiData.WebPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData.PexelPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData.PixabayPhoto

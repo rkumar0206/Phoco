@@ -3,8 +3,8 @@ package com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels
 import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
-import com.rohitthebest.phoco_theimagesearchingapp.remote.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.*
+import com.rohitthebest.phoco_theimagesearchingapp.utils.Resources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -150,23 +150,15 @@ class PhocoViewModel @Inject constructor(
 
                     if (it.isSuccessful) {
 
-                        if (it.code() == 200) {
+                        Log.d(TAG, "verifyTokens -> body = : ${it.body()}")
 
-                            _verifyTokens.postValue(
-                                Resources.Success(
-                                    null,
-                                    it.code().toString()
-                                )
+                        _verifyTokens.postValue(
+                            Resources.Success(
+                                null,
+                                it.code().toString()
                             )
-                        } else {
+                        )
 
-                            _verifyTokens.postValue(
-                                Resources.Success(
-                                    it.body(),
-                                    it.code().toString()
-                                )
-                            )
-                        }
                     } else {
 
                         _verifyTokens.postValue(Resources.Error(it.code().toString()))

@@ -19,7 +19,6 @@ import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentProfileBinding
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ProfileLayoutBinding
 import com.rohitthebest.phoco_theimagesearchingapp.remote.AuthToken
-import com.rohitthebest.phoco_theimagesearchingapp.remote.Resources
 import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.PhocoImageItem
 import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.PhocoUser
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.phocoAdapters.PhocoImageAdapter
@@ -64,6 +63,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         observeTokenResponse()
         observePhocoUserResponse()
         observeUploadImageResponse()
+        observeVerifyTokenResponse()
 
         initListeners()
 
@@ -94,7 +94,8 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
                 if (numberOfDays < 15) {
 
-                    //phocoViewModel.getNewTokens(it.refreshToken)
+                    //verifying access token
+                    verifyAccessToken(authTokens?.accessToken)
                     isLoggedInBefore = true
 
                     phocoUser = getUserProfileData(requireActivity())
@@ -113,6 +114,15 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                 }
             }
         }
+    }
+
+    private fun verifyAccessToken(accessToken: String?) {
+
+        Log.d(TAG, "verifyAccessToken: verifying access token")
+
+        Log.d(TAG, "verifyAccessToken: accessToken -> ${accessToken?.substring(7)}")
+
+        phocoViewModel.verifyTokens(accessToken?.substring(7)!!)
     }
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -247,6 +257,35 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         }
     }
 
+    private fun observeVerifyTokenResponse() {
+
+        phocoViewModel.verifyTokens.observe(viewLifecycleOwner, {
+
+            when (it) {
+
+                is Resources.Loading -> {
+                }
+
+                is Resources.Success -> {
+
+                    Log.d(TAG, "observeVerifyTokenResponse: verifying token successful")
+
+                    Log.d(TAG, "observeVerifyTokenResponse: Tokens valid")
+                    // token is not expired
+                    authTokens?.let { tokens -> getPhocoUser(tokens) }
+
+                }
+
+                else -> {
+
+                    Log.d(TAG, "observeVerifyTokenResponse: Tokens expired getting new tokens")
+                    //token expired, request for new tokens using the refresh tokens
+                    phocoViewModel.getNewTokens(authTokens?.refreshToken!!)
+                }
+            }
+        })
+    }
+
     private fun observeTokenResponse() {
 
         phocoViewModel.phocoTokenResponse.observe(viewLifecycleOwner, {
@@ -281,17 +320,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                         // saving the auth tokens to shared preference
                         saveAuthTokenInSharedPreferences(requireActivity(), tokens)
 
-                        if (requireContext().isInternetAvailable()) {
-
-                            // getting the user info
-                            phocoViewModel.getPhocoUser(
-                                primaryKey = null,
-                                username = phocoUser?.username,
-                                accessToken = tokens.accessToken
-                            )
-                        } else {
-                            requireContext().showNoInternetMessage()
-                        }
+                        getPhocoUser(tokens)
                     }
 
                 }
@@ -305,6 +334,22 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                 }
             }
         })
+    }
+
+    private fun getPhocoUser(tokens: AuthToken) {
+
+        if (requireContext().isInternetAvailable()) {
+
+            // getting the user info
+            phocoViewModel.getPhocoUser(
+                primaryKey = null,
+                username = phocoUser?.username,
+                accessToken = tokens.accessToken
+            )
+        } else {
+            requireContext().showNoInternetMessage()
+        }
+
     }
 
     private fun observePhocoUserResponse() {
@@ -332,7 +377,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                         Log.d(TAG, "observePhocoUserResponse: user saved in shared preference")
 
                         updateUI(user)
-                        observeUserImageResponse()
+                        //observeUserImageResponse()
                     }
 
                 }
