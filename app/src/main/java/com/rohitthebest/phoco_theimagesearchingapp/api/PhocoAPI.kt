@@ -43,7 +43,7 @@ interface PhocoAPI {
     @POST("/auth/token_verify/")
     suspend fun verifyToken(
         @Field("token") token: String
-    ): Response<InvalidToken?>
+    ): Response<Void>
 
     //-------------------------------------------------------------------------------
 

@@ -46,8 +46,8 @@ class PhocoViewModel @Inject constructor(
     private val _uploadImage = MutableLiveData<Resources<PhocoImageItem>>()
     val uploadImage: LiveData<Resources<PhocoImageItem>> get() = _uploadImage
 
-    private val _verifyTokens = MutableLiveData<Resources<InvalidToken>>()
-    val verifyTokens: LiveData<Resources<InvalidToken>> get() = _verifyTokens
+    private val _verifyTokens = MutableLiveData<Resources<Void>>()
+    val verifyTokens: LiveData<Resources<Void>> get() = _verifyTokens
 
     //user authentication related
     fun signUpUser(signUp: SignUp) {
@@ -150,7 +150,7 @@ class PhocoViewModel @Inject constructor(
 
                     if (it.isSuccessful) {
 
-                        Log.d(TAG, "verifyTokens -> body = : ${it.body()}")
+                        Log.d(TAG, "verifyTokens -> body = : ${it.body()}\ncode = ${it.code()}")
 
                         _verifyTokens.postValue(
                             Resources.Success(
