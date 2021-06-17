@@ -172,6 +172,14 @@ interface PhocoAPI {
         @Part("phoco_user") user: RequestBody
     ): Response<PhocoImageItem>
 
+    @FormUrlEncoded
+    @POST("/like/")
+    suspend fun likeOrUnlikeImage(
+        @Header("Authentication") accessToken: String,
+        @Field("user") user_pk: Int,
+        @Field("image") image_pk: Int
+    ): Response<String>
+
     //-------------------------------------------------------------------------------
 
 

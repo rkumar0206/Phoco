@@ -117,4 +117,9 @@ class PhocoRepository @Inject constructor(
         phocoUserPk: RequestBody
     ) = phocoAPI.postImage(accessToken, image, imageDescription, phocoUserPk)
 
+    suspend fun likeOrUnlikeImage(
+        accessToken: String,
+        user_pk: Int,
+        image_pk: Int
+    ) = phocoAPI.likeOrUnlikeImage(accessToken, user_pk, image_pk)
 }

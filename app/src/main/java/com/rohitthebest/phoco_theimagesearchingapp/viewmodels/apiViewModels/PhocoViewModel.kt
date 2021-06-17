@@ -31,6 +31,9 @@ class PhocoViewModel @Inject constructor(
     val phocoTokenResponse: LiveData<Resources<Tokens>> get() = _phocoTokenResponse
     val phocoPhocoUserResponse: LiveData<Resources<PhocoUser>> get() = _phocoPhocoUserResponse
 
+    private val _verifyTokens = MutableLiveData<Resources<Void>>()
+    val verifyTokens: LiveData<Resources<Void>> get() = _verifyTokens
+
     // follow related vars
     private val _followersList = MutableLiveData<Resources<List<PhocoUser>>>()
     private val _followingList = MutableLiveData<Resources<List<PhocoUser>>>()
@@ -46,8 +49,9 @@ class PhocoViewModel @Inject constructor(
     private val _uploadImage = MutableLiveData<Resources<PhocoImageItem>>()
     val uploadImage: LiveData<Resources<PhocoImageItem>> get() = _uploadImage
 
-    private val _verifyTokens = MutableLiveData<Resources<Void>>()
-    val verifyTokens: LiveData<Resources<Void>> get() = _verifyTokens
+    private val _likeOrUnlikeImage = MutableLiveData<Resources<String>>()
+    val likeOrUnlikeImage: LiveData<Resources<String>> get() = _likeOrUnlikeImage
+
 
     //user authentication related
     fun signUpUser(signUp: SignUp) {
@@ -333,6 +337,41 @@ class PhocoViewModel @Inject constructor(
     fun getUserFollowingImages(accessToken: String, user_pk: Int) =
         repository.getUserFollowingImages(accessToken, user_pk).asLiveData()
             .cachedIn(viewModelScope)
+
+    fun likeOrUnlikeImage(
+        accessToken: String,
+        user_pk: Int,
+        image_pk: Int
+    ) {
+
+        try {
+
+            viewModelScope.launch {
+
+                _likeOrUnlikeImage.postValue(Resources.Loading())
+
+                repository.likeOrUnlikeImage(accessToken, user_pk, image_pk).also {
+
+                    if (it.isSuccessful) {
+
+                        _likeOrUnlikeImage.postValue(
+                            Resources.Success(
+                                it.body(),
+                                it.code().toString()
+                            )
+                        )
+                    } else {
+
+                        _likeOrUnlikeImage.postValue(Resources.Error(it.code().toString()))
+                    }
+                }
+            }
+
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+
+    }
 
     fun uploadImage(
         accessToken: String,
