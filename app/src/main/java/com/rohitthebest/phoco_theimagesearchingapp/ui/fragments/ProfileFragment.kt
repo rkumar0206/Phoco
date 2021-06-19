@@ -122,7 +122,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         Log.d(TAG, "verifyAccessToken: accessToken -> ${accessToken?.substring(7)}")
 
-        phocoViewModel.verifyTokens(accessToken?.substring(7)!!)
+        if (requireContext().isInternetAvailable()) {
+
+            phocoViewModel.verifyTokens(accessToken?.substring(7)!!)
+        } else {
+
+            requireContext().showNoInternetMessage()
+        }
     }
 
     private val requestPermissionLauncher = registerForActivityResult(
@@ -377,9 +383,13 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
                         Log.d(TAG, "observePhocoUserResponse: user saved in shared preference")
 
                         updateUI(user)
-                        //observeUserImageResponse()
-                    }
+                        if (requireContext().isInternetAvailable()) {
 
+                            observeUserImageResponse()
+                        } else {
+                            requireContext().showNoInternetMessage()
+                        }
+                    }
                 }
 
                 else -> {
@@ -403,14 +413,61 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
             Log.d(TAG, "observeUserImageResponse: $it")
 
-            //setUpPhocoImageRecyclerView()
-            //phocoImageAdapter.submitData(viewLifecycleOwner.lifecycle, it)
+            imagesList = ArrayList()
+            imagesList?.add(it)
 
-            profileViewPagerAdapter = ProfileViewPagerAdapter(listOf(it, it, it))
-            includeBinding.viewPagerImages.adapter = profileViewPagerAdapter
-            profileViewPagerAdapter.setOnClickListener(this)
+            if (requireContext().isInternetAvailable()) {
+                observeUserLikedImagesResponse()
+            } else {
+
+                requireContext().showNoInternetMessage()
+            }
         })
     }
+
+    private fun observeUserLikedImagesResponse() {
+
+        phocoViewModel.getUserLikedImages(authTokens?.accessToken!!, phocoUser?.pk!!)
+            .observe(viewLifecycleOwner, {
+
+                Log.d(TAG, "observeUserLikedImagesResponse: $it")
+                imagesList?.add(it)
+
+                if (requireContext().isInternetAvailable()) {
+
+                    observeUserFollowingImageResponse()
+                } else {
+
+                    requireContext().showNoInternetMessage()
+                }
+            })
+    }
+
+    private fun observeUserFollowingImageResponse() {
+
+        phocoViewModel.getUserFollowingImages(authTokens?.accessToken!!, phocoUser?.pk!!)
+            .observe(viewLifecycleOwner, {
+
+                Log.d(TAG, "observeUserFollowingImageResponse: $it")
+
+                imagesList?.add(it)
+
+                setUpProfileViewPager()
+            })
+    }
+
+    private fun setUpProfileViewPager() {
+
+        imagesList?.let {
+
+            Log.d(TAG, "setUpProfileViewPager: $imagesList")
+
+            profileViewPagerAdapter = ProfileViewPagerAdapter(it)
+            includeBinding.viewPagerImages.adapter = profileViewPagerAdapter
+            profileViewPagerAdapter.setOnClickListener(this)
+        }
+    }
+
 
     override fun onImageClicked(phocoImage: PhocoImageItem) {
 

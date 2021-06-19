@@ -139,18 +139,20 @@ interface PhocoAPI {
 
     //------------------------------- Image Related ----------------------------------
 
-    @GET("/images/{user_pk}")
+    @GET("/images/{user_pk}/")
     suspend fun getUserPhocoImages(
         @Header("Authorization") accessToken: String,
         @Path("user_pk") user_pk: Int,
+        @Query("user_id") user_id: Int = user_pk,
         @Query("page") page: Int,
         @Query("per_page") per_page: Int
     ): Response<PhocoImageResponse>
 
-    @GET("/images_liked/{user_pk}")
+    @GET("/images_liked/{user_pk}/")
     suspend fun getUserLikedImages(
         @Header("Authorization") accessToken: String,
         @Path("user_pk") user_pk: Int,
+        @Query("user_id") user_id: Int = user_pk,
         @Query("page") page: Int,
         @Query("per_page") per_page: Int
     ): Response<PhocoImageResponse>
@@ -159,6 +161,7 @@ interface PhocoAPI {
     suspend fun getImagesBasedOnUserFollowing(
         @Header("Authorization") accessToken: String,
         @Path("user_pk") user_pk: Int,
+        @Query("user_id") user_id: Int = user_pk,
         @Query("page") page: Int,
         @Query("per_page") per_page: Int
     ): Response<PhocoImageResponse>

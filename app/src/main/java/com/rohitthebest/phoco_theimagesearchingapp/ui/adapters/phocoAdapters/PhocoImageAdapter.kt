@@ -3,13 +3,12 @@ package com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.phocoAdapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.rohitthebest.phoco_theimagesearchingapp.R
-import com.rohitthebest.phoco_theimagesearchingapp.databinding.PhotoItemForRvBinding
+import com.rohitthebest.phoco_theimagesearchingapp.databinding.ImageRvItemProfileBinding
 import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.PhocoImageItem
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.setImageToImageViewUsingGlide
@@ -27,7 +26,7 @@ class PhocoImageAdapter(
         this.savedImageIdList = list
     }
 
-    inner class PhocoImageViewHolder(val binding: PhotoItemForRvBinding) :
+    inner class PhocoImageViewHolder(val binding: ImageRvItemProfileBinding) :
         RecyclerView.ViewHolder(binding.root), View.OnClickListener, View.OnLongClickListener {
 
 
@@ -39,14 +38,6 @@ class PhocoImageAdapter(
 
                     setUpAndShowImageInImageView(phocoImage)
 
-                    val aspectRatio = phocoImage.width.toFloat() / phocoImage.height.toFloat()
-
-                    ConstraintSet().apply {
-
-                        clone(root)
-                        setDimensionRatio(image.id, aspectRatio.toString())
-                        applyTo(root)
-                    }
                     //displaying the user image
                     Glide.with(binding.view)
                         .load(R.drawable.ic_outline_account_circle_24)
@@ -74,6 +65,19 @@ class PhocoImageAdapter(
                             }
                         }
                     }
+
+                    phocoImage.is_liked?.let { isLiked ->
+
+                        if (isLiked) {
+
+                            binding.likeBtn.setImageResource(R.drawable.ic_baseline_favorite_24)
+                        } else {
+
+                            binding.likeBtn.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+                        }
+                    }
+
+                    binding.likesNumTV.text = phocoImage.num_likes.toString()
                 }
             }
         }
@@ -210,7 +214,7 @@ class PhocoImageAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhocoImageViewHolder {
 
         val binding =
-            PhotoItemForRvBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            ImageRvItemProfileBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return PhocoImageViewHolder(binding)
     }

@@ -32,26 +32,26 @@ class PhocoPagingSourceImages(
 
                 GettingImageListOptions.ALL_IMAGES ->
                     phocoImageAPI.getUserPhocoImages(
-                        accessToken,
-                        user_pk,
-                        position,
-                        params.loadSize
+                        accessToken = accessToken,
+                        user_pk = user_pk,
+                        page = position,
+                        per_page = params.loadSize
                     )
 
                 GettingImageListOptions.LIKED_IMAGES ->
                     phocoImageAPI.getUserLikedImages(
-                        accessToken,
-                        user_pk,
-                        position,
-                        params.loadSize
+                        accessToken = accessToken,
+                        user_pk = user_pk,
+                        page = position,
+                        per_page = params.loadSize
                     )
 
                 GettingImageListOptions.FOLLOWING_IMAGES ->
                     phocoImageAPI.getImagesBasedOnUserFollowing(
-                        accessToken,
-                        user_pk,
-                        position,
-                        params.loadSize
+                        accessToken = accessToken,
+                        user_pk = user_pk,
+                        page = position,
+                        per_page = params.loadSize
                     )
             }
 

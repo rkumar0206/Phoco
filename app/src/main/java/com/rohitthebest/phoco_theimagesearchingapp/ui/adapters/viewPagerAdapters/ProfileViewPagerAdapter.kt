@@ -36,7 +36,7 @@ class ProfileViewPagerAdapter(
 
                 setHasFixedSize(true)
                 adapter = mAdapter
-                layoutManager = StaggeredGridLayoutManager(2, RecyclerView.VERTICAL)
+                layoutManager = StaggeredGridLayoutManager(1, RecyclerView.VERTICAL)
             }
 
             GlobalScope.launch {

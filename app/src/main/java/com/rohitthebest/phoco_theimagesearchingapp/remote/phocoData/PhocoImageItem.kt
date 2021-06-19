@@ -11,6 +11,8 @@ data class PhocoImageItem(
     val pk: Int,
     val updated: String,
     val width: Int,
+    val is_liked: Boolean?,
+    val num_likes: Int,
     val user: User
 ) {
 
