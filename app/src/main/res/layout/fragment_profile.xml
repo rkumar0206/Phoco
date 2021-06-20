@@ -15,7 +15,6 @@
             android:background="@color/background_color"
             app:layout_scrollFlags="scroll|enterAlways"
             app:menu="@menu/menu_profile"
-            app:navigationIcon="@drawable/ic_baseline_arrow_back_24"
             app:title="@string/profile"
             app:titleTextColor="@color/text_color" />
 

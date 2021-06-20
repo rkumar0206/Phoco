@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -15,6 +16,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.PagingData
+import androidx.viewpager2.widget.ViewPager2
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentProfileBinding
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ProfileLayoutBinding
@@ -416,6 +418,56 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
             includeBinding.viewPagerImages.adapter = profileViewPagerAdapter
             profileViewPagerAdapter.setOnClickListener(this)
         }
+
+        includeBinding.viewPagerImages
+            .registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+
+                    when (position) {
+
+                        0 -> {
+
+                            changeTextColorOfHeader(includeBinding.tvShotsHeader)
+                        }
+
+                        1 -> {
+
+                            changeTextColorOfHeader(includeBinding.tvLikesHeader)
+                        }
+
+                        2 -> {
+
+                            changeTextColorOfHeader(includeBinding.tvFollowingHeader)
+                        }
+                    }
+                }
+            })
+    }
+
+    private fun changeTextColorOfHeader(textView: TextView) {
+
+        includeBinding.tvShotsHeader.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.text_color
+            )
+        )
+        includeBinding.tvLikesHeader.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.text_color
+            )
+        )
+        includeBinding.tvFollowingHeader.setTextColor(
+            ContextCompat.getColor(
+                requireContext(),
+                R.color.text_color
+            )
+        )
+
+        textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_pink))
     }
 
     //------------------------------------------------------------------------
