@@ -1,7 +1,6 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.viewPagerAdapters
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.paging.PagingData
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +12,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class ProfileViewPagerAdapter(
-    val imageList: List<PagingData<PhocoImageItem>>
+    private val imageList: List<PagingData<PhocoImageItem>>
 ) : RecyclerView.Adapter<ProfileViewPagerAdapter.ProfileViewPagerViewHolder>() {
 
     private var mListener: OnClickListener? = null
@@ -22,21 +21,15 @@ class ProfileViewPagerAdapter(
     inner class ProfileViewPagerViewHolder(val binding: ProfileViewPagerLayoutBinding) :
         RecyclerView.ViewHolder(binding.root), PhocoImageAdapter.OnClickListener {
 
-        fun setData(pagingData: PagingData<PhocoImageItem>, position: Int) {
+        fun setData(pagingData: PagingData<PhocoImageItem>) {
 
-            mAdapter = if (position == 0) {
-
-                PhocoImageAdapter(shouldShowFavouriteButton = false)
-            } else {
-
-                PhocoImageAdapter(shouldShowFavouriteButton = true)
-            }
+            mAdapter = PhocoImageAdapter()
 
             binding.rvImagesProfile.apply {
 
                 setHasFixedSize(true)
                 adapter = mAdapter
-                layoutManager = StaggeredGridLayoutManager(1, RecyclerView.VERTICAL)
+                layoutManager = StaggeredGridLayoutManager(3, RecyclerView.VERTICAL)
             }
 
             GlobalScope.launch {
@@ -54,27 +47,6 @@ class ProfileViewPagerAdapter(
                 mListener!!.onImageClicked(phocoImage)
             }
         }
-
-        override fun onAddToFavouriteBtnClicked(phocoImage: PhocoImageItem, position: Int) {
-
-            mListener!!.onAddToFavouriteBtnClicked(phocoImage, position)
-        }
-
-        override fun onDownloadImageBtnClicked(phocoImage: PhocoImageItem, view: View) {
-
-            mListener!!.onDownloadImageBtnClicked(phocoImage, view)
-        }
-
-        override fun onImageUserNameClicked(phocoImage: PhocoImageItem) {
-
-            mListener!!.onImageUserNameClicked(phocoImage)
-        }
-
-        override fun onAddToFavouriteLongClicked(phocoImage: PhocoImageItem, position: Int) {
-
-            mListener!!.onAddToFavouriteLongClicked(phocoImage, position)
-        }
-
 
         private fun checkForNullability(): Boolean {
 
@@ -94,7 +66,7 @@ class ProfileViewPagerAdapter(
 
     override fun onBindViewHolder(holder: ProfileViewPagerViewHolder, position: Int) {
 
-        holder.setData(imageList[position], position)
+        holder.setData(imageList[position])
     }
 
     override fun getItemCount(): Int = imageList.size
@@ -102,11 +74,6 @@ class ProfileViewPagerAdapter(
     interface OnClickListener {
 
         fun onImageClicked(phocoImage: PhocoImageItem)
-        fun onAddToFavouriteBtnClicked(phocoImage: PhocoImageItem, position: Int)
-        fun onDownloadImageBtnClicked(phocoImage: PhocoImageItem, view: View)
-        fun onImageUserNameClicked(phocoImage: PhocoImageItem)
-
-        fun onAddToFavouriteLongClicked(phocoImage: PhocoImageItem, position: Int)
     }
 
     fun setOnClickListener(listener: OnClickListener) {

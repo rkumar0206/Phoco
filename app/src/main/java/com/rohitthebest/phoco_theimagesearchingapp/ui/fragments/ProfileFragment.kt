@@ -21,7 +21,6 @@ import com.rohitthebest.phoco_theimagesearchingapp.databinding.ProfileLayoutBind
 import com.rohitthebest.phoco_theimagesearchingapp.remote.AuthToken
 import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.PhocoImageItem
 import com.rohitthebest.phoco_theimagesearchingapp.remote.phocoData.PhocoUser
-import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.phocoAdapters.PhocoImageAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.viewPagerAdapters.ProfileViewPagerAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.PhocoViewModel
@@ -45,7 +44,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
     private var isLoggedInBefore = false
 
-    private lateinit var phocoImageAdapter: PhocoImageAdapter
     private lateinit var profileViewPagerAdapter: ProfileViewPagerAdapter
     private lateinit var includeBinding: ProfileLayoutBinding
     private var imagesList: ArrayList<PagingData<PhocoImageItem>>? = null
@@ -67,9 +65,9 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
 
         initListeners()
 
-        phocoImageAdapter = PhocoImageAdapter(shouldShowFavouriteButton = false)
         profileViewPagerAdapter = ProfileViewPagerAdapter(emptyList())
     }
+
 
     private fun checkIfAuthTokensExpired() {
 
@@ -130,55 +128,6 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
             requireContext().showNoInternetMessage()
         }
     }
-
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
-
-        if (isGranted) {
-            Log.i(TAG, "Permission granted: ")
-        } else {
-            Log.i(TAG, "Permission denied: ")
-        }
-    }
-
-
-    private val chooseImageLauncher = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri ->
-
-        lifecycleScope.launch {
-
-            val file = uri.getFile(requireContext())
-
-            Log.d(TAG, "fileName: ${file?.name}")
-            Log.d(TAG, "fileLength: ${file?.length()}")
-
-            authTokens?.let { accessToken ->
-
-                Log.d(TAG, ": start of upload image")
-
-                file?.let { file ->
-
-                    // todo : check for the size of the file (must be greater then 4 MB)
-                    // todo : preview the image
-                    // todo : after upload button is clicked then only upload the image
-
-/*
-                    phocoViewModel.uploadImage(
-                        accessToken.accessToken,
-                        file.name,
-                        file,
-                        file.name,
-                        phocoUser?.pk.toString()
-                    )
-*/
-                }
-            }
-
-        }
-    }
-
 
     private fun initListeners() {
 
@@ -456,6 +405,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
             })
     }
 
+
     private fun setUpProfileViewPager() {
 
         imagesList?.let {
@@ -468,27 +418,16 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
         }
     }
 
+    //------------------------------------------------------------------------
+    /*[START OF RECYCLERVIEW CLICK LISTENERS]*/
 
     override fun onImageClicked(phocoImage: PhocoImageItem) {
 
         showToast(requireContext(), phocoImage.image_description)
     }
 
-    override fun onAddToFavouriteBtnClicked(phocoImage: PhocoImageItem, position: Int) {
-        //TODO("Not yet implemented")
-    }
-
-    override fun onDownloadImageBtnClicked(phocoImage: PhocoImageItem, view: View) {
-        //TODO("Not yet implemented")
-    }
-
-    override fun onImageUserNameClicked(phocoImage: PhocoImageItem) {
-        //TODO("Not yet implemented")
-    }
-
-    override fun onAddToFavouriteLongClicked(phocoImage: PhocoImageItem, position: Int) {
-        //TODO("Not yet implemented")
-    }
+    /*[END OF RECYCLERVIEW CLICK LISTENERS]*/
+    //---------------------------------------------------------------------------------
 
     private fun observeUploadImageResponse() {
 
@@ -535,6 +474,55 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
               .transition(DrawableTransitionOptions.withCrossFade())
               .into(binding.profileImageIV)*/
     }
+
+    //launchers
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+
+        if (isGranted) {
+            Log.i(TAG, "Permission granted: ")
+        } else {
+            Log.i(TAG, "Permission denied: ")
+        }
+    }
+
+    private val chooseImageLauncher = registerForActivityResult(
+        ActivityResultContracts.GetContent()
+    ) { uri ->
+
+        lifecycleScope.launch {
+
+            val file = uri.getFile(requireContext())
+
+            Log.d(TAG, "fileName: ${file?.name}")
+            Log.d(TAG, "fileLength: ${file?.length()}")
+
+            authTokens?.let { accessToken ->
+
+                Log.d(TAG, ": start of upload image")
+
+                file?.let { file ->
+
+                    // todo : check for the size of the file (must be greater then 4 MB)
+                    // todo : preview the image
+                    // todo : after upload button is clicked then only upload the image
+
+/*
+                    phocoViewModel.uploadImage(
+                        accessToken.accessToken,
+                        file.name,
+                        file,
+                        file.name,
+                        phocoUser?.pk.toString()
+                    )
+*/
+                }
+            }
+
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

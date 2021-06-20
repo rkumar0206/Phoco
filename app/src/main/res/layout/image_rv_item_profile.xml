@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/image"
         android:layout_width="0dp"
-        android:layout_height="300dp"
+        android:layout_height="150dp"
         android:contentDescription="@string/imageview"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -17,90 +17,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
-
-    <View
-        android:id="@+id/view"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/gradient_for_showing_image_info"
-        app:layout_constraintBottom_toBottomOf="@+id/image"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/imageUserNameTV"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="8dp"
-        android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:maxLines="1"
-        android:padding="3dp"
-        android:textColor="@color/text_color"
-        app:layout_constraintBottom_toBottomOf="@id/imageUserImage"
-        app:layout_constraintEnd_toStartOf="@id/likeBtn"
-        app:layout_constraintStart_toEndOf="@+id/imageUserImage"
-        app:layout_constraintTop_toTopOf="@id/imageUserImage"
-        tools:text="username" />
-
-    <ImageView
-        android:id="@+id/imageUserImage"
-        android:layout_width="30dp"
-        android:layout_height="0dp"
-        android:contentDescription="@string/imageview"
-        android:padding="3dp"
-        app:layout_constraintBottom_toBottomOf="@id/view"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/view"
-        app:srcCompat="@drawable/ic_outline_account_circle_24" />
-
-    <ImageView
-        android:id="@+id/downloadImageBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginEnd="10dp"
-        android:contentDescription="@string/imageview"
-        android:padding="3dp"
-        app:layout_constraintBottom_toBottomOf="@id/view"
-        app:layout_constraintEnd_toEndOf="@+id/view"
-        app:layout_constraintTop_toTopOf="@+id/view"
-        app:srcCompat="@drawable/ic_outline_arrow_circle_down_24" />
-
-    <ImageView
-        android:id="@+id/addToFavouritesBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:contentDescription="@string/imageview"
-        android:padding="3dp"
-        app:layout_constraintBottom_toBottomOf="@id/view"
-        app:layout_constraintEnd_toStartOf="@+id/downloadImageBtn"
-        app:layout_constraintTop_toTopOf="@+id/view"
-        app:srcCompat="@drawable/ic_outline_bookmark_border_24" />
-
-    <TextView
-        android:id="@+id/likesNumTV"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:gravity="center_vertical"
-        android:padding="5dp"
-        android:text="0"
-        android:textColor="@color/text_color"
-        app:layout_constraintBottom_toBottomOf="@id/view"
-        app:layout_constraintEnd_toStartOf="@+id/addToFavouritesBtn"
-        app:layout_constraintTop_toTopOf="@+id/view" />
-
-    <ImageView
-        android:id="@+id/likeBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:padding="3dp"
-        app:layout_constraintBottom_toBottomOf="@id/view"
-        app:layout_constraintEnd_toStartOf="@id/likesNumTV"
-        app:layout_constraintTop_toTopOf="@+id/view"
-        app:srcCompat="@drawable/ic_baseline_favorite_border_24" />
 
 
     <View
@@ -114,7 +30,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/image"
-        tools:visibility="gone" />
+        tools:visibility="visible" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/reloadFAB"
@@ -131,6 +47,6 @@
         app:layout_constraintStart_toStartOf="@id/reloadBackground"
         app:layout_constraintTop_toTopOf="@id/reloadBackground"
         app:srcCompat="@drawable/ic_baseline_refresh_24"
-        tools:visibility="gone" />
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
