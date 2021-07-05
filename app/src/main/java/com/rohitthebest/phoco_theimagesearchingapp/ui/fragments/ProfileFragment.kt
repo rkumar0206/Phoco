@@ -579,6 +579,10 @@ class ProfileFragment : Fragment(R.layout.fragment_profile), View.OnClickListene
     override fun onDestroyView() {
         super.onDestroyView()
 
+        includeBinding.viewPagerImages.unregisterOnPageChangeCallback(object :
+            ViewPager2.OnPageChangeCallback() {})
+
+
         _binding = null
     }
 }
