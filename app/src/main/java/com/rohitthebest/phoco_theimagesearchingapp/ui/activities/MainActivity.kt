@@ -25,10 +25,13 @@ class MainActivity : AppCompatActivity() {
         //No night mode
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.navHostFragment) as NavHostFragment
         val navController = navHostFragment.navController
 
         binding.bottomNavigationView.setupWithNavController(navController)
+
+        binding.bottomNavigationView.menu.findItem(R.id.profileFragment).isVisible = false
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
 
@@ -46,10 +49,10 @@ class MainActivity : AppCompatActivity() {
                     handleButtons(R.id.favouritesFragment)
                 }
 
-                R.id.profileFragment -> {
-                    showBottomNav()
-                    handleButtons(R.id.profileFragment)
-                }
+//                R.id.profileFragment -> {
+//                    showBottomNav()
+//                    handleButtons(R.id.profileFragment)
+//                }
 
                 R.id.searchFragment -> {
 
@@ -70,7 +73,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.menu.findItem(R.id.homeFragment).isEnabled = true
         binding.bottomNavigationView.menu.findItem(R.id.favouritesFragment).isEnabled = true
-        binding.bottomNavigationView.menu.findItem(R.id.profileFragment).isEnabled = true
+        //binding.bottomNavigationView.menu.findItem(R.id.profileFragment).isEnabled = true
         binding.bottomNavigationView.menu.findItem(R.id.searchFragment).isEnabled = true
 
         binding.bottomNavigationView.menu.findItem(id).isEnabled = false
