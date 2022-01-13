@@ -10,18 +10,11 @@ object Constants {
     const val PIXABAY_BASE_URL = "https://pixabay.com"
     const val PEXEL_BASE_URL = "https://api.pexels.com/"
     const val MOHIT_IMAGE_API_BASE_URL = "https://gentle-forest-22725.herokuapp.com"
-    const val PHOCO_BASE_URL = "https://phoco.herokuapp.com"
 
     const val UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME =
         "UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME"
     const val UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY =
         "UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY"
-    const val AUTH_TOKEN_SHARED_PREFERENCE_NAME = "AUTH_TOKEN_SHARED_PREFERENCE_NAME_DSJBJKSB"
-    const val AUTH_TOKEN_SHARED_PREFERENCE_KEY = "AUTH_TOKEN_SHARED_PREFERENCE_KEY_snjvnjk"
-    const val PHOCO_USER_DATA_SHARED_PREFERENCE_NAME =
-        "PHOCO_USER_DATA_SHARED_PREFERENCE_NAME_FBVJHB"
-    const val PHOCO_USER_DATA_SHARED_PREFERENCE_KEY =
-        "PHOCO_USER_DATA_SHARED_PREFERENCE_KEY_DVJKSBJKAB"
 
 
     const val NO_INTERNET_MESSAGE = "Please check your internet connection!!!"
@@ -41,7 +34,6 @@ object Constants {
     const val COLLECTION_WITH_SAVED_IMAGES_SELECTION_ID = "jkvbskjvbjkvbkjvbbfjdvnjkvn"
     const val EXTRACTED_COLORS_IMAGE_URL_KEY = "fjvnsdkkebvubjbhjbhjbHB"
 
-    const val NETWORK_PAGE_SIZE_PHOCO = 10
     const val NETWORK_PAGE_SIZE_UNSPLASH = 30
     const val NETWORK_PAGE_SIZE_PEXEL = 20
     const val NETWORK_PAGE_SIZE_PIXABAY = 20

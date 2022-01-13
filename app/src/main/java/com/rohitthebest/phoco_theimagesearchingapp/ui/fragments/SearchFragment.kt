@@ -9,6 +9,7 @@ import android.widget.AdapterView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
@@ -36,7 +37,10 @@ import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.Unsp
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.WebPhotoViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 private const val TAG = "SearchFragment"
 
@@ -478,7 +482,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
     private fun updateItemOfUnsplashSearchAdapter(position: Int) {
 
-        GlobalScope.launch {
+        lifecycleScope.launch {
 
             delay(100)
 
@@ -594,7 +598,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
     private fun updateItemOfPixabaySearchAdapter(position: Int) {
 
-        GlobalScope.launch {
+        lifecycleScope.launch {
 
             delay(100)
 
@@ -710,7 +714,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
     private fun updateItemOfPexelSearchAdapter(position: Int) {
 
-        GlobalScope.launch {
+        lifecycleScope.launch {
 
             delay(100)
 

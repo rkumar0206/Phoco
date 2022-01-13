@@ -49,11 +49,6 @@ class MainActivity : AppCompatActivity() {
                     handleButtons(R.id.favouritesFragment)
                 }
 
-//                R.id.profileFragment -> {
-//                    showBottomNav()
-//                    handleButtons(R.id.profileFragment)
-//                }
-
                 R.id.searchFragment -> {
 
                     showBottomNav()
@@ -73,7 +68,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.menu.findItem(R.id.homeFragment).isEnabled = true
         binding.bottomNavigationView.menu.findItem(R.id.favouritesFragment).isEnabled = true
-        //binding.bottomNavigationView.menu.findItem(R.id.profileFragment).isEnabled = true
         binding.bottomNavigationView.menu.findItem(R.id.searchFragment).isEnabled = true
 
         binding.bottomNavigationView.menu.findItem(id).isEnabled = false

@@ -35,10 +35,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData.PexelPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData.PixabayPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
 import es.dmoral.toasty.Toasty
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -229,7 +226,7 @@ fun hideKeyBoard(activity: Activity) {
 
     try {
 
-        GlobalScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
 
             closeKeyboard(activity)
         }

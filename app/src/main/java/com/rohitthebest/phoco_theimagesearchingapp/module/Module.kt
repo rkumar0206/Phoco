@@ -5,12 +5,14 @@ import androidx.room.Room
 import com.rohitthebest.phoco_theimagesearchingapp.Constants
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.MOHIT_IMAGE_API_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PEXEL_BASE_URL
-import com.rohitthebest.phoco_theimagesearchingapp.Constants.PHOCO_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PIXABAY_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_DATABASE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATABASE_NAME
-import com.rohitthebest.phoco_theimagesearchingapp.api.*
+import com.rohitthebest.phoco_theimagesearchingapp.api.MohitImageAPI
+import com.rohitthebest.phoco_theimagesearchingapp.api.PexelAPI
+import com.rohitthebest.phoco_theimagesearchingapp.api.PixabayAPI
+import com.rohitthebest.phoco_theimagesearchingapp.api.UnsplashAPI
 import com.rohitthebest.phoco_theimagesearchingapp.database.database.CollectionDatabase
 import com.rohitthebest.phoco_theimagesearchingapp.database.database.SavedImagesDatabase
 import com.rohitthebest.phoco_theimagesearchingapp.database.database.UnsplashPhotoDatabase
@@ -50,13 +52,6 @@ annotation class WebImageOkHttpClient
 
 @Qualifier
 annotation class WebImageRetrofit
-
-
-@Qualifier
-annotation class PhocoOkHttpClient
-
-@Qualifier
-annotation class PhocoRetrofit
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -203,42 +198,6 @@ object Module {
             @WebImageRetrofit retrofit: Retrofit
     ): MohitImageAPI = retrofit.create(MohitImageAPI::class.java)
 
-
-    //---------------------------------------------------------------------------------------
-
-
-    // --------------------------------- Phoco Image API ----------------------------------------
-
-    @PhocoOkHttpClient
-    @Provides
-    @Singleton
-    fun providesPhocoOkHttpClient(): OkHttpClient {
-
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
-
-        return OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .readTimeout(25, TimeUnit.SECONDS)
-                .build()
-    }
-
-    @PhocoRetrofit
-    @Provides
-    @Singleton
-    fun providesPhocoRetrofit(
-            @PhocoOkHttpClient okHttpClient: OkHttpClient
-    ): Retrofit = Retrofit.Builder()
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(PHOCO_BASE_URL)
-            .build()
-
-    @Provides
-    @Singleton
-    fun providePhocoAPI(
-            @PhocoRetrofit retrofit: Retrofit
-    ): PhocoAPI = retrofit.create(PhocoAPI::class.java)
 
     //---------------------------------------------------------------------------------------
 
