@@ -31,8 +31,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        binding.bottomNavigationView.menu.findItem(R.id.profileFragment).isVisible = false
-
         navController.addOnDestinationChangedListener { _, destination, _ ->
 
             when (destination.id) {
@@ -53,10 +51,6 @@ class MainActivity : AppCompatActivity() {
 
                     showBottomNav()
                     handleButtons(R.id.searchFragment)
-                }
-                R.id.loginSignUpFragment -> {
-
-                    showBottomNav()
                 }
 
                 else -> hideBottomNav()

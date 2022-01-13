@@ -32,22 +32,6 @@
             app:popExitAnim="@anim/fade_out" />
     </fragment>
     <fragment
-        android:id="@+id/profileFragment"
-        android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.ProfileFragment"
-        android:label="ProfileFragment"
-        tools:layout="@layout/fragment_profile">
-        <action
-            android:id="@+id/action_profileFragment_to_loginSignUpFragment"
-            app:destination="@id/loginSignUpFragment"
-
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"
-            app:popUpTo="@id/profileFragment"
-            app:popUpToInclusive="true" />
-    </fragment>
-    <fragment
         android:id="@+id/searchFragment"
         android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.SearchFragment"
         android:label="SearchFragment"
@@ -99,21 +83,5 @@
         <action
             android:id="@+id/action_collectionFragmentWithSavedImages_to_addCollectionFragment"
             app:destination="@id/addCollectionFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/loginSignUpFragment"
-        android:name="com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.LoginSignUpFragment"
-        android:label="LoginSignUpFragment"
-        tools:layout="@layout/fragment_login_signup">
-        <action
-            android:id="@+id/action_loginSignUpFragment_to_profileFragment"
-            app:destination="@id/profileFragment"
-
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out"
-            app:popUpTo="@id/loginSignUpFragment"
-            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

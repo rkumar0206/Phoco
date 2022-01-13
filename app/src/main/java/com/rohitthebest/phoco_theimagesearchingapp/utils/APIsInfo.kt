@@ -5,7 +5,8 @@ enum class APIName {
     UNSPLASH,
     PIXABAY,
     PEXELS,
-    WEB
+    WEB,
+    UNDRAW
 }
 
 data class APIsInfo(

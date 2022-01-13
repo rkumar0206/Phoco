@@ -11,7 +11,7 @@ data class UnDrawRequestModel(
 
 interface UnDrawAPI {
 
-    @POST("/search")
+    @POST("search")
     suspend fun searchUnDrawImages(
         @Body query: UnDrawRequestModel
     ): Response<UnDrawResponse>

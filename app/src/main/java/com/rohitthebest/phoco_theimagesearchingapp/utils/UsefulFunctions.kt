@@ -10,6 +10,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.PictureDrawable
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
@@ -34,6 +35,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.database.entity.UserInfo
 import com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData.PexelPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData.PixabayPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.utils.glideSVG.SvgSoftwareLayerSetter
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.*
 import java.io.File
@@ -663,6 +665,24 @@ inline fun setImageToImageViewUsingGlide(
         .transition(DrawableTransitionOptions.withCrossFade())
         .into(imageView)
 
+}
+
+fun setSvgImageUrlToImageViewUsingGlide(
+    context: Context,
+    imageView: ImageView,
+    imageUrl: String
+) {
+
+    val requestBuilder = Glide.with(context)
+        .`as`(PictureDrawable::class.java)
+        .apply {
+            this.error(R.drawable.ic_outline_error_outline_24)
+        }
+        .transition(DrawableTransitionOptions.withCrossFade())
+        .listener(SvgSoftwareLayerSetter())
+
+    val uri = Uri.parse(imageUrl)
+    requestBuilder.load(uri).into(imageView)
 }
 
 
