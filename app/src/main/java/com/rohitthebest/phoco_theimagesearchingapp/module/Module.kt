@@ -7,12 +7,10 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.MOHIT_IMAGE_API_BAS
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PEXEL_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PIXABAY_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_DATABASE_NAME
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNDRAW_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_BASE_URL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATABASE_NAME
-import com.rohitthebest.phoco_theimagesearchingapp.api.MohitImageAPI
-import com.rohitthebest.phoco_theimagesearchingapp.api.PexelAPI
-import com.rohitthebest.phoco_theimagesearchingapp.api.PixabayAPI
-import com.rohitthebest.phoco_theimagesearchingapp.api.UnsplashAPI
+import com.rohitthebest.phoco_theimagesearchingapp.api.*
 import com.rohitthebest.phoco_theimagesearchingapp.database.database.CollectionDatabase
 import com.rohitthebest.phoco_theimagesearchingapp.database.database.SavedImagesDatabase
 import com.rohitthebest.phoco_theimagesearchingapp.database.database.UnsplashPhotoDatabase
@@ -30,19 +28,10 @@ import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Qualifier
-annotation class UnsplashImageOkHttpClient
-
-@Qualifier
 annotation class UnsplashImageRetrofit
 
 @Qualifier
-annotation class PixabayImageOkHttpClient
-
-@Qualifier
 annotation class PixabayImageRetrofit
-
-@Qualifier
-annotation class PexelImageOkHttpClient
 
 @Qualifier
 annotation class PexelImageRetrofit
@@ -53,35 +42,38 @@ annotation class WebImageOkHttpClient
 @Qualifier
 annotation class WebImageRetrofit
 
+@Qualifier
+annotation class UndrawRetrofit
+
 @Module
 @InstallIn(SingletonComponent::class)
 object Module {
 
 
-    //================================== Unsplash API ====================================
-
-    @UnsplashImageOkHttpClient
     @Singleton
     @Provides
-    fun provideUnsplashOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(): OkHttpClient {
 
         val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 
         return OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .readTimeout(25, TimeUnit.SECONDS)
-                .build()
+            .addInterceptor(interceptor)
+            .readTimeout(25, TimeUnit.SECONDS)
+            .build()
     }
+
+
+    //================================== Unsplash API ====================================
 
     @UnsplashImageRetrofit
     @Singleton
     @Provides
     fun provideUnsplashRetrofit(
-            @UnsplashImageOkHttpClient okHttpClient: OkHttpClient
+        okHttpClient: OkHttpClient
     ): Retrofit = Retrofit.Builder()
-            .client(okHttpClient)
-            .baseUrl(UNSPLASH_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+        .client(okHttpClient)
+        .baseUrl(UNSPLASH_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
             .build()
 
     @Provides
@@ -95,25 +87,11 @@ object Module {
 
     //================================ Pixabay API ====================================
 
-    @PixabayImageOkHttpClient
-    @Provides
-    @Singleton
-    fun providePixabayOkHttpClient(): OkHttpClient {
-
-        val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-
-        return OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .readTimeout(25, TimeUnit.SECONDS)
-                .build()
-    }
-
     @PixabayImageRetrofit
     @Singleton
     @Provides
     fun providesPixabayRetrofit(
-
-            @PixabayImageOkHttpClient okHttpClient: OkHttpClient
+        okHttpClient: OkHttpClient
     ): Retrofit = Retrofit.Builder()
         .client(okHttpClient)
         .baseUrl(PIXABAY_BASE_URL)
@@ -131,25 +109,11 @@ object Module {
 
     //============================ Pexel API =========================================
 
-
-    @PexelImageOkHttpClient
-    @Provides
-    @Singleton
-    fun providePexelOkHttpClient(): OkHttpClient {
-
-        val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-
-        return OkHttpClient.Builder()
-            .addInterceptor(interceptor)
-            .readTimeout(25, TimeUnit.SECONDS)
-            .build()
-    }
-
     @PexelImageRetrofit
     @Singleton
     @Provides
     fun providesPexelRetrofit(
-        @PexelImageOkHttpClient okHttpClient: OkHttpClient
+        okHttpClient: OkHttpClient
     ): Retrofit = Retrofit.Builder()
         .client(okHttpClient)
         .baseUrl(PEXEL_BASE_URL)
@@ -176,8 +140,8 @@ object Module {
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
 
         return OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .readTimeout(25, TimeUnit.SECONDS)
+            .addInterceptor(interceptor)
+            .readTimeout(60, TimeUnit.SECONDS)
                 .build()
     }
 
@@ -195,23 +159,45 @@ object Module {
     @Provides
     @Singleton
     fun providesWebImageAPI(
-            @WebImageRetrofit retrofit: Retrofit
+        @WebImageRetrofit retrofit: Retrofit
     ): MohitImageAPI = retrofit.create(MohitImageAPI::class.java)
 
 
     //---------------------------------------------------------------------------------------
 
 
+    //========================= Undraw API ==========================================
+
+    @UndrawRetrofit
+    @Singleton
+    @Provides
+    fun providesUndrawRetrofit(
+        okHttpClient: OkHttpClient
+    ): Retrofit = Retrofit.Builder()
+        .client(okHttpClient)
+        .baseUrl(UNDRAW_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    @Singleton
+    @Provides
+    fun providesUndrawAPI(
+        @UndrawRetrofit retrofit: Retrofit
+    ): UnDrawAPI = retrofit.create(UnDrawAPI::class.java)
+
+
+    //---------------------------------------------------------------------------------
+
     //======================= Unsplash photo database ======================================
 
     @Singleton
     @Provides
     fun provideUnsplashPhotoDatabase(
-            @ApplicationContext context: Context
+        @ApplicationContext context: Context
     ) = Room.databaseBuilder(
-            context,
-            UnsplashPhotoDatabase::class.java,
-            UNSPLASH_PHOTO_DATABASE_NAME
+        context,
+        UnsplashPhotoDatabase::class.java,
+        UNSPLASH_PHOTO_DATABASE_NAME
     )
             .fallbackToDestructiveMigration()
             .build()

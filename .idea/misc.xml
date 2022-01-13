@@ -6,8 +6,11 @@
         <entry key="..\:/Users/Rohit/AndroidStudioProjects/PhocoTheImageSearchingApp/app/src/main/res/drawable/ic_outline_error_outline_24.xml" value="0.25052083333333336" />
         <entry key="..\:/Users/Rohit/AndroidStudioProjects/PhocoTheImageSearchingApp/app/src/main/res/font/sumana.xml" value="0.26875" />
         <entry key="..\:/Users/Rohit/AndroidStudioProjects/PhocoTheImageSearchingApp/app/src/main/res/layout/activity_main.xml" value="0.2257405515832482" />
+        <entry key="..\:/Users/Rohit/AndroidStudioProjects/PhocoTheImageSearchingApp/app/src/main/res/layout/fragment_profile.xml" value="0.1015625" />
         <entry key="..\:/Users/Rohit/AndroidStudioProjects/PhocoTheImageSearchingApp/app/src/main/res/layout/fragment_search.xml" value="0.23020833333333332" />
         <entry key="..\:/Users/Rohit/AndroidStudioProjects/PhocoTheImageSearchingApp/app/src/main/res/layout/photo_item_for_rv.xml" value="0.21944444444444444" />
+        <entry key="..\:/Users/Rohit/AndroidStudioProjects/PhocoTheImageSearchingApp/app/src/main/res/menu/bottom_navigation_menu.xml" value="0.22083333333333333" />
+        <entry key="..\:/Users/Rohit/AndroidStudioProjects/PhocoTheImageSearchingApp/app/src/main/res/menu/menu_profile.xml" value="0.22083333333333333" />
       </map>
     </option>
   </component>

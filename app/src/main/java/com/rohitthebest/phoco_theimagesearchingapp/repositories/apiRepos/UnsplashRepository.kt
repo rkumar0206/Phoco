@@ -1,9 +1,10 @@
-package com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData
+package com.rohitthebest.phoco_theimagesearchingapp.repositories.apiRepos
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.NETWORK_PAGE_SIZE_UNSPLASH
 import com.rohitthebest.phoco_theimagesearchingapp.api.UnsplashAPI
+import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPagingSource
 import javax.inject.Inject
 import javax.inject.Singleton
 

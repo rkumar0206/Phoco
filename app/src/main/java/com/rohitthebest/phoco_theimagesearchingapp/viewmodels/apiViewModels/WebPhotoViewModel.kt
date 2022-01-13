@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.rohitthebest.phoco_theimagesearchingapp.api.WebResponse
-import com.rohitthebest.phoco_theimagesearchingapp.remote.mohitImagApiData.WebPhotoRepository
+import com.rohitthebest.phoco_theimagesearchingapp.repositories.apiRepos.WebPhotoRepository
 import com.rohitthebest.phoco_theimagesearchingapp.utils.Resources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
