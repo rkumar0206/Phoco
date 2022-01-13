@@ -6,6 +6,7 @@ object Constants {
     const val COLLECTION_DATABASE_NAME = "collection.db"
     const val SAVED_IMAGE_DATABASE_NAME = "savedImage.db"
 
+    const val UNDRAW_BASE_URL = "https://undraw.co/api"
     const val UNSPLASH_BASE_URL = "https://api.unsplash.com/"
     const val PIXABAY_BASE_URL = "https://pixabay.com"
     const val PEXEL_BASE_URL = "https://api.pexels.com/"
