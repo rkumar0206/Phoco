@@ -185,10 +185,16 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
             savedImagesViewModel.insertImages(receivedImagesList)
 
             //passing the value to fragment from which this bottom sheet has been called
-            findNavController().previousBackStackEntry?.savedStateHandle?.set(IMAGE_SAVED_TO_COLLECTION_KEY, true)
+            findNavController().previousBackStackEntry?.savedStateHandle?.set(
+                IMAGE_SAVED_TO_COLLECTION_KEY,
+                true
+            )
 
             Log.d(TAG, "onCollectionClicked: updated the key of all the received list")
         }
+
+        collection.timestamp = System.currentTimeMillis()
+        collectionViewModel.updateCollection(collection)
 
         dismiss()
     }

@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "collection_table")
 data class Collection(
         @PrimaryKey(autoGenerate = false) var key: String,
-        val timestamp: Long = System.currentTimeMillis(),
+        var timestamp: Long = System.currentTimeMillis(),
         var collectionName: String,
         var collectionImageUrl: String = "",
         var collectionDescription: String = "",
