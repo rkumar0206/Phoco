@@ -44,7 +44,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.random.Random
 
 private const val TAG = "UsefulFunctions"
 
@@ -279,126 +278,12 @@ fun View.showKeyboard(activity: Activity) {
     }
 }
 
-/**
- * this function can convert an integer into  a string of a given base/radix
- * this function does not assure that you will find its logic in mathematics
- * it considers that the ordered digits are 0-9 then a-z then A-Z then !@#$%^&
- * @author Mohit kumar
- * @param radix
- */
-fun Long.toStringM(radix: Int = 0): String {
-
-    val values = arrayOf(
-            "0",
-            "1",
-            "2",
-            "3",
-            "4",
-            "5",
-            "6",
-            "7",
-            "8",
-            "9",
-            "a",
-            "b",
-            "c",
-            "d",
-            "e",
-            "f",
-            "g",
-            "h",
-            "i",
-            "j",
-            "k",
-            "l",
-            "m",
-            "n",
-            "o",
-            "p",
-            "q",
-            "r",
-            "s",
-            "t",
-            "u",
-            "v",
-            "w",
-            "x",
-            "y",
-            "z",
-            "A",
-            "B",
-            "C",
-            "D",
-            "E",
-            "F",
-            "G",
-            "H",
-            "I",
-            "J",
-            "K",
-            "L",
-            "M",
-            "N",
-            "O",
-            "P",
-            "Q",
-            "R",
-            "S",
-            "T",
-            "U",
-            "V",
-            "W",
-            "X",
-            "Y",
-            "Z",
-            "!",
-            "@",
-            "#",
-            "$",
-            "%",
-            "^",
-            "&"
-    )
-    var str = ""
-    var d = this
-    var r: Int
-
-    if (radix in 1..69) {
-
-        if (d <= 0) {
-            return d.toString()
-        }
-
-        while (d != 0L) {
-
-            r = (d % radix).toInt()
-            d /= radix
-            str = values[r] + str
-        }
-
-        return str
-    }
-
-    return d.toString()
-}
-
-
-fun generateKey(appendString: String = "", radix: Int = 69): String {
-
-    return "${System.currentTimeMillis().toStringM(radix)}_${
-        Random.nextLong(
-                100,
-                9223372036854775
-        ).toStringM(radix)
-    }$appendString"
-}
-
 
 fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
 
     val savedImage = SavedImage().apply {
 
-        key = generateKey()
+        key = UUID.randomUUID().toString()
         collectionKey = ""
     }
 
@@ -412,7 +297,8 @@ fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
 
                 apiInfo = APIsInfo(apiName, R.drawable.logo_unsplash)
                 imageId = unsplashPhoto.id
-                imageName = unsplashPhoto.alt_description ?: generateKey()
+                imageName =
+                    unsplashPhoto.alt_description ?: UUID.randomUUID().toString() + "_unsplash"
                 imageUrls = ImageDownloadLinksAndInfo.ImageUrls(
                     unsplashPhoto.urls.small,
                     unsplashPhoto.urls.regular,
@@ -437,11 +323,11 @@ fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
 
                 apiInfo = APIsInfo(apiName, R.drawable.logo_pixabay_square)
                 imageId = pixabayPhoto.id.toString()
-                imageName = generateKey("_pixabay")   //name of the image
+                imageName = UUID.randomUUID().toString() + "_pixabay"   //name of the image
                 imageUrls = ImageDownloadLinksAndInfo
                     .ImageUrls(
                         pixabayPhoto.previewURL,
-                        pixabayPhoto.previewURL,
+                        pixabayPhoto.largeImageURL,
                         pixabayPhoto.largeImageURL
                     )
                 userInfo = UserInfo(
@@ -463,7 +349,7 @@ fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
 
                 apiInfo = APIsInfo(apiName, R.drawable.logo_pexels)
                 imageId = pexelPhoto.id.toString()
-                imageName = generateKey("_pexel")   //name of the image
+                imageName = UUID.randomUUID().toString() + "_pexel"   //name of the image
                 imageUrls = ImageDownloadLinksAndInfo
                     .ImageUrls(pexelPhoto.src.medium, pexelPhoto.src.large, pexelPhoto.src.original)
                 userInfo = UserInfo(

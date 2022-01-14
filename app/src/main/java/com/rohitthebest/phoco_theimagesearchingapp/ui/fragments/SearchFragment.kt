@@ -42,6 +42,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
+import kotlin.collections.ArrayList
 
 private const val TAG = "SearchFragment"
 
@@ -585,13 +587,13 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     override fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto, view: View) {
 
         val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
-                ImageDownloadLinksAndInfo.ImageUrls(
-                        unsplashPhoto.urls.small,
-                        unsplashPhoto.urls.regular,
-                        unsplashPhoto.links.download
-                ),
-                unsplashPhoto.alt_description ?: generateKey(),
-                ""
+            ImageDownloadLinksAndInfo.ImageUrls(
+                unsplashPhoto.urls.small,
+                unsplashPhoto.urls.regular,
+                unsplashPhoto.links.download
+            ),
+            unsplashPhoto.alt_description ?: UUID.randomUUID().toString() + "_unsplash",
+            ""
         )
 
         showDownloadOptionPopupMenu(
@@ -644,7 +646,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 pixabayPhoto.webformatURL,
                 pixabayPhoto.largeImageURL
             ),
-            generateKey("_pixabay"),
+            UUID.randomUUID().toString() + "_pixabay",
             pixabayPhoto.id.toString()
         )
 
@@ -701,13 +703,13 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     override fun ondownloadImageBtnClicked(pixabayPhoto: PixabayPhoto, view: View) {
 
         val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
-                ImageDownloadLinksAndInfo.ImageUrls(
-                        pixabayPhoto.previewURL,
-                        pixabayPhoto.webformatURL,
-                        pixabayPhoto.largeImageURL
-                ),
-                generateKey("_pixabay"),
-                ""
+            ImageDownloadLinksAndInfo.ImageUrls(
+                pixabayPhoto.previewURL,
+                pixabayPhoto.webformatURL,
+                pixabayPhoto.largeImageURL
+            ),
+            UUID.randomUUID().toString() + "_pixabay",
+            ""
         )
 
         showDownloadOptionPopupMenu(
@@ -761,7 +763,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 pexelPhoto.src.large,
                 pexelPhoto.src.original
             ),
-            generateKey("_pexel"),
+            UUID.randomUUID().toString() + "_pexel",
             pexelPhoto.id.toString()
         )
 
@@ -823,7 +825,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 pexelPhoto.src.large,
                 pexelPhoto.src.original
             ),
-            generateKey("_pexel"),
+            UUID.randomUUID().toString() + "_pexel",
             ""
         )
 
@@ -878,7 +880,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 webPhoto.imgurl!!,
                 webPhoto.imgurl
             ),
-            generateKey("_web"),
+            UUID.randomUUID().toString() + "_web",
             ""
         )
 
@@ -897,7 +899,7 @@ class SearchFragment : Fragment(R.layout.fragment_search),
         downloadFile(
                 requireActivity(),
                 webPhoto.imgurl,
-                generateKey("_web.jpg", 30)
+            UUID.randomUUID().toString() + "_web.jpg"
         )
     }
 

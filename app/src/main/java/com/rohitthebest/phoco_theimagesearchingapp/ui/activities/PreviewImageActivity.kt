@@ -30,6 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 private const val TAG = "PreviewImageActivity"
 
@@ -479,7 +480,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 )
             )
                 "${imageDownloadLinksAndInfo.imageName}.jpg"
-            else "${generateKey()}.jpg"
+            else "${UUID.randomUUID()}.jpg"
         )
 
     }

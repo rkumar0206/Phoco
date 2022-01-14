@@ -14,11 +14,11 @@ import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentAddCollectionBinding
 import com.rohitthebest.phoco_theimagesearchingapp.utils.ToastyType
-import com.rohitthebest.phoco_theimagesearchingapp.utils.generateKey
 import com.rohitthebest.phoco_theimagesearchingapp.utils.isValidString
 import com.rohitthebest.phoco_theimagesearchingapp.utils.showToasty
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 private const val TAG = "AddCollectionFragment"
 
@@ -68,7 +68,7 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
             if (args?.collectionKey?.isValidString()!!) {
 
                 isCollectionKeyReceived = true
-                receivedCollectionKey = args.collectionKey
+                receivedCollectionKey = args.collectionKey!!
                 getCollection()
             }
         }
@@ -180,12 +180,12 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
             Log.d(TAG, "insertNewCollectionToDatabase: ")
 
             val collection = Collection(
-                    key = generateKey(),
-                    collectionName = binding.collectionNameET.editText?.text?.trim().toString(),
-                    collectionDescription = binding.collectionDescriptionET.editText?.text?.trim()
-                            .toString(),
-                    collectionImageUrl = "",
-                    uid = ""
+                key = UUID.randomUUID().toString(),
+                collectionName = binding.collectionNameET.editText?.text?.trim().toString(),
+                collectionDescription = binding.collectionDescriptionET.editText?.text?.trim()
+                    .toString(),
+                collectionImageUrl = "",
+                uid = ""
             )
 
             collectionViewModel.insertCollection(collection)

@@ -314,13 +314,13 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         Log.d(TAG, "onShowMoreOptionsBtnClicked: raw : ${unsplashPhoto.urls.raw}")
 
         val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
-                ImageDownloadLinksAndInfo.ImageUrls(
-                        unsplashPhoto.urls.small,
-                        unsplashPhoto.urls.regular,
-                        unsplashPhoto.links.download
-                ),
-                unsplashPhoto.alt_description ?: generateKey(),
-                ""
+            ImageDownloadLinksAndInfo.ImageUrls(
+                unsplashPhoto.urls.small,
+                unsplashPhoto.urls.regular,
+                unsplashPhoto.links.download
+            ),
+            unsplashPhoto.alt_description ?: UUID.randomUUID().toString() + "_unsplash",
+            ""
         )
 
 
