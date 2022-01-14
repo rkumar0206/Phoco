@@ -12,6 +12,9 @@ import com.rohitthebest.phoco_theimagesearchingapp.databinding.PhotoItemForRvBin
 import com.rohitthebest.phoco_theimagesearchingapp.remote.undrawData.Illo
 import com.rohitthebest.phoco_theimagesearchingapp.utils.invisible
 import com.rohitthebest.phoco_theimagesearchingapp.utils.setSvgImageUrlToImageViewUsingGlide
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val TAG = "UnDrawImageAdapter"
 
@@ -29,7 +32,7 @@ class UnDrawImageAdapter :
 
                 if (checkForNullability()) {
 
-                    mListener!!.onImageClicked(getItem(absoluteAdapterPosition))
+                    mListener!!.onImageClicked(absoluteAdapterPosition)
                 }
             }
 
@@ -80,11 +83,15 @@ class UnDrawImageAdapter :
 
             Log.d(TAG, "setUpAndShowImageInImageView: ${unDraw.image}")
 
-            setSvgImageUrlToImageViewUsingGlide(
-                binding.root.context,
-                binding.image,
-                unDraw.image
-            )
+            CoroutineScope(Dispatchers.Main).launch {
+
+                setSvgImageUrlToImageViewUsingGlide(
+                    binding.root.context,
+                    binding.image,
+                    unDraw.image
+                )
+
+            }
 
         }
 
@@ -127,7 +134,7 @@ class UnDrawImageAdapter :
 
     interface OnClickListener {
 
-        fun onImageClicked(unDraw: Illo)
+        fun onImageClicked(selectedPosition: Int)
         fun onDownloadBtnClicked(unDraw: Illo)
         fun onImageTitleClicked(unDraw: Illo)
     }

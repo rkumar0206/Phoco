@@ -12,8 +12,10 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rohitthebest.phoco_theimagesearchingapp.Constants
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.EXTRACTED_COLORS_IMAGE_URL_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.HOME_FRAGMENT_TAG
-import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_TAG_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_TAG
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNDRAW
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ActivityPreviewImageBinding
 import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
@@ -21,6 +23,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.viewPagerAdapters
 import com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.dialogFragments.ExtractedColorsBottomSheetDialog
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToImageDownloadLinksAndInfo
+import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.fromStringToPreviewUnDrawImagesMessage
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,7 +37,9 @@ private const val TAG = "PreviewImageActivity"
 class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var binding: ActivityPreviewImageBinding
+
     private lateinit var imageDownloadLinksAndInfo: ImageDownloadLinksAndInfo
+    private var apiTag = ""
     private lateinit var wallpaperManager: WallpaperManager
 
     private var isDownloadOptionsVisible = false
@@ -43,7 +48,9 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
     private val unsplashPhotoViewModel by viewModels<UnsplashPhotoViewModel>()
     private val savedImageViewModel by viewModels<SavedImageViewModel>()
 
+    // this list consists the 30 random photos which appear on the home fragment
     private lateinit var homeImageList: List<UnsplashPhoto>
+    private lateinit var previewUnDrawImagesMessage: PreviewUnDrawImagesMessage
 
     private var currentImageIndex: Int = 0
 
@@ -60,25 +67,56 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         previewViewPagerAdapter = PreviewImageViewPagerAdapter(emptyList())
 
-        imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_MESSAGE_KEY)
-            ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
+        apiTag = intent.getStringExtra(PREVIEW_IMAGE_TAG_KEY)!!
 
-        when (imageDownloadLinksAndInfo.tag) {
+        //imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_KEY)
+        //  ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
+
+        when (apiTag) {
 
             HOME_FRAGMENT_TAG -> {
+
+                imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_KEY)
+                    ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
 
                 // in this condition images saved in UnsplashPhoto Database will be displayed (HomeFragment images)
                 getImageList()
             }
             SAVED_IMAGE_TAG -> {
 
+                imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_KEY)
+                    ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
+
                 // in this condition images saved in collections will be displayed
 
-                receivedCollectionKey = imageDownloadLinksAndInfo.imageName // received as collection key here
+                receivedCollectionKey =
+                    imageDownloadLinksAndInfo.imageName // received as collection key here
 
                 getSavedImageListRelatedToPassedCollectionKey()
             }
+
+            SEARCH_FRAGMENT_TAG_UNDRAW -> {
+
+                previewUnDrawImagesMessage =
+                    fromStringToPreviewUnDrawImagesMessage(intent.getStringExtra(PREVIEW_IMAGE_KEY)!!)
+
+                currentImageIndex = previewUnDrawImagesMessage.selectedPosition
+
+                setUpPreviewImageViewPager(
+                    previewUnDrawImagesMessage.unDrawImages.map { illo -> illo.image }
+                )
+
+                updateTheImageIndexNumberInTextView()
+
+                binding.extractImageColorsFAB.hide()
+                binding.setImageAsHomescreenFAB.hide()
+
+            }
+
             else -> {
+
+                imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_KEY)
+                    ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
 
                 // preview only single image
 
@@ -97,9 +135,9 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun getImageList() {
 
-        unsplashPhotoViewModel.getAllUnsplashPhoto().observe(this, {
+        unsplashPhotoViewModel.getAllUnsplashPhoto().observe(this, { unsplashPhotos ->
 
-            homeImageList = it
+            homeImageList = unsplashPhotos
 
             currentImageIndex =
                 homeImageList.indexOfFirst { image -> image.id == imageDownloadLinksAndInfo.imageId }
@@ -113,9 +151,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun setUpPreviewImageViewPager(imageUrlList: List<String>) {
 
-        previewViewPagerAdapter = PreviewImageViewPagerAdapter(
-            imageUrlList
-        )
+        previewViewPagerAdapter = PreviewImageViewPagerAdapter(imageUrlList, apiTag)
 
         binding.previewImageViewPager.adapter = previewViewPagerAdapter
         binding.previewImageViewPager.currentItem = currentImageIndex
@@ -190,14 +226,28 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             /*[START OF FAB BUTTON CLICKS]*/
             binding.downloadImageFAB.id -> {
 
-                if (!isDownloadOptionsVisible) {
+                if (apiTag != SEARCH_FRAGMENT_TAG_UNDRAW) {
 
-                    showDownloadOptions()
+                    if (!isDownloadOptionsVisible) {
+
+                        showDownloadOptions()
+                    } else {
+
+                        hideDownloadOptions()
+                    }
                 } else {
 
-                    hideDownloadOptions()
-                }
+                    // for unDraw images don't show download options
 
+                    val unDraw = previewUnDrawImagesMessage.unDrawImages[currentImageIndex]
+
+                    downloadFile(
+                        this,
+                        unDraw.image,
+                        unDraw.slug + ".svg"
+                    )
+
+                }
             }
 
             binding.setImageAsHomescreenFAB.id -> {
@@ -246,10 +296,18 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             binding.shareImageFAB.id -> {
 
-                shareAsText(this,
+                shareAsText(
+                    this,
+                    "Follow this link to download the image :\n\n${
+                        if (apiTag != SEARCH_FRAGMENT_TAG_UNDRAW) {
 
-                        "Follow this link to download the image :\n\n${imageDownloadLinksAndInfo.imageUrls.original}",
-                        "Image download link")
+                            imageDownloadLinksAndInfo.imageUrls.original
+                        } else {
+                            previewUnDrawImagesMessage.unDrawImages[currentImageIndex].image
+                        }
+                    }",
+                    "Image download link"
+                )
                 hideDownloadOptions()
             }
             /*[END OF FAB BUTTON CLICKS]*/
@@ -297,7 +355,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
     @SuppressLint("SetTextI18n")
     private fun updateTheImageIndexNumberInTextView() {
 
-        when (imageDownloadLinksAndInfo.tag) {
+        when (apiTag) {
             HOME_FRAGMENT_TAG -> {
 
                 binding.imageNumberTV.text = "${currentImageIndex + 1} / ${homeImageList.size}"
@@ -306,6 +364,11 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
                 binding.imageNumberTV.text =
                     "${currentImageIndex + 1} / ${receivedSavedImageList.size}"
+            }
+            SEARCH_FRAGMENT_TAG_UNDRAW -> {
+
+                binding.imageNumberTV.text =
+                    "${currentImageIndex + 1} / ${previewUnDrawImagesMessage.unDrawImages.size}"
             }
             else -> {
 
@@ -316,7 +379,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun updateImageDownloadInfo() {
 
-        if (imageDownloadLinksAndInfo.tag == HOME_FRAGMENT_TAG) {
+        if (apiTag == HOME_FRAGMENT_TAG) {
 
             val currentImage = homeImageList[currentImageIndex]
 
@@ -331,7 +394,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             imageDownloadLinksAndInfo.imageId = currentImage.id
 
             //setImageInImageView()
-        } else if (imageDownloadLinksAndInfo.tag == SAVED_IMAGE_TAG) {
+        } else if (apiTag == SAVED_IMAGE_TAG) {
 
             val currentImage = receivedSavedImageList[currentImageIndex]
 

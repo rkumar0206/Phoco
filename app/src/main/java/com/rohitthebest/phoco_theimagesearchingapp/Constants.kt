@@ -20,13 +20,15 @@ object Constants {
 
     const val NO_INTERNET_MESSAGE = "Please check your internet connection!!!"
     const val EDIT_TEXT_EMPTY_MESSAGE = "* Mandatory field"
-    const val PREVIEW_IMAGE_MESSAGE_KEY = "PREVIEW_IMAGE_MESSAGE_KEYnvsjnjsnjnnv"
+    const val PREVIEW_IMAGE_KEY = "PREVIEW_IMAGE_MESSAGE_KEYnvsjnjsnjnnv"
+    const val PREVIEW_IMAGE_TAG_KEY = "PREVIEW_IMAGE_TAG_KEY_Kjvsjvbsnxnnv"
     const val HOME_FRAGMENT_TAG = "HomeFragment"
     const val SAVED_IMAGE_TAG = "SavedImagebkjvjknvnmnvjk"
     const val SEARCH_FRAGMENT_TAG_UNSPLASH = "sEARCHfRAGEMNTWITHUNSPLAsHtaG"
     const val SEARCH_FRAGMENT_TAG_PIXABAY = "sEARCHfRAGEMNTWITHPixabaYtaG"
     const val SEARCH_FRAGMENT_TAG_PEXEL = "sEARCHfRAGEMNTWIvjsvjsnjkvnkjbaYtaG"
     const val SEARCH_FRAGMENT_TAG_WEB = "sEARCHfRAGEMNTdfbdbfbfngkvnkjbaYtaG"
+    const val SEARCH_FRAGMENT_TAG_UNDRAW = "sEARCHfRAGEMNTnksvnkfbfngkvxnvkknaYdfvnG"
 
     const val COLLECTION_KEY_FOR_ALL_PHOTOS = "fjvajkfvkjbvbvhbhva"
 

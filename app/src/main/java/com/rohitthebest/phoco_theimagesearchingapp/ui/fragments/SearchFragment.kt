@@ -15,9 +15,11 @@ import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rohitthebest.phoco_theimagesearchingapp.Constants
-import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_TAG_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_PEXEL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_PIXABAY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNDRAW
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNSPLASH
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_WEB
 import com.rohitthebest.phoco_theimagesearchingapp.R
@@ -32,6 +34,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertImageDownloadLinksAndInfoToString
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertSavedImageToString
+import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.fromPreviewUnDrawImagesMessageToString
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -89,11 +92,13 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
         initSearchEditText()
 
+        // ------------------------- Observe image results / response ----------
         observeUnsplashSearchResult()
         observePixabayResult()
         observePexelResult()
         observeWebImageResult()
         observeUnDrawImageResult()
+        // ------------------------------------------------------------
 
         observeForIfSavedImageAddedToTheCollection()
 
@@ -519,20 +524,22 @@ class SearchFragment : Fragment(R.layout.fragment_search),
         val intent = Intent(requireContext(), PreviewImageActivity::class.java)
 
         val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
-                ImageDownloadLinksAndInfo.ImageUrls(
-                        unsplashPhoto.urls.small,
-                        unsplashPhoto.urls.regular,
-                        unsplashPhoto.links.download
-                ),
-                unsplashPhoto.alt_description ?: System.currentTimeMillis().toString(16),
-                SEARCH_FRAGMENT_TAG_UNSPLASH,
-                unsplashPhoto.id
+            ImageDownloadLinksAndInfo.ImageUrls(
+                unsplashPhoto.urls.small,
+                unsplashPhoto.urls.regular,
+                unsplashPhoto.links.download
+            ),
+            unsplashPhoto.alt_description ?: System.currentTimeMillis().toString(16),
+            unsplashPhoto.id
         )
 
         intent.putExtra(
-                PREVIEW_IMAGE_MESSAGE_KEY,
-                convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
+            PREVIEW_IMAGE_KEY,
+            convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
         )
+
+        intent.putExtra(PREVIEW_IMAGE_TAG_KEY, SEARCH_FRAGMENT_TAG_UNSPLASH)
+
         startActivity(intent)
     }
 
@@ -584,7 +591,6 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                         unsplashPhoto.links.download
                 ),
                 unsplashPhoto.alt_description ?: generateKey(),
-                "",
                 ""
         )
 
@@ -639,14 +645,16 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 pixabayPhoto.largeImageURL
             ),
             generateKey("_pixabay"),
-            SEARCH_FRAGMENT_TAG_PIXABAY,
             pixabayPhoto.id.toString()
         )
 
         intent.putExtra(
-                PREVIEW_IMAGE_MESSAGE_KEY,
-                convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
+            PREVIEW_IMAGE_KEY,
+            convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
         )
+
+        intent.putExtra(PREVIEW_IMAGE_TAG_KEY, SEARCH_FRAGMENT_TAG_PIXABAY)
+
         startActivity(intent)
     }
 
@@ -699,7 +707,6 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                         pixabayPhoto.largeImageURL
                 ),
                 generateKey("_pixabay"),
-                "",
                 ""
         )
 
@@ -755,14 +762,16 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 pexelPhoto.src.original
             ),
             generateKey("_pexel"),
-            SEARCH_FRAGMENT_TAG_PEXEL,
             pexelPhoto.id.toString()
         )
 
         intent.putExtra(
-            PREVIEW_IMAGE_MESSAGE_KEY,
+            PREVIEW_IMAGE_KEY,
             convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
         )
+
+        intent.putExtra(PREVIEW_IMAGE_TAG_KEY, SEARCH_FRAGMENT_TAG_PEXEL)
+
         startActivity(intent)
     }
 
@@ -815,7 +824,6 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 pexelPhoto.src.original
             ),
             generateKey("_pexel"),
-            "",
             ""
         )
 
@@ -865,20 +873,22 @@ class SearchFragment : Fragment(R.layout.fragment_search),
         val intent = Intent(requireContext(), PreviewImageActivity::class.java)
 
         val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
-                ImageDownloadLinksAndInfo.ImageUrls(
-                        webPhoto.preview!!,
-                        webPhoto.imgurl!!,
-                        webPhoto.imgurl
-                ),
-                generateKey("_web"),
-                SEARCH_FRAGMENT_TAG_WEB,
-                ""
+            ImageDownloadLinksAndInfo.ImageUrls(
+                webPhoto.preview!!,
+                webPhoto.imgurl!!,
+                webPhoto.imgurl
+            ),
+            generateKey("_web"),
+            ""
         )
 
         intent.putExtra(
-                PREVIEW_IMAGE_MESSAGE_KEY,
-                convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
+            PREVIEW_IMAGE_KEY,
+            convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
         )
+
+        intent.putExtra(PREVIEW_IMAGE_TAG_KEY, SEARCH_FRAGMENT_TAG_WEB)
+
         startActivity(intent)
     }
 
@@ -902,10 +912,26 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
     //------------------------------ UnDraw image adapter click listener ---------------------------
 
-    override fun onImageClicked(unDraw: Illo) {
+    override fun onImageClicked(selectedPosition: Int) {
 
-        Log.d(TAG, "onImageClicked: $unDraw")
-        // todo : open preview activity
+        Log.d(TAG, "onImageClicked: Selected Position : $selectedPosition")
+
+        val intent = Intent(requireContext(), PreviewImageActivity::class.java)
+
+        val previewUnDrawImagesMessage = PreviewUnDrawImagesMessage(
+            unDrawImageAdapter.currentList,
+            selectedPosition
+        )
+
+        intent.putExtra(
+            PREVIEW_IMAGE_KEY, fromPreviewUnDrawImagesMessageToString(
+                previewUnDrawImagesMessage
+            )
+        )
+
+        intent.putExtra(PREVIEW_IMAGE_TAG_KEY, SEARCH_FRAGMENT_TAG_UNDRAW)
+
+        startActivity(intent)
     }
 
     override fun onDownloadBtnClicked(unDraw: Illo) {

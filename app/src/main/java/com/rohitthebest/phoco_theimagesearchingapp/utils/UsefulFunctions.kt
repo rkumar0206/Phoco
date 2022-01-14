@@ -667,22 +667,30 @@ inline fun setImageToImageViewUsingGlide(
 
 }
 
-fun setSvgImageUrlToImageViewUsingGlide(
+suspend fun setSvgImageUrlToImageViewUsingGlide(
     context: Context,
     imageView: ImageView,
     imageUrl: String
 ) {
 
-    val requestBuilder = Glide.with(context)
-        .`as`(PictureDrawable::class.java)
-        .apply {
-            this.error(R.drawable.ic_outline_error_outline_24)
-        }
-        .transition(DrawableTransitionOptions.withCrossFade())
-        .listener(SvgSoftwareLayerSetter())
+    withContext(Dispatchers.IO) {
 
-    val uri = Uri.parse(imageUrl)
-    requestBuilder.load(uri).into(imageView)
+        val requestBuilder = Glide.with(context)
+            .`as`(PictureDrawable::class.java)
+            .apply {
+                this.error(R.drawable.ic_outline_error_outline_24)
+            }
+            .transition(DrawableTransitionOptions.withCrossFade())
+            .listener(SvgSoftwareLayerSetter())
+
+
+        val uri = Uri.parse(imageUrl)
+
+        withContext(Dispatchers.Main) {
+
+            requestBuilder.load(uri).into(imageView)
+        }
+    }
 }
 
 

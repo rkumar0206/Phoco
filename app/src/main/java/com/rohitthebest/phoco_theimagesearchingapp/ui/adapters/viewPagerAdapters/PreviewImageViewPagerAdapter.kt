@@ -4,12 +4,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.rohitthebest.phoco_theimagesearchingapp.Constants
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.PreviewImageImageviewLayoutBinding
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.setImageToImageViewUsingGlide
+import com.rohitthebest.phoco_theimagesearchingapp.utils.setSvgImageUrlToImageViewUsingGlide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class PreviewImageViewPagerAdapter(private val imageUrlList: List<String>) :
+class PreviewImageViewPagerAdapter(
+    private val imageUrlList: List<String>,
+    private val tag: String = ""
+) :
     RecyclerView.Adapter<PreviewImageViewPagerAdapter.ViewPagerViewHolder>() {
 
     inner class ViewPagerViewHolder(val binding: PreviewImageImageviewLayoutBinding) :
@@ -23,17 +31,31 @@ class PreviewImageViewPagerAdapter(private val imageUrlList: List<String>) :
         //displaying the actual image
         private fun setUpAndShowImageInImageView(imageUrl: String) {
 
-            setImageToImageViewUsingGlide(
-                binding.root.context,
-                binding.previewImageIV,
-                imageUrl,
-                {
-                    showReloadBtn()
-                },
-                {
-                    hideReloadBtn()
+            if (tag != Constants.SEARCH_FRAGMENT_TAG_UNDRAW) {
+
+                setImageToImageViewUsingGlide(
+                    binding.root.context,
+                    binding.previewImageIV,
+                    imageUrl,
+                    {
+                        showReloadBtn()
+                    },
+                    {
+                        hideReloadBtn()
+                    }
+                )
+
+            } else {
+
+                CoroutineScope(Dispatchers.Main).launch {
+
+                    setSvgImageUrlToImageViewUsingGlide(
+                        binding.root.context,
+                        binding.previewImageIV,
+                        imageUrl
+                    )
                 }
-            )
+            }
         }
 
         private fun showReloadBtn() {

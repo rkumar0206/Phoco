@@ -13,7 +13,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.HOME_FRAGMENT_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.IMAGE_SAVED_TO_COLLECTION_KEY
-import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_TAG_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.R
@@ -59,7 +60,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         _binding = FragmentHomeBinding.bind(view)
 
-        loadUnplashPhotoSavedDate()
+        loadUnsplashPhotoSavedDate()
 
         isRefreshEnabled = true
 
@@ -245,18 +246,21 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         val intent = Intent(requireContext(), PreviewImageActivity::class.java)
 
         val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
-                ImageDownloadLinksAndInfo.ImageUrls(
-                        unsplashPhoto.urls.small,
-                        unsplashPhoto.urls.regular,
-                        unsplashPhoto.links.download
-                ),
-                unsplashPhoto.alt_description ?: "",
-                HOME_FRAGMENT_TAG,
-                unsplashPhoto.id
+            ImageDownloadLinksAndInfo.ImageUrls(
+                unsplashPhoto.urls.small,
+                unsplashPhoto.urls.regular,
+                unsplashPhoto.links.download
+            ),
+            unsplashPhoto.alt_description ?: "",
+            unsplashPhoto.id
         )
 
-        intent.putExtra(PREVIEW_IMAGE_MESSAGE_KEY,
-                convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo))
+        intent.putExtra(
+            PREVIEW_IMAGE_KEY,
+            convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
+        )
+
+        intent.putExtra(PREVIEW_IMAGE_TAG_KEY, HOME_FRAGMENT_TAG)
 
         startActivity(intent)
     }
@@ -316,7 +320,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                         unsplashPhoto.links.download
                 ),
                 unsplashPhoto.alt_description ?: generateKey(),
-                "",
                 ""
         )
 
@@ -390,7 +393,10 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                 ?.getLiveData<Boolean>(IMAGE_SAVED_TO_COLLECTION_KEY)
                 ?.observe(viewLifecycleOwner, {
 
-                    Log.d(TAG, "observeForCollectionAddition: isObserva... $isObservingForImageSavedInCollection")
+                    Log.d(
+                        TAG,
+                        "observeForCollectionAddition: isObserve... $isObservingForImageSavedInCollection"
+                    )
 
                     if (isObservingForImageSavedInCollection) {
 
@@ -437,11 +443,11 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         edit.apply()
     }
 
-    private fun loadUnplashPhotoSavedDate() {
+    private fun loadUnsplashPhotoSavedDate() {
 
         val sharedPreference = requireActivity().getSharedPreferences(
-                UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME,
-                Context.MODE_PRIVATE
+            UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME,
+            Context.MODE_PRIVATE
         )
 
         lastDateSaved = sharedPreference.getString(UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY, "")

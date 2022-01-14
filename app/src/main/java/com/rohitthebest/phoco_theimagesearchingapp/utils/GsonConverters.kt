@@ -21,6 +21,16 @@ class GsonConverters {
             return gson.fromJson(str, type)
         }
 
+        fun fromPreviewUnDrawImagesMessageToString(previewUnDrawImagesMessage: PreviewUnDrawImagesMessage): String {
+
+            return Gson().toJson(previewUnDrawImagesMessage)
+        }
+
+        fun fromStringToPreviewUnDrawImagesMessage(str: String): PreviewUnDrawImagesMessage {
+
+            return Gson().fromJson(str, object : TypeToken<PreviewUnDrawImagesMessage>() {}.type)
+        }
+
         fun convertSavedImageToString(savedImage: SavedImage): String {
 
             return gson.toJson(savedImage)

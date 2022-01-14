@@ -22,7 +22,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rohitthebest.phoco_theimagesearchingapp.Constants
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.COLLECTION_KEY_FOR_ALL_PHOTOS
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.COLLECTION_WITH_SAVED_IMAGES_SELECTION_ID
-import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_MESSAGE_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_TAG_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
@@ -238,15 +239,15 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
             savedImage.imageUrls,
             receivedCollectionKey,  /*passing collection key to previewImageActivity instead of image
                  name and next every thing will be handled in the PreviewImageActivity*/
-            SAVED_IMAGE_TAG,
             savedImage.imageId
         )
 
         val intent = Intent(requireContext(), PreviewImageActivity::class.java)
         intent.putExtra(
-            PREVIEW_IMAGE_MESSAGE_KEY,
+            PREVIEW_IMAGE_KEY,
             convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
         )
+        intent.putExtra(PREVIEW_IMAGE_TAG_KEY, SAVED_IMAGE_TAG)
         startActivity(intent)
     }
 
@@ -285,7 +286,6 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
         val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
             savedImage.imageUrls,
             savedImage.imageName,
-            "",
             ""
         )
 
