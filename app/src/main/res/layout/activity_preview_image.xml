@@ -74,6 +74,21 @@
             tools:targetApi="o" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/saveImageFAB"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            android:layout_weight="1"
+            android:clickable="true"
+            android:contentDescription="@string/fabbutton"
+            android:focusable="true"
+            android:tooltipText="Save image to image"
+            app:fabSize="mini"
+            app:srcCompat="@drawable/ic_outline_bookmark_border_24"
+            tools:targetApi="o" />
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/shareImageFAB"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

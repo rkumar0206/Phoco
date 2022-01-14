@@ -286,7 +286,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
             showSnackBar(binding.root, "Image saved")
 
-            //todo : upload to firestore if cloud support is available in future
+            //upload to firestore if cloud support is available in future
         }
     }
 

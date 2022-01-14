@@ -2,16 +2,14 @@ package com.rohitthebest.phoco_theimagesearchingapp.utils
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.WallpaperManager
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.PictureDrawable
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -38,10 +36,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashP
 import com.rohitthebest.phoco_theimagesearchingapp.utils.glideSVG.SvgSoftwareLayerSetter
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.*
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
-import java.io.IOException
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -184,9 +179,13 @@ fun getCurrentDate(): String {
     return sdf.format(Date())
 }
 
-suspend fun setImageAsHomeScreenWallpaperFromImageUrl(context: Context, imageUrl: String) {
+suspend fun getImageBitmapUsingGlide(
+    context: Context,
+    imageUrl: String,
+    onResourceReady: (Bitmap) -> Unit
+) {
 
-    val wallpaperManager = WallpaperManager.getInstance(context)
+    //val wallpaperManager = WallpaperManager.getInstance(context)
 
     withContext(Dispatchers.IO) {
 
@@ -198,8 +197,9 @@ suspend fun setImageAsHomeScreenWallpaperFromImageUrl(context: Context, imageUrl
 
                     try {
 
-                        wallpaperManager.setBitmap(resource)
-                        showToast(context, "Image set as Home screen wallpaper")
+                        onResourceReady(resource)
+//                        wallpaperManager.setBitmap(resource)
+//                        showToast(context, "Image set as Home screen wallpaper")
                     } catch (e: IOException) {
 
                         e.printStackTrace()
@@ -213,6 +213,56 @@ suspend fun setImageAsHomeScreenWallpaperFromImageUrl(context: Context, imageUrl
             })
     }
 }
+
+fun Bitmap.getImageUri(context: Context): Uri? {
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+        val resolver = context.contentResolver
+
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, "image.jpeg")
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            put(
+                MediaStore.MediaColumns.RELATIVE_PATH,
+                "${Environment.DIRECTORY_PICTURES}/Phoco"
+            )
+        }
+
+        val uri = resolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+        uri?.let {
+            resolver.openOutputStream(it).use { fout ->
+
+                try {
+
+                    this.compress(Bitmap.CompressFormat.JPEG, 100, fout)
+                    fout?.close()
+
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
+
+        return uri
+
+    } else {
+
+        val bytes = ByteArrayOutputStream()
+        this.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+
+        val path = MediaStore.Images.Media.insertImage(
+            context.contentResolver,
+            this,
+            "imageTemp",
+            null
+        )
+
+        return Uri.parse(path)
+    }
+}
+
 
 fun Int.getHexColorString() = String.format("#%06X", 0xFFFFFFFF and this.toLong())
 
@@ -509,6 +559,7 @@ suspend fun Uri.getFile(context: Context): File? {
 }
 
 
+@SuppressLint("CheckResult")
 inline fun setImageToImageViewUsingGlide(
     context: Context,
     imageView: ImageView,
@@ -553,6 +604,7 @@ inline fun setImageToImageViewUsingGlide(
 
 }
 
+@SuppressLint("CheckResult")
 suspend fun setSvgImageUrlToImageViewUsingGlide(
     context: Context,
     imageView: ImageView,

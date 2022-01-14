@@ -2,6 +2,8 @@ package com.rohitthebest.phoco_theimagesearchingapp.ui.activities
 
 import android.annotation.SuppressLint
 import android.app.WallpaperManager
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -15,7 +17,11 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.HOME_FRAGMENT_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_TAG_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_TAG
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_PIXABAY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNDRAW
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNSPLASH
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_WEB
+import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ActivityPreviewImageBinding
 import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
@@ -31,6 +37,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
+import kotlin.collections.ArrayList
+
 
 private const val TAG = "PreviewImageActivity"
 
@@ -57,8 +65,14 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private var receivedCollectionKey = ""  // will be used only when image comes from collection
     private lateinit var receivedSavedImageList: List<SavedImage>
+    private lateinit var allSavedImageListId: List<String>
+
+    private lateinit var downloadedImageUris: ArrayList<Uri?>
 
     private lateinit var previewViewPagerAdapter: PreviewImageViewPagerAdapter
+
+    // todo : handle the click listener of saveImageFAB
+    // todo : handle the long click listener of saveImageFab to open the bottom sheet for choosing the collection
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +81,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         previewViewPagerAdapter = PreviewImageViewPagerAdapter(emptyList())
+        downloadedImageUris = ArrayList()
 
         apiTag = intent.getStringExtra(PREVIEW_IMAGE_TAG_KEY)!!
 
@@ -77,12 +92,17 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             HOME_FRAGMENT_TAG -> {
 
+                getAllSavedImages()
+
                 imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_KEY)
                     ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
 
+
                 // in this condition images saved in UnsplashPhoto Database will be displayed (HomeFragment images)
                 getImageList()
+
             }
+
             SAVED_IMAGE_TAG -> {
 
                 imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_KEY)
@@ -94,6 +114,8 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                     imageDownloadLinksAndInfo.imageName // received as collection key here
 
                 getSavedImageListRelatedToPassedCollectionKey()
+
+                binding.saveImageFAB.hide()
             }
 
             SEARCH_FRAGMENT_TAG_UNDRAW -> {
@@ -111,10 +133,18 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
                 binding.extractImageColorsFAB.hide()
                 binding.setImageAsHomescreenFAB.hide()
-
+                binding.saveImageFAB.hide()
             }
 
             else -> {
+
+                if (apiTag == SEARCH_FRAGMENT_TAG_WEB) {
+
+                    binding.saveImageFAB.hide()
+                } else {
+
+                    getAllSavedImages()
+                }
 
                 imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_KEY)
                     ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
@@ -124,6 +154,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 setUpPreviewImageViewPager(
                     listOf(imageDownloadLinksAndInfo.imageUrls.medium)
                 )
+
             }
         }
 
@@ -132,6 +163,16 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         wallpaperManager = WallpaperManager.getInstance(applicationContext)
 
         enableOrDisableDownloadOptions(false)
+    }
+
+    private fun getAllSavedImages() {
+
+        savedImageViewModel.getAllSavedImages().observe(this, { savedImages ->
+
+            allSavedImageListId = savedImages.map { it.imageId }
+
+            checkIfImageSavedInDatabase()
+        })
     }
 
     private fun getImageList() {
@@ -168,24 +209,70 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                     currentImageIndex = position
                     updateTheImageIndexNumberInTextView()
                     updateImageDownloadInfo()
+
+                    checkIfImageSavedInDatabase()
+
                 }
             }
         )
+    }
+
+    private fun checkIfImageSavedInDatabase(): Boolean {
+
+        if (::allSavedImageListId.isInitialized
+            && apiTag != SAVED_IMAGE_TAG
+            && apiTag != SEARCH_FRAGMENT_TAG_WEB
+            && apiTag != SEARCH_FRAGMENT_TAG_UNDRAW
+        ) {
+
+            if (apiTag == HOME_FRAGMENT_TAG) {
+
+                return if (allSavedImageListId.contains(homeImageList[currentImageIndex].id)) {
+
+                    isImageSavedInDatabase(true)
+                    true
+                } else {
+                    isImageSavedInDatabase(false)
+                    false
+                }
+            } else {
+
+                return if (allSavedImageListId.contains(imageDownloadLinksAndInfo.imageId)) {
+
+                    isImageSavedInDatabase(true)
+                    true
+                } else {
+                    isImageSavedInDatabase(false)
+                    false
+                }
+            }
+
+        }
+
+        return false
+    }
+
+    private fun isImageSavedInDatabase(isImageSaved: Boolean) {
+
+        if (isImageSaved) {
+            binding.saveImageFAB.setImageResource(R.drawable.ic_baseline_bookmark_24)
+        } else {
+            binding.saveImageFAB.setImageResource(R.drawable.ic_outline_bookmark_border_24)
+        }
     }
 
     private fun getSavedImageListRelatedToPassedCollectionKey() {
 
         if (receivedCollectionKey == Constants.COLLECTION_KEY_FOR_ALL_PHOTOS) {
 
-            savedImageViewModel.getAllSavedImages().observe(this, {
+            savedImageViewModel.getAllSavedImages().observe(this, { savedImages ->
 
-                receivedSavedImageList = it
+                receivedSavedImageList = savedImages
 
                 currentImageIndex =
                     receivedSavedImageList.indexOfFirst { image -> image.imageId == imageDownloadLinksAndInfo.imageId }
 
                 setUpPreviewImageViewPager(receivedSavedImageList.map { it.imageUrls.medium })
-
 
                 updateTheImageIndexNumberInTextView()
             })
@@ -212,6 +299,12 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         binding.setImageAsHomescreenFAB.setOnClickListener(this)
         binding.extractImageColorsFAB.setOnClickListener(this)
         binding.shareImageFAB.setOnClickListener(this)
+        binding.saveImageFAB.setOnClickListener(this)
+        binding.saveImageFAB.setOnLongClickListener {
+
+
+            true
+        }
 
         binding.smallDownloadCV.setOnClickListener(this)
         binding.mediumDownloadCV.setOnClickListener(this)
@@ -258,15 +351,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                         .setMessage("Set this image as Home screen wallpaper?")
                         .setPositiveButton("Yes") { dialog, _ ->
 
-                            CoroutineScope(Dispatchers.Main).launch {
-
-                                Log.d(TAG, "onClick: Setting image as Home screen wallpaper")
-
-                                setImageAsHomeScreenWallpaperFromImageUrl(
-                                        applicationContext,
-                                        imageDownloadLinksAndInfo.imageUrls.medium
-                                )
-                            }
+                            setImageAsWallpaper()
 
                             dialog.dismiss()
                         }
@@ -311,6 +396,44 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 )
                 hideDownloadOptions()
             }
+
+            binding.saveImageFAB.id -> {
+
+                if (apiTag == HOME_FRAGMENT_TAG) {
+
+                    if (checkIfImageSavedInDatabase()) {
+
+                        savedImageViewModel.deleteImageByImageId(homeImageList[currentImageIndex].id)
+                    } else {
+
+                        val savedImage =
+                            generateSavedImage(homeImageList[currentImageIndex], APIName.UNSPLASH)
+                        savedImageViewModel.insertImage(savedImage)
+                    }
+                } else {
+
+                    when (apiTag) {
+
+                        SEARCH_FRAGMENT_TAG_UNSPLASH -> {
+
+/*
+                            val unsplashPhoto = UnsplashPhoto(
+                                imageDownloadLinksAndInfo.imageId,
+
+                            )
+*/
+
+                        }
+
+                        SEARCH_FRAGMENT_TAG_PIXABAY -> {
+
+
+                        }
+                    }
+                }
+
+            }
+
             /*[END OF FAB BUTTON CLICKS]*/
 
 
@@ -337,6 +460,8 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             binding.previewImageViewPager.id -> {
 
+                Log.d(TAG, "onClick: previewImageViewPager")
+
                 if (isFABOptionVisible && !isDownloadOptionsVisible) {
 
                     hideFabButtonOptions()
@@ -348,6 +473,38 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
                     showFabButtonOptions()
                 }
+            }
+        }
+    }
+
+    /**
+     * Opens the default wallpaper changer of android
+     */
+    private fun setImageAsWallpaper() {
+
+        CoroutineScope(Dispatchers.Main).launch {
+
+            Log.d(TAG, "onClick: Setting image as Home screen wallpaper")
+
+            getImageBitmapUsingGlide(
+                applicationContext,
+                imageDownloadLinksAndInfo.imageUrls.medium
+            ) { bitmap ->
+
+                val imageUri = bitmap.getImageUri(applicationContext)
+
+                Log.d(TAG, "setImageAsWallpaper: $imageUri")
+
+                val intent = Intent(Intent.ACTION_ATTACH_DATA)
+                intent.addCategory(Intent.CATEGORY_DEFAULT)
+                intent.setDataAndType(
+                    imageUri,
+                    "image/jpeg"
+                )
+                intent.putExtra("mimetype", "image/jpeg")
+                startActivity(Intent.createChooser(intent, "Set as : "))
+
+                downloadedImageUris.add(imageUri)
             }
         }
     }
@@ -487,6 +644,19 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onDestroy() {
         super.onDestroy()
+
+        if (downloadedImageUris.isNotEmpty()) {
+
+            downloadedImageUris.forEach { uri ->
+
+                uri?.let { contentResolver.delete(it, null, null) }?.let {
+
+                    if (it > 0) {
+                        Log.d(TAG, "onDestroy: Image deleted")
+                    }
+                }
+            }
+        }
 
         binding.previewImageViewPager.unregisterOnPageChangeCallback(
             object : ViewPager2.OnPageChangeCallback() {}
