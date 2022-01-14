@@ -239,7 +239,10 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
             savedImage.imageUrls,
             receivedCollectionKey,  /*passing collection key to previewImageActivity instead of image
                  name and next every thing will be handled in the PreviewImageActivity*/
-            savedImage.imageId
+            savedImage.imageId,
+            savedImage.userInfo,
+            savedImage.width,
+            savedImage.height
         )
 
         val intent = Intent(requireContext(), PreviewImageActivity::class.java)
@@ -286,7 +289,8 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
         val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
             savedImage.imageUrls,
             savedImage.imageName,
-            ""
+            "",
+            null
         )
 
         showDownloadOptionPopupMenu(

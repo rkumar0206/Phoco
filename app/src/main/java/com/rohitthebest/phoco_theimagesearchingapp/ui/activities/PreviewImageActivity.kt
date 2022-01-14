@@ -17,6 +17,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.HOME_FRAGMENT_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_TAG_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_TAG
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_PEXEL
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_PIXABAY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNDRAW
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNSPLASH
@@ -24,6 +25,9 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.ActivityPreviewImageBinding
+import com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData.PexelPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData.Src
+import com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData.PixabayPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.viewPagerAdapters.PreviewImageViewPagerAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.dialogFragments.ExtractedColorsBottomSheetDialog
@@ -399,38 +403,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             binding.saveImageFAB.id -> {
 
-                if (apiTag == HOME_FRAGMENT_TAG) {
-
-                    if (checkIfImageSavedInDatabase()) {
-
-                        savedImageViewModel.deleteImageByImageId(homeImageList[currentImageIndex].id)
-                    } else {
-
-                        val savedImage =
-                            generateSavedImage(homeImageList[currentImageIndex], APIName.UNSPLASH)
-                        savedImageViewModel.insertImage(savedImage)
-                    }
-                } else {
-
-                    when (apiTag) {
-
-                        SEARCH_FRAGMENT_TAG_UNSPLASH -> {
-
-/*
-                            val unsplashPhoto = UnsplashPhoto(
-                                imageDownloadLinksAndInfo.imageId,
-
-                            )
-*/
-
-                        }
-
-                        SEARCH_FRAGMENT_TAG_PIXABAY -> {
-
-
-                        }
-                    }
-                }
+                saveOrDeleteImageFromDatabase()
 
             }
 
@@ -475,6 +448,138 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
+    }
+
+    private fun saveOrDeleteImageFromDatabase() {
+
+        if (apiTag == HOME_FRAGMENT_TAG) {
+
+            if (checkIfImageSavedInDatabase()) {
+
+                savedImageViewModel.deleteImageByImageId(homeImageList[currentImageIndex].id)
+            } else {
+
+                val savedImage =
+                    generateSavedImage(homeImageList[currentImageIndex], APIName.UNSPLASH)
+                savedImageViewModel.insertImage(savedImage)
+            }
+        } else {
+
+            if (checkIfImageSavedInDatabase()) {
+
+                savedImageViewModel.deleteImageByImageId(imageDownloadLinksAndInfo.imageId)
+            } else {
+
+                when (apiTag) {
+
+                    SEARCH_FRAGMENT_TAG_UNSPLASH -> {
+
+                        handleSavingUnsplashPhoto()
+                    }
+
+                    SEARCH_FRAGMENT_TAG_PIXABAY -> {
+
+                        handleSavingPixabayPhoto()
+                    }
+
+                    SEARCH_FRAGMENT_TAG_PEXEL -> {
+
+                        handleSavingPexelPhoto()
+                    }
+                }
+            }
+
+        }
+
+    }
+
+    private fun handleSavingPexelPhoto() {
+
+        val pexelPhoto = PexelPhoto(
+            "",
+            imageDownloadLinksAndInfo.height,
+            imageDownloadLinksAndInfo.imageId.toInt(),
+            false,
+            imageDownloadLinksAndInfo.userInfo?.userName!!,
+            imageDownloadLinksAndInfo.userInfo?.userIdOrUserName!!.toInt(),
+            imageDownloadLinksAndInfo.userInfo?.userImageUrl!!,
+            Src(
+                "",
+                imageDownloadLinksAndInfo.imageUrls.medium,
+                "",
+                imageDownloadLinksAndInfo.imageUrls.small,
+                imageDownloadLinksAndInfo.imageUrls.original,
+                "",
+                "",
+                ""
+            ),
+            "",
+            imageDownloadLinksAndInfo.width
+        )
+
+        val savedImage = generateSavedImage(pexelPhoto, APIName.PEXELS)
+        savedImageViewModel.insertImage(savedImage)
+    }
+
+    private fun handleSavingPixabayPhoto() {
+
+        val pixabay = PixabayPhoto().apply {
+
+            id = imageDownloadLinksAndInfo.imageId.toInt()
+            previewURL = imageDownloadLinksAndInfo.imageUrls.small
+            largeImageURL = imageDownloadLinksAndInfo.imageUrls.original
+            user = imageDownloadLinksAndInfo.userInfo?.userName!!
+            user_id =
+                imageDownloadLinksAndInfo.userInfo?.userIdOrUserName!!.toInt()
+            userImageURL =
+                imageDownloadLinksAndInfo.userInfo?.userImageUrl!!
+            imageWidth = imageDownloadLinksAndInfo.width
+            imageHeight = imageDownloadLinksAndInfo.height
+        }
+
+        val savedImage = generateSavedImage(pixabay, APIName.PIXABAY)
+        savedImageViewModel.insertImage(savedImage)
+
+    }
+
+    private fun handleSavingUnsplashPhoto() {
+
+
+        val unsplashPhoto = UnsplashPhoto(
+            imageDownloadLinksAndInfo.imageId,
+            imageDownloadLinksAndInfo.width,
+            imageDownloadLinksAndInfo.height,
+            "",
+            imageDownloadLinksAndInfo.imageName,
+            UnsplashPhoto.UnsplashPhotoUrls(
+                small = imageDownloadLinksAndInfo.imageUrls.small,
+                regular = imageDownloadLinksAndInfo.imageUrls.medium,
+                raw = "",
+                full = "",
+                thumb = ""
+            ),
+            UnsplashPhoto.Links(
+                download = imageDownloadLinksAndInfo.imageUrls.original,
+                self = "",
+                html = ""
+            ),
+            UnsplashPhoto.UnsplashUser(
+                name = imageDownloadLinksAndInfo.userInfo?.userName!!,
+                username = imageDownloadLinksAndInfo.userInfo?.userIdOrUserName!!,
+                profile_image = UnsplashPhoto.UnsplashProfileImage(
+                    medium = imageDownloadLinksAndInfo.userInfo?.userImageUrl!!,
+                    small = "",
+                    large = ""
+                ),
+                id = "",
+                total_collections = 0,
+                total_photos = 0
+            )
+        )
+
+        val savedImage = generateSavedImage(unsplashPhoto, APIName.UNSPLASH)
+        savedImageViewModel.insertImage(savedImage)
+
     }
 
     /**

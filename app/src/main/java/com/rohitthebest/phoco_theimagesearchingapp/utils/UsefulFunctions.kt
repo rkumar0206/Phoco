@@ -418,7 +418,11 @@ fun generateSavedImage(imageToBeSaved: Any, apiName: APIName): SavedImage {
 
 }
 
-fun showDownloadOptionPopupMenu(activity: Activity, view: View, imageDownloadLinksAndInfo: ImageDownloadLinksAndInfo) {
+fun showDownloadOptionPopupMenu(
+    activity: Activity,
+    view: View,
+    imageDownloadLinksAndInfo: ImageDownloadLinksAndInfo
+) {
 
     val popup = PopupMenu(activity, view)
 

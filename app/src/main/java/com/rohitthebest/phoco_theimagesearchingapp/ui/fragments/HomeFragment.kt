@@ -18,6 +18,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_TAG_K
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.UNSPLASH_PHOTO_DATE_SHARED_PREFERENCE_NAME
 import com.rohitthebest.phoco_theimagesearchingapp.R
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.UserInfo
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentHomeBinding
 import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.ui.activities.PreviewImageActivity
@@ -252,7 +253,14 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                 unsplashPhoto.links.download
             ),
             unsplashPhoto.alt_description ?: "",
-            unsplashPhoto.id
+            unsplashPhoto.id,
+            UserInfo(
+                unsplashPhoto.user.name,
+                unsplashPhoto.user.username,
+                unsplashPhoto.user.profile_image.medium
+            ),
+            unsplashPhoto.width,
+            unsplashPhoto.height
         )
 
         intent.putExtra(
@@ -306,8 +314,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         }
 
     }
-
-
+    
     @SuppressLint("RestrictedApi")
     override fun onDownloadImageBtnClicked(unsplashPhoto: UnsplashPhoto, view: View) {
 
@@ -320,7 +327,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                 unsplashPhoto.links.download
             ),
             unsplashPhoto.alt_description ?: UUID.randomUUID().toString() + "_unsplash",
-            ""
+            "",
+            null
         )
 
 

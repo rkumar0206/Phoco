@@ -23,6 +23,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_UNSPLASH
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SEARCH_FRAGMENT_TAG_WEB
 import com.rohitthebest.phoco_theimagesearchingapp.R
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.UserInfo
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentSearchBinding
 import com.rohitthebest.phoco_theimagesearchingapp.remote.mohitImagApiData.WebPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData.PexelPhoto
@@ -532,7 +533,14 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 unsplashPhoto.links.download
             ),
             unsplashPhoto.alt_description ?: System.currentTimeMillis().toString(16),
-            unsplashPhoto.id
+            unsplashPhoto.id,
+            UserInfo(
+                userName = unsplashPhoto.user.name,
+                userIdOrUserName = unsplashPhoto.user.username,
+                userImageUrl = unsplashPhoto.user.profile_image.medium
+            ),
+            unsplashPhoto.width,
+            unsplashPhoto.height
         )
 
         intent.putExtra(
@@ -593,7 +601,8 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 unsplashPhoto.links.download
             ),
             unsplashPhoto.alt_description ?: UUID.randomUUID().toString() + "_unsplash",
-            ""
+            "",
+            null
         )
 
         showDownloadOptionPopupMenu(
@@ -647,7 +656,12 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 pixabayPhoto.largeImageURL
             ),
             UUID.randomUUID().toString() + "_pixabay",
-            pixabayPhoto.id.toString()
+            pixabayPhoto.id.toString(),
+            UserInfo(
+                pixabayPhoto.user,
+                pixabayPhoto.user_id.toString(),
+                pixabayPhoto.userImageURL
+            )
         )
 
         intent.putExtra(
@@ -709,7 +723,8 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 pixabayPhoto.largeImageURL
             ),
             UUID.randomUUID().toString() + "_pixabay",
-            ""
+            "",
+            null
         )
 
         showDownloadOptionPopupMenu(
@@ -764,7 +779,14 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 pexelPhoto.src.original
             ),
             UUID.randomUUID().toString() + "_pexel",
-            pexelPhoto.id.toString()
+            pexelPhoto.id.toString(),
+            UserInfo(
+                userName = pexelPhoto.photographer,
+                userIdOrUserName = pexelPhoto.photographer_id.toString(),
+                userImageUrl = pexelPhoto.photographer_url
+            ),
+            pexelPhoto.width,
+            pexelPhoto.height
         )
 
         intent.putExtra(
@@ -826,7 +848,8 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 pexelPhoto.src.original
             ),
             UUID.randomUUID().toString() + "_pexel",
-            ""
+            "",
+            null
         )
 
         showDownloadOptionPopupMenu(
@@ -881,7 +904,8 @@ class SearchFragment : Fragment(R.layout.fragment_search),
                 webPhoto.imgurl
             ),
             UUID.randomUUID().toString() + "_web",
-            ""
+            "",
+            null
         )
 
         intent.putExtra(
