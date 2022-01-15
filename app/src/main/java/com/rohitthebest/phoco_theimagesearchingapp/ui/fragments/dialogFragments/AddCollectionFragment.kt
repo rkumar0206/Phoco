@@ -195,9 +195,10 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
 
             receivedCollection.apply {
 
+                this.timestamp = System.currentTimeMillis()
                 this.collectionName = binding.collectionNameET.editText?.text?.trim().toString()
                 this.collectionDescription = binding.collectionDescriptionET.editText?.text?.trim()
-                        .toString()
+                    .toString()
                 this.collectionImageUrl = ""
             }
 

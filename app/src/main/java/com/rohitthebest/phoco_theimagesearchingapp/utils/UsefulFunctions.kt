@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import com.bumptech.glide.Glide
@@ -107,19 +108,26 @@ fun showSnackBar(
         .show()
 }
 
-fun View.showSnackbar(
+fun View.showSnackBar(
     msg: String,
     length: Int = Snackbar.LENGTH_LONG,
     actionMessage: CharSequence?,
     action: (View) -> Unit
 ) {
-    val snackbar = Snackbar.make(this, msg, length)
+    val snackBar = Snackbar.make(this, msg, length)
+
     if (actionMessage != null) {
-        snackbar.setAction(actionMessage) {
-            action(this)
+
+        val snackbarActionTextView =
+            snackBar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_action)
+
+        snackbarActionTextView.isAllCaps = false
+
+        snackBar.setAction(actionMessage) {
+            action(it)
         }.show()
     } else {
-        snackbar.show()
+        snackBar.show()
     }
 }
 

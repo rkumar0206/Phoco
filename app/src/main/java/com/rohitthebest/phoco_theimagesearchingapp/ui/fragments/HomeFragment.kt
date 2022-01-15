@@ -292,7 +292,19 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
             updateItemOfUnsplashSearchAdapter(position)
 
-            showSnackBar(binding.root, "Image saved")
+            //showSnackBar(binding.root, "Image saved")
+
+            binding.root.showSnackBar(
+                "Image saved",
+                actionMessage = "Choose collection"
+            ) {
+
+                isObservingForImageSavedInCollection = true
+                this.position = position
+                isRefreshEnabled = true
+
+                getSavedImageAndPassItToCollectionBottomSheet(unsplashPhoto.id)
+            }
 
             //upload to firestore if cloud support is available in future
         }
@@ -363,64 +375,72 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
             isRefreshEnabled = true
 
-            savedImageViewModel.getSavedImageByImageId(unsplashPhoto.id).observe(viewLifecycleOwner, {
+            getSavedImageAndPassItToCollectionBottomSheet(unsplashPhoto.id)
 
-                if (isRefreshEnabled) {
-
-                    if (it != null) {
-
-                        val action = HomeFragmentDirections.actionHomeFragmentToChooseFromCollectionsFragment(
-                                convertSavedImageToString(it)
-                        )
-
-                        findNavController().navigate(action)
-                    } else {
-
-                        Log.d(TAG, "onAddToFavouriteLongClicked: Something went wrong!!")
-                    }
-
-                    isRefreshEnabled = false
-                }
-            })
         } else {
 
             val savedImage = generateSavedImage(unsplashPhoto, APIName.UNSPLASH)
 
             val action = HomeFragmentDirections.actionHomeFragmentToChooseFromCollectionsFragment(
-                    convertSavedImageToString(savedImage)
+                convertSavedImageToString(savedImage)
             )
 
             findNavController().navigate(action)
         }
     }
 
+    private fun getSavedImageAndPassItToCollectionBottomSheet(imageId: String) {
+
+        savedImageViewModel.getSavedImageByImageId(imageId).observe(viewLifecycleOwner, {
+
+            if (isRefreshEnabled) {
+
+                if (it != null) {
+
+                    val action =
+                        HomeFragmentDirections.actionHomeFragmentToChooseFromCollectionsFragment(
+                            convertSavedImageToString(it)
+                        )
+
+                    findNavController().navigate(action)
+                } else {
+
+                    Log.d(TAG, "onAddToFavouriteLongClicked: Something went wrong!!")
+                }
+
+                isRefreshEnabled = false
+            }
+        })
+
+    }
+
     private fun observeForIfSavedImageAddedToTheCollection() {
 
         findNavController().currentBackStackEntry
-                ?.savedStateHandle
-                ?.getLiveData<Boolean>(IMAGE_SAVED_TO_COLLECTION_KEY)
-                ?.observe(viewLifecycleOwner, {
+            ?.savedStateHandle
+            ?.getLiveData<Boolean>(IMAGE_SAVED_TO_COLLECTION_KEY)
+            ?.observe(viewLifecycleOwner, {
 
-                    Log.d(
-                        TAG,
-                        "observeForCollectionAddition: isObserve... $isObservingForImageSavedInCollection"
-                    )
+                Log.d(
+                    TAG,
+                    "observeForCollectionAddition: isObserve... $isObservingForImageSavedInCollection"
+                )
 
-                    if (isObservingForImageSavedInCollection) {
+                if (isObservingForImageSavedInCollection) {
 
-                        //true : user has selected one of the collection from the bottom sheet
-                        //false : user hasn't selected any collection
-                        if (it) {
+                    //true : user has selected one of the collection from the bottom sheet
+                    //false : user hasn't selected any collection
+                    if (it) {
 
-                            showSnackBar(binding.root, "Image saved")
+                        showSnackBar(binding.root, "Image saved")
 
-                            Log.d(TAG, "observeForCollectionAddition: value is true")
+                        Log.d(TAG, "observeForCollectionAddition: value is true")
 
-                            if (position != -1) {
+                        if (position != -1) {
 
-                                Log.d(TAG, "observeForCollectionAddition: position : $position")
+                            Log.d(TAG, "observeForCollectionAddition: position : $position")
 
-                                updateItemOfUnsplashSearchAdapter(position)
+                            updateItemOfUnsplashSearchAdapter(position)
 
                                 Log.d(TAG, "observeForCollectionAddition: updated")
 

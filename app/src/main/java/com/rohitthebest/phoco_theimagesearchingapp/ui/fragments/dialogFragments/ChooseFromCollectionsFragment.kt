@@ -199,6 +199,17 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
         dismiss()
     }
 
+    companion object {
+
+        @JvmStatic
+        fun newInstance(bundle: Bundle): ChooseFromCollectionsFragment {
+
+            val fragment = ChooseFromCollectionsFragment()
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
+
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
 

@@ -568,10 +568,10 @@ class SearchFragment : Fragment(R.layout.fragment_search),
             val savedImage = generateSavedImage(unsplashPhoto, APIName.UNSPLASH)
 
             savedImageViewModel.insertImage(savedImage)
-
-            showSnackBar(binding.root, "Image Saved")
-
             updateItemOfUnsplashSearchAdapter(position)
+
+            //showSnackBar(binding.root, "Image Saved")
+            showSnackBarWithChooseCollectionActionButton(unsplashPhoto.id, position)
         }
 
     }
@@ -690,10 +690,11 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
             savedImageViewModel.insertImage(savedImage)
 
-            showSnackBar(binding.root, "Image Saved")
+            //showSnackBar(binding.root, "Image Saved")
 
             updateItemOfPixabaySearchAdapter(position)
 
+            showSnackBarWithChooseCollectionActionButton(pixabayPhoto.id.toString(), position)
         }
 
     }
@@ -815,10 +816,11 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
             savedImageViewModel.insertImage(savedImage)
 
-            showSnackBar(binding.root, "Image Saved")
+            //showSnackBar(binding.root, "Image Saved")
 
             updateItemOfPexelSearchAdapter(position)
 
+            showSnackBarWithChooseCollectionActionButton(pexelPhoto.id.toString(), position)
         }
 
     }
@@ -982,6 +984,21 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
     // ---------------------------------------------------------------------------
 
+    private fun showSnackBarWithChooseCollectionActionButton(savedImageId: String, position: Int) {
+
+        binding.root.showSnackBar(
+            "Image saved",
+            actionMessage = "Choose collection"
+        ) {
+
+            isObservingForImageSavedInCollection = true
+            this.position = position
+            isRefreshEnabled = true
+            getTheSavedImageAndPassItToTheChooseCollectionBottomSheet(savedImageId)
+        }
+
+    }
+
     private fun observeForIfSavedImageAddedToTheCollection() {
 
         findNavController().currentBackStackEntry
@@ -1025,16 +1042,16 @@ class SearchFragment : Fragment(R.layout.fragment_search),
     Bottom sheet for choosing another collection*/
     private fun getTheSavedImageAndPassItToTheChooseCollectionBottomSheet(id: String) {
 
-        savedImageViewModel.getSavedImageByImageId(id).observe(viewLifecycleOwner, {
+        savedImageViewModel.getSavedImageByImageId(id).observe(viewLifecycleOwner, { savedImage ->
 
             if (isRefreshEnabled) {
 
-                if (it != null) {
+                if (savedImage != null) {
 
                     val action =
-                            SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
-                                    convertSavedImageToString(it)
-                            )
+                        SearchFragmentDirections.actionSearchFragmentToChooseFromCollectionsFragment(
+                            convertSavedImageToString(savedImage)
+                        )
 
                     findNavController().navigate(action)
                 } else {
