@@ -48,4 +48,6 @@
     <string name="likes">Likes</string>
     <string name="following">Following</string>
     <string name="unDraw">unDraw</string>
+    <string name="share_image_link">Share image link</string>
+    <string name="share_image">Share image</string>
 </resources>

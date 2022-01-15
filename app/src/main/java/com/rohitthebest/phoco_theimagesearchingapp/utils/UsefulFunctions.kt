@@ -18,6 +18,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -486,14 +487,14 @@ fun showDownloadOptionPopupMenu(
 }
 
 
-fun shareAsText(context: Context, message: String, subject: String? = "") {
+fun shareAsText(activity: Activity, message: String, subject: String? = "") {
 
     val intent = Intent(Intent.ACTION_SEND)
     intent.type = "text/plain"
     intent.putExtra(Intent.EXTRA_SUBJECT, subject)
     intent.putExtra(Intent.EXTRA_TEXT, message)
 
-    context.startActivity(Intent.createChooser(intent, "Share via"))
+    activity.startActivity(Intent.createChooser(intent, "Share via"))
 }
 
 fun copyToClipBoard(activity: Activity, text: String) {
@@ -526,6 +527,123 @@ fun openLinkInBrowser(context: Context, url: String?) {
 }
 
 
+fun showShareOptionPopoupMenu(
+    activity: Activity,
+    view: View,
+    imageUrls: ImageDownloadLinksAndInfo.ImageUrls
+) {
+
+    val popupMenu = PopupMenu(activity, view)
+
+    popupMenu.menuInflater.inflate(R.menu.image_share_menu, popupMenu.menu)
+
+    popupMenu.show()
+
+    popupMenu.setOnMenuItemClickListener {
+
+        return@setOnMenuItemClickListener when (it.itemId) {
+
+            R.id.menu_share_image_link -> {
+
+                shareAsText(
+                    activity,
+                    "Follow this link to download the image :\n\n${imageUrls.original}",
+                    "Image download link"
+                )
+
+                true
+            }
+
+            R.id.menu_share_image -> {
+
+                handleShareImageMenu(activity, imageUrl = imageUrls.medium)
+
+                true
+            }
+
+//            R.id.menu_share_image_medium -> {
+//
+//                handleShareImageMenu(activity, imageUrls.medium)
+//
+//                true
+//            }
+//            R.id.menu_share_image_original -> {
+//
+//                handleShareImageMenu(activity, imageUrls.original)
+//                true
+//            }
+
+            else -> false
+        }
+    }
+}
+
+fun handleShareImageMenu(context: Context, imageUrl: String) {
+
+    showToast(context, "Please wait...downloading file...")
+
+    CoroutineScope(Dispatchers.Main).launch {
+
+        getImageBitmapUsingGlide(
+            context,
+            imageUrl,
+        ) { bitmap ->
+
+            CoroutineScope(Dispatchers.Main).launch {
+
+                saveBitmapToCacheDirectoryAndShare(context, bitmap)
+            }
+        }
+    }
+}
+
+private suspend fun saveBitmapToCacheDirectoryAndShare(context: Context, bitmap: Bitmap?) {
+
+    withContext(Dispatchers.IO) {
+        try {
+
+            val cachePath = File(context.cacheDir, "images")
+            cachePath.mkdirs()
+            val fos = FileOutputStream("$cachePath/image.png") //overwrites the image everytime
+            bitmap?.compress(Bitmap.CompressFormat.PNG, 100, fos)
+            fos.close()
+
+            //sharing the image
+            shareImage(context)
+
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+
+    }
+
+}
+
+private fun shareImage(context: Context) {
+
+    val imagePath = File(context.cacheDir, "images")
+    val newFile = File(imagePath, "image.png")
+
+    val contentUri = FileProvider.getUriForFile(
+        context,
+        "com.rohitthebest.phoco_theimagesearchingapp.provider",
+        newFile
+    )
+
+    if (contentUri != null) {
+
+        val shareIntent = Intent()
+        shareIntent.action = Intent.ACTION_SEND
+        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // temp permission for receiving app to read this file
+        shareIntent.setDataAndType(contentUri, context.contentResolver.getType(contentUri))
+        shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
+        context.startActivity(Intent.createChooser(shareIntent, "Share Via"))
+
+    }
+}
+
+
+/*
 fun calculateNumberOfDays(startDateTimestamp: Long, endDateTimestamp: Long): Int =
     ((endDateTimestamp - startDateTimestamp) / (1000 * 60 * 60 * 24)).toInt()
 
@@ -572,6 +690,7 @@ suspend fun Uri.getFile(context: Context): File? {
         }
     }
 }
+*/
 
 
 @SuppressLint("CheckResult")

@@ -416,18 +416,21 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             binding.shareImageFAB.id -> {
 
-                shareAsText(
-                    this,
-                    "Follow this link to download the image :\n\n${
-                        if (apiTag != SEARCH_FRAGMENT_TAG_UNDRAW) {
+                if (apiTag != SEARCH_FRAGMENT_TAG_UNDRAW) {
 
-                            imageDownloadLinksAndInfo.imageUrls.original
-                        } else {
-                            previewUnDrawImagesMessage.unDrawImages[currentImageIndex].image
-                        }
-                    }",
-                    "Image download link"
-                )
+                    showShareOptionPopoupMenu(
+                        this, binding.shareImageFAB,
+                        imageDownloadLinksAndInfo.imageUrls
+                    )
+                } else {
+
+                    shareAsText(
+                        this,
+                        previewUnDrawImagesMessage.unDrawImages[currentImageIndex].image,
+                        "unDraw svg image\n"
+                    )
+                }
+
                 hideDownloadOptions()
             }
 
