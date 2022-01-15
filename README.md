@@ -5,7 +5,7 @@ This app let's you search images using different popular websites, like,
 - [Pixabay](https://pixabay.com/)
 - [Pexels](https://www.pexels.com/)
 - [unDraw](https://undraw.co/)
-- Also you can search images on web
+- Also you can search images from web
 
 ## Features
 - 30 random images everyday 
