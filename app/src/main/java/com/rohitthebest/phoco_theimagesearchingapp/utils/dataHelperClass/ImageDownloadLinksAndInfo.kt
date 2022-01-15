@@ -1,4 +1,4 @@
-package com.rohitthebest.phoco_theimagesearchingapp.utils
+package com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass
 
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.UserInfo
 

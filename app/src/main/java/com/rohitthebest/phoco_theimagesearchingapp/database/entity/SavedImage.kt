@@ -2,8 +2,8 @@ package com.rohitthebest.phoco_theimagesearchingapp.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.rohitthebest.phoco_theimagesearchingapp.utils.APIsInfo
-import com.rohitthebest.phoco_theimagesearchingapp.utils.ImageDownloadLinksAndInfo
+import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.APIsInfo
+import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.ImageDownloadLinksAndInfo
 
 @Entity(tableName = "saved_image_table")
 data class SavedImage(

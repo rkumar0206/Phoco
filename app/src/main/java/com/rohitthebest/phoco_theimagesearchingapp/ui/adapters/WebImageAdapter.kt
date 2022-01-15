@@ -105,7 +105,7 @@ class WebImageAdapter() :
 
                     binding.image.id -> {
 
-                        mListener!!.onImageClicked(getItem(absoluteAdapterPosition))
+                        mListener!!.onWebImageClicked(absoluteAdapterPosition)
                     }
 
                     binding.downloadImageBtn.id -> {
@@ -163,7 +163,7 @@ class WebImageAdapter() :
 
     interface OnClickListener {
 
-        fun onImageClicked(webPhoto: WebPhoto)
+        fun onWebImageClicked(selectedPosition: Int)
         fun onDownloadImageBtnClicked(webPhoto: WebPhoto, view: View)
         fun onVisitWebsiteTVClicked(websiteUrl: String)
     }

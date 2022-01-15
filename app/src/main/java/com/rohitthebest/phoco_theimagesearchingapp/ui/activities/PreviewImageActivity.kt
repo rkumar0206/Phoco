@@ -37,6 +37,11 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertSavedImageToString
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToImageDownloadLinksAndInfo
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.fromStringToPreviewUnDrawImagesMessage
+import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.fromStringToPreviewWebImageMessage
+import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.APIName
+import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.ImageDownloadLinksAndInfo
+import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.PreviewUnDrawImagesMessage
+import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.PreviewWebImageMessage
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,6 +72,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
     // this list consists the 30 random photos which appear on the home fragment
     private lateinit var homeImageList: List<UnsplashPhoto>
     private lateinit var previewUnDrawImagesMessage: PreviewUnDrawImagesMessage
+    private lateinit var previewWebImagesMessage: PreviewWebImageMessage
 
     private var currentImageIndex: Int = 0
 
@@ -77,8 +83,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var downloadedImageUris: ArrayList<Uri?>
 
     private lateinit var previewViewPagerAdapter: PreviewImageViewPagerAdapter
-
-    // todo : handle the long click listener of saveImageFab to open the bottom sheet for choosing the collection
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -142,15 +146,43 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 binding.saveImageFAB.hide()
             }
 
+            SEARCH_FRAGMENT_TAG_WEB -> {
+
+                binding.saveImageFAB.hide()
+
+                previewWebImagesMessage = intent.getStringExtra(PREVIEW_IMAGE_KEY)?.let {
+                    fromStringToPreviewWebImageMessage(it)
+                }!!
+
+                currentImageIndex = previewWebImagesMessage.selectedPosition
+
+                val currentWebPhoto =
+                    previewWebImagesMessage.webImages[previewWebImagesMessage.selectedPosition]
+
+                imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
+                    ImageDownloadLinksAndInfo.ImageUrls(
+                        currentWebPhoto.preview.toString(),
+                        currentWebPhoto.imgurl.toString(),
+                        currentWebPhoto.imgurl.toString()
+                    ),
+                    UUID.randomUUID().toString() + "_web",
+                    "",
+                    null,
+                    currentWebPhoto.width?.toInt() ?: 0,
+                    currentWebPhoto.height?.toInt() ?: 0
+                )
+
+                setUpPreviewImageViewPager(
+                    previewWebImagesMessage.webImages.map { webPhoto -> webPhoto.imgurl.toString() }
+                )
+
+                updateTheImageIndexNumberInTextView()
+
+            }
+
             else -> {
 
-                if (apiTag == SEARCH_FRAGMENT_TAG_WEB) {
-
-                    binding.saveImageFAB.hide()
-                } else {
-
-                    getAllSavedImages()
-                }
+                getAllSavedImages()
 
                 imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_KEY)
                     ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
@@ -306,11 +338,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         binding.extractImageColorsFAB.setOnClickListener(this)
         binding.shareImageFAB.setOnClickListener(this)
         binding.saveImageFAB.setOnClickListener(this)
-        binding.saveImageFAB.setOnLongClickListener {
-
-
-            true
-        }
 
         binding.smallDownloadCV.setOnClickListener(this)
         binding.mediumDownloadCV.setOnClickListener(this)
@@ -678,6 +705,11 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                 binding.imageNumberTV.text =
                     "${currentImageIndex + 1} / ${previewUnDrawImagesMessage.unDrawImages.size}"
             }
+            SEARCH_FRAGMENT_TAG_WEB -> {
+
+                binding.imageNumberTV.text =
+                    "${currentImageIndex + 1} / ${previewWebImagesMessage.webImages.size}"
+            }
             else -> {
 
                 binding.imageNumberTV.text = "1 / 1"
@@ -687,36 +719,54 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun updateImageDownloadInfo() {
 
-        if (apiTag == HOME_FRAGMENT_TAG) {
+        when (apiTag) {
+            HOME_FRAGMENT_TAG -> {
 
-            val currentImage = homeImageList[currentImageIndex]
+                val currentImage = homeImageList[currentImageIndex]
 
-            imageDownloadLinksAndInfo.imageUrls = ImageDownloadLinksAndInfo
-                .ImageUrls(
-                    currentImage.urls.small,
-                    currentImage.urls.regular,
-                    currentImage.links.download
-                )
+                imageDownloadLinksAndInfo.imageUrls = ImageDownloadLinksAndInfo
+                    .ImageUrls(
+                        currentImage.urls.small,
+                        currentImage.urls.regular,
+                        currentImage.links.download
+                    )
 
-            imageDownloadLinksAndInfo.imageName = currentImage.alt_description ?: ""
-            imageDownloadLinksAndInfo.imageId = currentImage.id
+                imageDownloadLinksAndInfo.imageName = currentImage.alt_description ?: ""
+                imageDownloadLinksAndInfo.imageId = currentImage.id
 
-            //setImageInImageView()
-        } else if (apiTag == SAVED_IMAGE_TAG) {
+                //setImageInImageView()
+            }
+            SAVED_IMAGE_TAG -> {
 
-            val currentImage = receivedSavedImageList[currentImageIndex]
+                val currentImage = receivedSavedImageList[currentImageIndex]
 
-            imageDownloadLinksAndInfo.imageUrls = ImageDownloadLinksAndInfo
-                .ImageUrls(
-                    currentImage.imageUrls.small,
-                    currentImage.imageUrls.medium,
-                    currentImage.imageUrls.original
-                )
+                imageDownloadLinksAndInfo.imageUrls = ImageDownloadLinksAndInfo
+                    .ImageUrls(
+                        currentImage.imageUrls.small,
+                        currentImage.imageUrls.medium,
+                        currentImage.imageUrls.original
+                    )
 
-            imageDownloadLinksAndInfo.imageName = currentImage.imageName
-            imageDownloadLinksAndInfo.imageId = currentImage.imageId
+                imageDownloadLinksAndInfo.imageName = currentImage.imageName
+                imageDownloadLinksAndInfo.imageId = currentImage.imageId
 
-            //setImageInImageView()
+                //setImageInImageView()
+            }
+            SEARCH_FRAGMENT_TAG_WEB -> {
+
+                val currentWebImage = previewWebImagesMessage.webImages[currentImageIndex]
+
+                imageDownloadLinksAndInfo.imageUrls = ImageDownloadLinksAndInfo
+                    .ImageUrls(
+                        currentWebImage.preview.toString(),
+                        currentWebImage.imgurl.toString(),
+                        currentWebImage.imgurl.toString()
+                    )
+
+                imageDownloadLinksAndInfo.imageName = UUID.randomUUID().toString() + "_web"
+                imageDownloadLinksAndInfo.imageId = ""
+
+            }
         }
     }
 

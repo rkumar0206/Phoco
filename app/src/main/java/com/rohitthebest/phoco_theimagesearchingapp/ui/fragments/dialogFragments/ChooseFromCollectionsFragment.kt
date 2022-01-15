@@ -106,20 +106,29 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
                     getAllSavedImages()
                 }
 
-            } catch (e: Exception) {
+            } catch (e: IllegalArgumentException) {
 
+                e.printStackTrace()
                 Log.d(TAG, "getPassedArgument: Argument is not passed using navigation component")
 
                 // argument is received from an activity using newInstance function
 
-                isArgumentReceivedFromNavigationComponent = false
+                try {
 
-                val savedImageString =
-                    arguments?.getString(PREVIEW_IMAGE_ACT_CHOOSE_COLLECTION_MESSAGE_KEY)
+                    isArgumentReceivedFromNavigationComponent = false
 
-                receivedImageToBeSaved = savedImageString?.let { convertStringToSavedImage(it) }!!
+                    val savedImageString =
+                        arguments?.getString(PREVIEW_IMAGE_ACT_CHOOSE_COLLECTION_MESSAGE_KEY)
 
-                getAllSavedImages()
+                    receivedImageToBeSaved =
+                        savedImageString?.let { convertStringToSavedImage(it) }!!
+
+                    getAllSavedImages()
+
+                } catch (e: Exception) {
+
+                    e.printStackTrace()
+                }
             }
         }
     }

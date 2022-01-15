@@ -36,6 +36,8 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertImageDownloadLinksAndInfoToString
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertSavedImageToString
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.fromPreviewUnDrawImagesMessageToString
+import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.fromPreviewWebImageMessageToString
+import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.*
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -895,24 +897,29 @@ class SearchFragment : Fragment(R.layout.fragment_search),
 
     //------------------------------ Web image adapter click listener ---------------------------
 
-    override fun onImageClicked(webPhoto: WebPhoto) {
+    override fun onWebImageClicked(selectedPosition: Int) {
 
         val intent = Intent(requireContext(), PreviewImageActivity::class.java)
 
-        val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
-            ImageDownloadLinksAndInfo.ImageUrls(
-                webPhoto.preview!!,
-                webPhoto.imgurl!!,
-                webPhoto.imgurl
-            ),
-            UUID.randomUUID().toString() + "_web",
-            "",
-            null
+//        val imageDownloadLinksAndInfo = ImageDownloadLinksAndInfo(
+//            ImageDownloadLinksAndInfo.ImageUrls(
+//                webPhoto.preview!!,
+//                webPhoto.imgurl!!,
+//                webPhoto.imgurl
+//            ),
+//            UUID.randomUUID().toString() + "_web",
+//            "",
+//            null
+//        )
+
+        val previewWebImageMessage = PreviewWebImageMessage(
+            webImageAdapter.currentList,
+            selectedPosition
         )
 
         intent.putExtra(
             PREVIEW_IMAGE_KEY,
-            convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo)
+            fromPreviewWebImageMessageToString(previewWebImageMessage)
         )
 
         intent.putExtra(PREVIEW_IMAGE_TAG_KEY, SEARCH_FRAGMENT_TAG_WEB)

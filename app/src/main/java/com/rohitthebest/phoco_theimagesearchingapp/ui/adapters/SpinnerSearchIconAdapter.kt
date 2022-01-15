@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import com.rohitthebest.phoco_theimagesearchingapp.R
-import com.rohitthebest.phoco_theimagesearchingapp.utils.APIsInfo
+import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.APIsInfo
 
 class SpinnerSearchIconAdapter(context: Context, websiteImageList: ArrayList<APIsInfo>)
     : ArrayAdapter<APIsInfo>(context, 0, websiteImageList) {

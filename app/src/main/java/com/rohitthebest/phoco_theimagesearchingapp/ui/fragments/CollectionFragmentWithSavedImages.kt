@@ -36,6 +36,8 @@ import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.keyProvider.Colle
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertImageDownloadLinksAndInfoToString
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertListOfStringString
+import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.APIName
+import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.ImageDownloadLinksAndInfo
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -195,19 +197,19 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
     private fun deleteCollection() {
 
         MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Delete this collection?")
-                .setMessage("All the images inside this collection will also be deleted and cannot be retrieved again.")
-                .setIcon(R.drawable.ic_baseline_delete_24)
-                .setPositiveButton("Okay") { dialog, _ ->
+            .setTitle("Delete this collection?")
+            .setMessage("All the images inside this collection will also be deleted and cannot be retrieved again.")
+            .setIcon(R.drawable.ic_baseline_delete_24)
+            .setPositiveButton("Ok") { dialog, _ ->
 
-                    savedImageViewModel.deleteByCollectionKey(receivedCollectionKey)
-                    collectionViewModel.deleteCollection(receivedCollection)
+                savedImageViewModel.deleteByCollectionKey(receivedCollectionKey)
+                collectionViewModel.deleteCollection(receivedCollection)
 
-                    showToasty(requireContext(), "Collection deleted", ToastyType.INFO)
+                showToasty(requireContext(), "Collection deleted", ToastyType.INFO)
 
-                    dialog.dismiss()
+                dialog.dismiss()
 
-                    requireActivity().onBackPressed()
+                requireActivity().onBackPressed()
 
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->

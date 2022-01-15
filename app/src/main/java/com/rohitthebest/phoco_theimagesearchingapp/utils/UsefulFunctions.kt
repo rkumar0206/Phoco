@@ -34,6 +34,9 @@ import com.rohitthebest.phoco_theimagesearchingapp.database.entity.UserInfo
 import com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData.PexelPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData.PixabayPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
+import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.APIName
+import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.APIsInfo
+import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.ImageDownloadLinksAndInfo
 import com.rohitthebest.phoco_theimagesearchingapp.utils.glideSVG.SvgSoftwareLayerSetter
 import es.dmoral.toasty.Toasty
 import kotlinx.coroutines.*
