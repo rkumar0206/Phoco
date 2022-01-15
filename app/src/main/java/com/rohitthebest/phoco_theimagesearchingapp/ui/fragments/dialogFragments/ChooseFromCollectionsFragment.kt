@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.IMAGE_SAVED_TO_COLLECTION_KEY
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_ACT_CHOOSE_COLLECTION_MESSAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
@@ -43,7 +44,13 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
 
     private var receivedImagesList = emptyList<SavedImage>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    private var isArgumentReceivedFromNavigationComponent = true
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         return inflater.inflate(R.layout.fragment_choose_from_collections, container, false)
     }
@@ -70,31 +77,50 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
 
         if (!arguments?.isEmpty!!) {
 
-            val args = arguments?.let {
+            try {
 
-                ChooseFromCollectionsFragmentArgs.fromBundle(it)
-            }
+                // argument is received from navigation component
+                isArgumentReceivedFromNavigationComponent = true
 
-            val tag = args?.withTag
+                val args = arguments?.let {
 
-            if (tag?.isValidString()!!) {
+                    ChooseFromCollectionsFragmentArgs.fromBundle(it)
+                }
 
-                // if tag is not null then it means that a list of saved images key is passed as argument
+                val tag = args?.withTag
 
-                val listOfSavedImagesKeys = convertStringToListOfStrings(args.imageToSave!!)
-                getAllSavedImagesByKeys(listOfSavedImagesKeys)
+                if (tag?.isValidString()!!) {
 
-                Log.d(TAG, "getPassedArgument: receivedKeyList : $listOfSavedImagesKeys")
+                    // if tag is not null then it means that a list of saved images key is passed as argument
+
+                    val listOfSavedImagesKeys = convertStringToListOfStrings(args.imageToSave!!)
+                    getAllSavedImagesByKeys(listOfSavedImagesKeys)
+
+                    Log.d(TAG, "getPassedArgument: receivedKeyList : $listOfSavedImagesKeys")
+
+                    getAllSavedImages()
+                } else {
+
+                    receivedImageToBeSaved = convertStringToSavedImage(args.imageToSave!!)
+
+                    getAllSavedImages()
+                }
+
+            } catch (e: Exception) {
+
+                Log.d(TAG, "getPassedArgument: Argument is not passed using navigation component")
+
+                // argument is received from an activity using newInstance function
+
+                isArgumentReceivedFromNavigationComponent = false
+
+                val savedImageString =
+                    arguments?.getString(PREVIEW_IMAGE_ACT_CHOOSE_COLLECTION_MESSAGE_KEY)
+
+                receivedImageToBeSaved = savedImageString?.let { convertStringToSavedImage(it) }!!
 
                 getAllSavedImages()
-            } else {
-
-                receivedImageToBeSaved = convertStringToSavedImage(args.imageToSave!!)
-
-                getAllSavedImages()
             }
-
-
         }
     }
 
@@ -164,10 +190,22 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
 
                 savedImagesViewModel.insertImage(receivedImageToBeSaved)
 
-                Log.d(TAG, "onCollectionClicked: Image saved to collection ${collection.collectionName}")
+                Log.d(
+                    TAG,
+                    "onCollectionClicked: Image saved to collection ${collection.collectionName}"
+                )
 
-                //passing the value to fragment from which this bottom sheet has been called
-                findNavController().previousBackStackEntry?.savedStateHandle?.set(IMAGE_SAVED_TO_COLLECTION_KEY, true)
+                if (isArgumentReceivedFromNavigationComponent) {
+
+                    //passing the value to fragment from which this bottom sheet has been called
+                    findNavController().previousBackStackEntry?.savedStateHandle?.set(
+                        IMAGE_SAVED_TO_COLLECTION_KEY,
+                        true
+                    )
+                } else {
+
+                    dismiss()
+                }
 
             } else {
 

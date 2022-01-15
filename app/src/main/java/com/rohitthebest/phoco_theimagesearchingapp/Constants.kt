@@ -29,6 +29,7 @@ object Constants {
     const val SEARCH_FRAGMENT_TAG_PEXEL = "sEARCHfRAGEMNTWIvjsvjsnjkvnkjbaYtaG"
     const val SEARCH_FRAGMENT_TAG_WEB = "sEARCHfRAGEMNTdfbdbfbfngkvnkjbaYtaG"
     const val SEARCH_FRAGMENT_TAG_UNDRAW = "sEARCHfRAGEMNTnksvnkfbfngkvxnvkknaYdfvnG"
+    const val PREVIEW_IMAGE_ACT_CHOOSE_COLLECTION_MESSAGE_KEY = "PREVsdbbMAGE_jnvnHOOSE_sbcESkfnEY"
 
     const val COLLECTION_KEY_FOR_ALL_PHOTOS = "fjvajkfvkjbvbvhbhva"
 

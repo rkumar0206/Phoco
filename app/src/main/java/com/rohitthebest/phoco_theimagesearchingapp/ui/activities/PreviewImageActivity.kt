@@ -14,6 +14,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rohitthebest.phoco_theimagesearchingapp.Constants
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.EXTRACTED_COLORS_IMAGE_URL_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.HOME_FRAGMENT_TAG
+import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_ACT_CHOOSE_COLLECTION_MESSAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.PREVIEW_IMAGE_TAG_KEY
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.SAVED_IMAGE_TAG
@@ -30,8 +31,10 @@ import com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData.Src
 import com.rohitthebest.phoco_theimagesearchingapp.remote.pixabayData.PixabayPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.remote.unsplashData.UnsplashPhoto
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.viewPagerAdapters.PreviewImageViewPagerAdapter
+import com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.dialogFragments.ChooseFromCollectionsFragment
 import com.rohitthebest.phoco_theimagesearchingapp.ui.fragments.dialogFragments.ExtractedColorsBottomSheetDialog
 import com.rohitthebest.phoco_theimagesearchingapp.utils.*
+import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertSavedImageToString
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.convertStringToImageDownloadLinksAndInfo
 import com.rohitthebest.phoco_theimagesearchingapp.utils.GsonConverters.Companion.fromStringToPreviewUnDrawImagesMessage
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
@@ -75,7 +78,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var previewViewPagerAdapter: PreviewImageViewPagerAdapter
 
-    // todo : handle the click listener of saveImageFAB
     // todo : handle the long click listener of saveImageFab to open the bottom sheet for choosing the collection
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -233,20 +235,20 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
                 return if (allSavedImageListId.contains(homeImageList[currentImageIndex].id)) {
 
-                    isImageSavedInDatabase(true)
+                    changeSavedImageFabIsImageSavedOrUnsaved(true)
                     true
                 } else {
-                    isImageSavedInDatabase(false)
+                    changeSavedImageFabIsImageSavedOrUnsaved(false)
                     false
                 }
             } else {
 
                 return if (allSavedImageListId.contains(imageDownloadLinksAndInfo.imageId)) {
 
-                    isImageSavedInDatabase(true)
+                    changeSavedImageFabIsImageSavedOrUnsaved(true)
                     true
                 } else {
-                    isImageSavedInDatabase(false)
+                    changeSavedImageFabIsImageSavedOrUnsaved(false)
                     false
                 }
             }
@@ -256,7 +258,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         return false
     }
 
-    private fun isImageSavedInDatabase(isImageSaved: Boolean) {
+    private fun changeSavedImageFabIsImageSavedOrUnsaved(isImageSaved: Boolean) {
 
         if (isImageSaved) {
             binding.saveImageFAB.setImageResource(R.drawable.ic_baseline_bookmark_24)
@@ -283,9 +285,9 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         } else {
 
             savedImageViewModel.getSavedImagesByCollectionKey(receivedCollectionKey).observe(
-                    this, {
+                this, { savedImages ->
 
-                    receivedSavedImageList = it
+                    receivedSavedImageList = savedImages
 
                     currentImageIndex =
                         receivedSavedImageList.indexOfFirst { image -> image.imageId == imageDownloadLinksAndInfo.imageId }
@@ -293,7 +295,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                     setUpPreviewImageViewPager(receivedSavedImageList.map { it.imageUrls.medium })
 
                     updateTheImageIndexNumberInTextView()
-            })
+                })
         }
     }
 
@@ -457,17 +459,30 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
             if (checkIfImageSavedInDatabase()) {
 
                 savedImageViewModel.deleteImageByImageId(homeImageList[currentImageIndex].id)
+                showToast(applicationContext, "Image deleted")
             } else {
 
                 val savedImage =
                     generateSavedImage(homeImageList[currentImageIndex], APIName.UNSPLASH)
                 savedImageViewModel.insertImage(savedImage)
+
+                //showToast(applicationContext, "Image saved")
+
+                binding.root.showSnackBar(
+                    "Image saved",
+                    actionMessage = "Choose collection"
+                ) {
+
+                    getSavedImageAndPassToChooseCollectionBottomSheet(savedImage.imageId)
+                }
+
             }
         } else {
 
             if (checkIfImageSavedInDatabase()) {
 
                 savedImageViewModel.deleteImageByImageId(imageDownloadLinksAndInfo.imageId)
+                showToast(applicationContext, "Image deleted")
             } else {
 
                 when (apiTag) {
@@ -491,6 +506,33 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         }
 
+    }
+
+    var isRefreshEnabled = true
+
+    private fun getSavedImageAndPassToChooseCollectionBottomSheet(imageId: String) {
+
+        savedImageViewModel.getSavedImageByImageId(imageId).observe(this) { savedImage ->
+
+            if (isRefreshEnabled) {
+
+                val bundle = Bundle()
+                bundle.putString(
+                    PREVIEW_IMAGE_ACT_CHOOSE_COLLECTION_MESSAGE_KEY,
+                    convertSavedImageToString(savedImage)
+                )
+
+                supportFragmentManager.let {
+
+                    ChooseFromCollectionsFragment.newInstance(bundle).apply {
+
+                        show(it, TAG)
+                    }
+                }
+
+                isRefreshEnabled = false
+            }
+        }
     }
 
     private fun handleSavingPexelPhoto() {
@@ -519,6 +561,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         val savedImage = generateSavedImage(pexelPhoto, APIName.PEXELS)
         savedImageViewModel.insertImage(savedImage)
+        showToast(applicationContext, "Image saved")
     }
 
     private fun handleSavingPixabayPhoto() {
@@ -539,6 +582,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         val savedImage = generateSavedImage(pixabay, APIName.PIXABAY)
         savedImageViewModel.insertImage(savedImage)
+        showToast(applicationContext, "Image saved")
 
     }
 
@@ -579,6 +623,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         val savedImage = generateSavedImage(unsplashPhoto, APIName.UNSPLASH)
         savedImageViewModel.insertImage(savedImage)
+        showToast(applicationContext, "Image saved")
 
     }
 

@@ -7,14 +7,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.COLLECTION_KEY_FOR_ALL_PHOTOS
 import com.rohitthebest.phoco_theimagesearchingapp.R
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.databinding.FragmentFavouriteBinding
 import com.rohitthebest.phoco_theimagesearchingapp.ui.adapters.CollectionsAdapter
 import com.rohitthebest.phoco_theimagesearchingapp.utils.hide
+import com.rohitthebest.phoco_theimagesearchingapp.utils.setImageToImageViewUsingGlide
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
@@ -48,21 +47,21 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite), CollectionsAda
 
     private fun getAllSavedPhotosList() {
 
-        savedImageViewModel.getAllSavedImages().observe(viewLifecycleOwner, {
+        savedImageViewModel.getAllSavedImages().observe(viewLifecycleOwner, { savedImages ->
 
-            collectionAdapter = CollectionsAdapter(it)
+            collectionAdapter = CollectionsAdapter(savedImages)
 
             setUpCollectionsRecyclerView()
 
             getAllCollections()
 
-            if (it.isNotEmpty()) {
+            if (savedImages.isNotEmpty()) {
 
                 val imageViewList = listOf(
-                        binding.allSavedIV1,
-                        binding.allSavedIV2,
-                        binding.allSavedIV3,
-                        binding.allSavedIV4
+                    binding.allSavedIV1,
+                    binding.allSavedIV2,
+                    binding.allSavedIV3,
+                    binding.allSavedIV4
                 )
 
                 try {
@@ -71,17 +70,18 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite), CollectionsAda
 
                         if (i < 4) {
 
-                            Glide.with(requireContext())
-                                    .load(it[i].imageUrls.small)
-                                    .transition(DrawableTransitionOptions.withCrossFade())
-                                    .into(imageViewList[i])
+                            setImageToImageViewUsingGlide(
+                                requireContext(),
+                                imageViewList[i],
+                                savedImages[i].imageUrls.small,
+                                {}, {}
+                            )
                         }
                     }
 
                 } catch (e: IndexOutOfBoundsException) {
                     e.printStackTrace()
                 }
-
             }
         })
     }
