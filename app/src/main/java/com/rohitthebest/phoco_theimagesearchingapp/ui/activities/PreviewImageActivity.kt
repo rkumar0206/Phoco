@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.rohitthebest.phoco_theimagesearchingapp.Constants
@@ -47,6 +48,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
@@ -249,7 +251,6 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                     updateImageDownloadInfo()
 
                     checkIfImageSavedInDatabase()
-
                 }
             }
         )
@@ -479,6 +480,8 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    private var savedImageTemp: SavedImage? = null
+
     private fun saveOrDeleteImageFromDatabase() {
 
         if (apiTag == HOME_FRAGMENT_TAG) {
@@ -491,18 +494,14 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
                 val savedImage =
                     generateSavedImage(homeImageList[currentImageIndex], APIName.UNSPLASH)
+
                 savedImageViewModel.insertImage(savedImage)
 
+                initSavedImageTemp(savedImage.imageId)
+
+                showSnackBarWithChooseCollectionActionButton()
+
                 //showToast(applicationContext, "Image saved")
-
-                binding.root.showSnackBar(
-                    "Image saved",
-                    actionMessage = "Choose collection"
-                ) {
-
-                    getSavedImageAndPassToChooseCollectionBottomSheet(savedImage.imageId)
-                }
-
             }
         } else {
 
@@ -535,18 +534,21 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    var isRefreshEnabled = true
+    private fun showSnackBarWithChooseCollectionActionButton() {
 
-    private fun getSavedImageAndPassToChooseCollectionBottomSheet(imageId: String) {
+        lifecycleScope.launch {
 
-        savedImageViewModel.getSavedImageByImageId(imageId).observe(this) { savedImage ->
+            delay(150)
 
-            if (isRefreshEnabled) {
+            binding.root.showSnackBar(
+                "Image saved",
+                actionMessage = "Choose collection"
+            ) {
 
                 val bundle = Bundle()
                 bundle.putString(
                     PREVIEW_IMAGE_ACT_CHOOSE_COLLECTION_MESSAGE_KEY,
-                    convertSavedImageToString(savedImage)
+                    savedImageTemp?.let { savedImage -> convertSavedImageToString(savedImage) }
                 )
 
                 supportFragmentManager.let {
@@ -556,11 +558,18 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
                         show(it, TAG)
                     }
                 }
-
-                isRefreshEnabled = false
             }
         }
     }
+
+    private fun initSavedImageTemp(imageId: String) {
+
+        savedImageViewModel.getSavedImageByImageId(imageId).observe(this) { savedImage ->
+
+            savedImageTemp = savedImage
+        }
+    }
+
 
     private fun handleSavingPexelPhoto() {
 
@@ -588,7 +597,9 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
         val savedImage = generateSavedImage(pexelPhoto, APIName.PEXELS)
         savedImageViewModel.insertImage(savedImage)
-        showToast(applicationContext, "Image saved")
+
+        initSavedImageTemp(savedImage.imageId)
+        showSnackBarWithChooseCollectionActionButton()
     }
 
     private fun handleSavingPixabayPhoto() {
@@ -611,10 +622,11 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         savedImageViewModel.insertImage(savedImage)
         showToast(applicationContext, "Image saved")
 
+        initSavedImageTemp(savedImage.imageId)
+        showSnackBarWithChooseCollectionActionButton()
     }
 
     private fun handleSavingUnsplashPhoto() {
-
 
         val unsplashPhoto = UnsplashPhoto(
             imageDownloadLinksAndInfo.imageId,
@@ -652,6 +664,8 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         savedImageViewModel.insertImage(savedImage)
         showToast(applicationContext, "Image saved")
 
+        initSavedImageTemp(savedImage.imageId)
+        showSnackBarWithChooseCollectionActionButton()
     }
 
     /**

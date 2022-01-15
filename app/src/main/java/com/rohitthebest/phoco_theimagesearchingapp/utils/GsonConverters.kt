@@ -11,7 +11,7 @@ class GsonConverters {
 
     companion object {
 
-        val gson = Gson()
+        private val gson = Gson()
 
         fun convertImageDownloadLinksAndInfoToString(imageDownloadLinksAndInfo: ImageDownloadLinksAndInfo): String {
 
