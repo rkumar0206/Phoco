@@ -50,4 +50,6 @@
     <string name="unDraw">unDraw</string>
     <string name="share_image_link">Share image link</string>
     <string name="share_image">Share image</string>
+    <string name="delete_collection">Delete Collection</string>
+    <string name="share_images_link">Share images link</string>
 </resources>

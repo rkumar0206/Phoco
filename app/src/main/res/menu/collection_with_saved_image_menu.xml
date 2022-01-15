@@ -4,10 +4,13 @@
 
     <item
         android:id="@+id/menu_edit_collection"
-        android:title="Edit Collection"
+        android:title="@string/edit_collection"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_share_collection_images"
+        android:title="@string/share_images_link" />
     <item
         android:id="@+id/menu_delete_collection"
         android:icon="@drawable/ic_baseline_delete_24"
-        android:title="Delete Collection" />
+        android:title="@string/delete_collection" />
 </menu>

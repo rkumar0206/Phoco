@@ -69,6 +69,8 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
     private var allItemsKey = emptyList<String>()
 
+    private var savedImages: List<SavedImage> = emptyList()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -80,6 +82,8 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
         }
 
         collectionWithSavedImagesAdapter = CollectionWithSavedImagesAdapter()
+
+        setUpMenuClickListener()
 
         getPassedArgument()
 
@@ -106,7 +110,7 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
             getCollectionInfo()
 
-            getAllSavedImages()
+            getSavedImages()
 
         }
     }
@@ -125,44 +129,48 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
                 }
             })
 
-            setUpMenuClickListener()
+
 
         } else {
 
             binding.savedImagesToolbar.title = "All photos"
 
-            binding.savedImagesToolbar.menu.clear()
-            binding.savedImagesToolbar.menu.close()
+            //binding.savedImagesToolbar.menu.clear()
+            //binding.savedImagesToolbar.menu.close()
+            binding.savedImagesToolbar.menu.findItem(R.id.menu_edit_collection).isVisible = false
+            binding.savedImagesToolbar.menu.findItem(R.id.menu_delete_collection).isVisible = false
         }
     }
 
-    private fun getAllSavedImages() {
+    private fun getSavedImages() {
 
         if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) {
 
-            savedImageViewModel.getAllSavedImages().observe(viewLifecycleOwner, {
+            savedImageViewModel.getAllSavedImages().observe(viewLifecycleOwner, { savedImageList ->
 
-                allItemsKey = it.map { k -> k.key }
+                initAllItemsKeyAndSubmitLIstToCollectionAdapter(savedImageList)
 
-                if (isRefreshEnabled) {
-
-                    collectionWithSavedImagesAdapter.submitList(it)
-                    isRefreshEnabled = false
-                }
             })
         } else {
 
             savedImageViewModel.getSavedImagesByCollectionKey(receivedCollectionKey)
-                    .observe(viewLifecycleOwner, {
+                .observe(viewLifecycleOwner, { savedImageList ->
 
-                        allItemsKey = it.map { k -> k.key }
+                    initAllItemsKeyAndSubmitLIstToCollectionAdapter(savedImageList)
+                })
+        }
+    }
 
-                        if (isRefreshEnabled) {
+    private fun initAllItemsKeyAndSubmitLIstToCollectionAdapter(savedImageList: List<SavedImage>) {
 
-                            collectionWithSavedImagesAdapter.submitList(it)
-                            isRefreshEnabled = false
-                        }
-                    })
+        savedImages = savedImageList
+
+        allItemsKey = savedImageList.map { k -> k.key }
+
+        if (isRefreshEnabled) {
+
+            collectionWithSavedImagesAdapter.submitList(savedImageList)
+            isRefreshEnabled = false
         }
     }
 
@@ -171,27 +179,60 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
         val menu = binding.savedImagesToolbar.menu
 
         menu.findItem(R.id.menu_edit_collection)
-                .setOnMenuItemClickListener {
+            .setOnMenuItemClickListener {
 
-                    val action = CollectionFragmentWithSavedImagesDirections
-                            .actionCollectionFragmentWithSavedImagesToAddCollectionFragment(
-                                    receivedCollectionKey
-                            )
+                val action = CollectionFragmentWithSavedImagesDirections
+                    .actionCollectionFragmentWithSavedImagesToAddCollectionFragment(
+                        receivedCollectionKey
+                    )
 
-                    findNavController().navigate(action)
+                findNavController().navigate(action)
 
-                    isRefreshEnabled = true
+                isRefreshEnabled = true
 
-                    true
-                }
+                true
+            }
 
         menu.findItem(R.id.menu_delete_collection)
-                .setOnMenuItemClickListener {
+            .setOnMenuItemClickListener {
 
-                    deleteCollection()
+                deleteCollection()
 
-                    true
+                true
+            }
+
+        menu.findItem(R.id.menu_share_collection_images)
+            .setOnMenuItemClickListener {
+
+                if (savedImages.isNotEmpty()) {
+
+                    val str = StringBuilder("")
+
+                    if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) {
+
+                        str.append("All saved photos (${savedImages.size})\n")
+                    } else {
+
+                        str.append("${receivedCollection.collectionName} collection (${savedImages.size})\n")
+                    }
+
+                    savedImages.forEach { savedImage ->
+
+                        str.append("\n\n")
+                        str.append("------------------------------\n")
+                        str.append(savedImage.imageUrls.original + "\n")
+                        str.append("------------------------------")
+                    }
+
+                    shareAsText(
+                        requireActivity(),
+                        str.toString(),
+                        "Collection images"
+                    )
                 }
+
+                true
+            }
     }
 
     private fun deleteCollection() {
