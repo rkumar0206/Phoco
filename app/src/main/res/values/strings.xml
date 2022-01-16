@@ -51,5 +51,10 @@
     <string name="share_image_link">Share image link</string>
     <string name="share_image">Share image</string>
     <string name="delete_collection">Delete Collection</string>
-    <string name="share_images_link">Share images link</string>
+    <string name="share_images_link_as_text">Share images link as text</string>
+    <string name="share_images_link_as_pdf">Share images link as pdf</string>
+    <string name="export_images_link">Export images link (pdf)</string>
+    <string name="export_images_image">Export images (pdf)</string>
+    <string name="share_collection_images">Share collection images</string>
+    <string name="export_images">Export images</string>
 </resources>

@@ -24,7 +24,7 @@ class CustomRequestBodyForFileUpload(
         private const val DEFAULT_BUFFER_SIZE = 2048
     }
 
-    override fun contentType(): MediaType? = "$contentType".toMediaTypeOrNull()
+    override fun contentType(): MediaType? = contentType.toMediaTypeOrNull()
 
     override fun contentLength(): Long = file.length()
 

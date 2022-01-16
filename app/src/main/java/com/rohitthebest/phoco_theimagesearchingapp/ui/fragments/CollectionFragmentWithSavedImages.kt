@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -42,11 +43,12 @@ import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+
 private const val TAG = "CollectionFragmentWithS"
 
 @AndroidEntryPoint
 class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_with_saved_images),
-        CollectionWithSavedImagesAdapter.OnClickListener {
+    CollectionWithSavedImagesAdapter.OnClickListener {
 
     private var _binding: FragmentCollectionWithSavedImagesBinding? = null
     private val binding get() = _binding!!
@@ -201,38 +203,60 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
                 true
             }
 
-        menu.findItem(R.id.menu_share_collection_images)
-            .setOnMenuItemClickListener {
+        menu.findItem(R.id.menu_share_collection_images_as_text).setOnMenuItemClickListener {
 
-                if (savedImages.isNotEmpty()) {
+            shareAsText(
+                requireActivity(),
+                getSavedImagesLinksAsString(
+                    savedImages.map { it.imageUrls.original },
+                    if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) null else receivedCollection
+                ),
+                "Saved images"
+            )
 
-                    val str = StringBuilder("")
+            true
+        }
+        menu.findItem(R.id.menu_share_collection_images_as_pdf).setOnMenuItemClickListener {
 
-                    if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) {
+            shareSavedImagesLinksAsPdf(
+                requireActivity(),
+                getSavedImagesLinksAsItextParagraph(
+                    savedImages.map { it.imageUrls.original },
+                    if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) null else receivedCollection
+                )
+            )
 
-                        str.append("All saved photos (${savedImages.size})\n")
-                    } else {
+            true
+        }
+        menu.findItem(R.id.menu_export_images_link).setOnMenuItemClickListener {
 
-                        str.append("${receivedCollection.collectionName} collection (${savedImages.size})\n")
-                    }
+            val fileName =
+                if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) "All_Saved" else receivedCollection.collectionName
 
-                    savedImages.forEach { savedImage ->
+            exportSavedImagesLinkToFile(
+                requireActivity(),
+                getSavedImagesLinksAsItextParagraph(
+                    savedImages.map { it.imageUrls.original },
+                    if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) null else receivedCollection
+                ),
+                fileName
+            )
 
-                        str.append("\n\n")
-                        str.append("------------------------------\n")
-                        str.append(savedImage.imageUrls.original + "\n")
-                        str.append("------------------------------")
-                    }
+            showToast(
+                requireContext(),
+                "Document saved to /PhoneStorage/Documents/$fileName.pdf",
+                Toast.LENGTH_LONG
+            )
 
-                    shareAsText(
-                        requireActivity(),
-                        str.toString(),
-                        "Collection images"
-                    )
-                }
+            true
+        }
+        menu.findItem(R.id.menu_export_images_image).setOnMenuItemClickListener {
 
-                true
-            }
+            showToast(requireContext(), "menu_export_images_image")
+
+            true
+        }
+
     }
 
     private fun deleteCollection() {
@@ -541,8 +565,11 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
             }
     }
 
+
     override fun onDestroyView() {
         super.onDestroyView()
+
+        Log.d(TAG, "onDestroyView: ")
 
         _binding = null
 

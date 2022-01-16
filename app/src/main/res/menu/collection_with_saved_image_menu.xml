@@ -8,7 +8,40 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/menu_share_collection_images"
-        android:title="@string/share_images_link" />
+        android:title="@string/share_collection_images">
+
+        <menu>
+
+            <item
+                android:id="@+id/menu_share_collection_images_as_text"
+                android:title="@string/share_images_link_as_text" />
+            <item
+                android:id="@+id/menu_share_collection_images_as_pdf"
+                android:title="@string/share_images_link_as_pdf" />
+
+        </menu>
+
+    </item>
+
+    <item
+        android:id="@+id/menu_export_images"
+        android:title="@string/export_images">
+
+        <menu>
+
+            <item
+                android:id="@+id/menu_export_images_link"
+                android:title="@string/export_images_link" />
+            <item
+                android:id="@+id/menu_export_images_image"
+                android:title="@string/export_images_image" />
+
+        </menu>
+
+
+    </item>
+
+
     <item
         android:id="@+id/menu_delete_collection"
         android:icon="@drawable/ic_baseline_delete_24"

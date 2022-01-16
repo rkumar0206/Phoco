@@ -5,4 +5,8 @@
         name="shared_image"
         path="images/" />
 
+    <cache-path
+        name="shared_pdf"
+        path="documents/" />
+
 </paths>

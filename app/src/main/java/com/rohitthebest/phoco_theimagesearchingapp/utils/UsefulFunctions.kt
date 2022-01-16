@@ -19,6 +19,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -28,8 +29,11 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.snackbar.Snackbar
+import com.itextpdf.text.*
+import com.itextpdf.text.pdf.PdfWriter
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.NO_INTERNET_MESSAGE
 import com.rohitthebest.phoco_theimagesearchingapp.R
+import com.rohitthebest.phoco_theimagesearchingapp.database.entity.Collection
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.SavedImage
 import com.rohitthebest.phoco_theimagesearchingapp.database.entity.UserInfo
 import com.rohitthebest.phoco_theimagesearchingapp.remote.pexelsData.PexelPhoto
@@ -578,38 +582,38 @@ fun showShareOptionPopoupMenu(
     }
 }
 
-fun handleShareImageMenu(context: Context, imageUrl: String) {
+fun handleShareImageMenu(activity: Activity, imageUrl: String) {
 
-    showToast(context, "Please wait...downloading file...")
+    showToast(activity, "Please wait...downloading file...")
 
     CoroutineScope(Dispatchers.Main).launch {
 
         getImageBitmapUsingGlide(
-            context,
+            activity,
             imageUrl,
         ) { bitmap ->
 
             CoroutineScope(Dispatchers.Main).launch {
 
-                saveBitmapToCacheDirectoryAndShare(context, bitmap)
+                saveBitmapToCacheDirectoryAndShare(activity, bitmap)
             }
         }
     }
 }
 
-private suspend fun saveBitmapToCacheDirectoryAndShare(context: Context, bitmap: Bitmap?) {
+private suspend fun saveBitmapToCacheDirectoryAndShare(activity: Activity, bitmap: Bitmap?) {
 
     withContext(Dispatchers.IO) {
         try {
 
-            val cachePath = File(context.cacheDir, "images")
+            val cachePath = File(activity.cacheDir, "images")
             cachePath.mkdirs()
             val fos = FileOutputStream("$cachePath/image.png") //overwrites the image everytime
             bitmap?.compress(Bitmap.CompressFormat.PNG, 100, fos)
             fos.close()
 
             //sharing the image
-            shareImage(context)
+            shareImage(activity)
 
         } catch (e: IOException) {
             e.printStackTrace()
@@ -619,27 +623,35 @@ private suspend fun saveBitmapToCacheDirectoryAndShare(context: Context, bitmap:
 
 }
 
-private fun shareImage(context: Context) {
+private fun shareImage(activity: Activity) {
 
-    val imagePath = File(context.cacheDir, "images")
+    val imagePath = File(activity.cacheDir, "images")
     val newFile = File(imagePath, "image.png")
 
     val contentUri = FileProvider.getUriForFile(
-        context,
+        activity,
         "com.rohitthebest.phoco_theimagesearchingapp.provider",
         newFile
     )
 
     if (contentUri != null) {
 
-        val shareIntent = Intent()
-        shareIntent.action = Intent.ACTION_SEND
-        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // temp permission for receiving app to read this file
-        shareIntent.setDataAndType(contentUri, context.contentResolver.getType(contentUri))
-        shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
-        context.startActivity(Intent.createChooser(shareIntent, "Share Via"))
-
+        shareUri(
+            activity,
+            contentUri
+        )
     }
+}
+
+fun shareUri(activity: Activity, contentUri: Uri) {
+
+    val shareIntent = Intent()
+    shareIntent.action = Intent.ACTION_SEND
+    shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // temp permission for receiving app to read this file
+    shareIntent.setDataAndType(contentUri, activity.contentResolver.getType(contentUri))
+    shareIntent.putExtra(Intent.EXTRA_STREAM, contentUri)
+    activity.startActivity(Intent.createChooser(shareIntent, "Share Via"))
+
 }
 
 
@@ -764,6 +776,190 @@ suspend fun setSvgImageUrlToImageViewUsingGlide(
         }
     }
 }
+
+fun getSavedImagesLinksAsString(
+    savedImagesUrls: List<String>,
+    collection: Collection? = null
+): String {
+
+    val str = StringBuilder("")
+
+    if (savedImagesUrls.isNotEmpty()) {
+
+        if (collection == null) {
+
+            // savedImages consist all the saved images
+            str.append("All saved photos (${savedImagesUrls.size})\n")
+        } else {
+
+            str.append("${collection.collectionName} collection (${savedImagesUrls.size})\n")
+        }
+
+        savedImagesUrls.forEach { savedImage ->
+
+            str.append("\n\n")
+            //str.append("------------------------------\n")
+            str.append(savedImage)
+            //str.append("------------------------------")
+        }
+    }
+
+    return str.toString()
+}
+
+fun getSavedImagesLinksAsItextParagraph(
+    savedImagesUrls: List<String>,
+    collection: Collection? = null
+): Paragraph {
+
+    val font: Font =
+        FontFactory.getFont(FontFactory.COURIER, 14f, BaseColor.BLACK)
+
+    val font2 = FontFactory.getFont(FontFactory.TIMES_ITALIC, 14f, Font.UNDERLINE, BaseColor.BLUE)
+
+    val paragraph = Paragraph("", font)
+
+    if (savedImagesUrls.isNotEmpty()) {
+
+        if (collection == null) {
+
+            paragraph.add("All saved photos (${savedImagesUrls.size})\n\n")
+
+        } else {
+
+            paragraph.add("${collection.collectionName} collection (${savedImagesUrls.size})\n\n")
+        }
+
+        savedImagesUrls.forEach { savedImageUrl ->
+
+            val anchor = Anchor(savedImageUrl, font2)
+            anchor.reference = savedImageUrl
+
+            paragraph.add(anchor)
+            paragraph.add("\n\n")
+        }
+    }
+
+    return paragraph
+}
+
+
+fun shareSavedImagesLinksAsPdf(
+    activity: Activity,
+    paragraph: Paragraph
+) {
+
+    try {
+
+        val cachePath = File(activity.cacheDir, "documents")
+        cachePath.mkdirs()
+        val fout =
+            FileOutputStream("$cachePath/phoco_collection.pdf") //overwrites the image everytime
+
+        makePdfOfString(fout, paragraph)
+
+        val pdfPath = File(activity.cacheDir, "documents")
+        val newFile = File(pdfPath, "phoco_collection.pdf")
+
+        val contentUri = FileProvider.getUriForFile(
+            activity,
+            "com.rohitthebest.phoco_theimagesearchingapp.provider",
+            newFile
+        )
+
+        if (contentUri != null) {
+
+            shareUri(
+                activity,
+                contentUri
+            )
+        }
+
+    } catch (e: IOException) {
+        e.printStackTrace()
+    }
+
+}
+
+fun exportSavedImagesLinkToFile(
+    activity: Activity,
+    paragraph: Paragraph,
+    fileName: String = "collection"
+): Uri? {
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+
+        val resolver = activity.contentResolver
+
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, "$fileName.pdf")
+            put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+            put(
+                MediaStore.MediaColumns.RELATIVE_PATH,
+                "${Environment.DIRECTORY_DOCUMENTS}/Phoco"
+            )
+        }
+
+        val uri = resolver?.insert(
+            MediaStore.Files.getContentUri("external"),
+            contentValues
+        )
+
+        uri?.let { pdfUri ->
+
+            resolver.openOutputStream(pdfUri).use { fout ->
+
+                try {
+
+                    makePdfOfString(fout, paragraph)
+
+                    return pdfUri
+
+                } catch (e: java.lang.Exception) {
+                    e.printStackTrace()
+                }
+            }
+
+        }
+    } else {
+
+        try {
+            val file = Environment
+                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS + "/Phoco/$fileName.pdf")
+
+            makePdfOfString(FileOutputStream(file), paragraph)
+
+            return file.toUri()
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    return null
+}
+
+fun makePdfOfString(fout: OutputStream?, paragraph: Paragraph) {
+
+    try {
+        val document = Document()
+
+        PdfWriter.getInstance(document, fout)
+
+        document.open()
+
+        document.add(paragraph)
+
+        document.close()
+
+        fout?.close()
+    } catch (e: Exception) {
+
+        e.printStackTrace()
+    }
+
+}
+
 
 
 

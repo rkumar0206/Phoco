@@ -107,15 +107,17 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
 
             HOME_FRAGMENT_TAG -> {
 
-                getAllSavedImages()
-
                 imageDownloadLinksAndInfo = intent.getStringExtra(PREVIEW_IMAGE_KEY)
                     ?.let { convertStringToImageDownloadLinksAndInfo(it) }!!
-
 
                 // in this condition images saved in UnsplashPhoto Database will be displayed (HomeFragment images)
                 getImageList()
 
+                lifecycleScope.launch {
+
+                    delay(150)
+                    getAllSavedImages()
+                }
             }
 
             SAVED_IMAGE_TAG -> {
