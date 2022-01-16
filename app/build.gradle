@@ -141,4 +141,5 @@ dependencies {
 
     implementation 'com.caverock:androidsvg-aar:1.4'
 
+    implementation 'io.sentry:sentry-android:5.5.2'
 }

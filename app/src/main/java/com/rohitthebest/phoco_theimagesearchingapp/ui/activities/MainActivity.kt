@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //Sentry.captureMessage("testing SDK setup")
 
         binding = ActivityMainBinding.inflate(layoutInflater)
 

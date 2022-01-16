@@ -31,6 +31,16 @@
             </intent-filter>
         </activity>
 
+        <meta-data
+            android:name="io.sentry.dsn"
+            android:value="https://83d4186f112c4d9982279f8cb9765393@o453884.ingest.sentry.io/6151581" />
+        <!-- Set tracesSampleRate to 1.0 to capture 100% of transactions for performance monitoring.
+           We recommend adjusting this value in production. -->
+        <meta-data
+            android:name="io.sentry.traces.sample-rate"
+            android:value="1.0" />
+
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.rohitthebest.phoco_theimagesearchingapp.provider"

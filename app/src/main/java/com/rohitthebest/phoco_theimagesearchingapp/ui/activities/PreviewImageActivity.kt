@@ -93,6 +93,9 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
         setContentView(binding.root)
 
         previewViewPagerAdapter = PreviewImageViewPagerAdapter(emptyList())
+        receivedSavedImageList = emptyList()
+        allSavedImageListId = emptyList()
+        homeImageList = emptyList()
         downloadedImageUris = ArrayList()
 
         apiTag = intent.getStringExtra(PREVIEW_IMAGE_TAG_KEY)!!
@@ -259,6 +262,7 @@ class PreviewImageActivity : AppCompatActivity(), View.OnClickListener {
     private fun checkIfImageSavedInDatabase(): Boolean {
 
         if (::allSavedImageListId.isInitialized
+            && allSavedImageListId.isNotEmpty()
             && apiTag != SAVED_IMAGE_TAG
             && apiTag != SEARCH_FRAGMENT_TAG_WEB
             && apiTag != SEARCH_FRAGMENT_TAG_UNDRAW
