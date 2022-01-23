@@ -57,4 +57,5 @@
     <string name="export_images_image">Export images (pdf)</string>
     <string name="share_collection_images">Share collection images</string>
     <string name="export_images">Export images</string>
+    <string name="no_collections_added">No collections added</string>
 </resources>

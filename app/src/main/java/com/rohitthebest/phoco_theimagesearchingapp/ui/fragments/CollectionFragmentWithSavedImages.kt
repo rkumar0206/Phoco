@@ -103,6 +103,8 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
         if (!arguments?.isEmpty!!) {
 
+            Log.d(TAG, "getPassedArgument: ")
+
             val args = arguments?.let {
 
                 CollectionFragmentWithSavedImagesArgs.fromBundle(it)
@@ -114,6 +116,10 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
             getSavedImages()
 
+        } else {
+
+            showToast(requireContext(), "Something went wrong...")
+            requireActivity().onBackPressed()
         }
     }
 
@@ -127,11 +133,17 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
                     receivedCollection = it
 
+                    Log.d(TAG, "getCollectionInfo: $receivedCollection")
+
+                    if (!::receivedCollection.isInitialized || it == null) {
+
+                        showToast(requireContext(), "Something went wrong...")
+                        requireActivity().onBackPressed()
+                    }
+
                     binding.savedImagesToolbar.title = receivedCollection.collectionName
                 }
             })
-
-
 
         } else {
 
@@ -150,7 +162,7 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
             savedImageViewModel.getAllSavedImages().observe(viewLifecycleOwner, { savedImageList ->
 
-                initAllItemsKeyAndSubmitLIstToCollectionAdapter(savedImageList)
+                initAllItemsKeyAndSubmitListToCollectionAdapter(savedImageList)
 
             })
         } else {
@@ -158,12 +170,12 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
             savedImageViewModel.getSavedImagesByCollectionKey(receivedCollectionKey)
                 .observe(viewLifecycleOwner, { savedImageList ->
 
-                    initAllItemsKeyAndSubmitLIstToCollectionAdapter(savedImageList)
+                    initAllItemsKeyAndSubmitListToCollectionAdapter(savedImageList)
                 })
         }
     }
 
-    private fun initAllItemsKeyAndSubmitLIstToCollectionAdapter(savedImageList: List<SavedImage>) {
+    private fun initAllItemsKeyAndSubmitListToCollectionAdapter(savedImageList: List<SavedImage>) {
 
         savedImages = savedImageList
 
@@ -205,48 +217,62 @@ class CollectionFragmentWithSavedImages : Fragment(R.layout.fragment_collection_
 
         menu.findItem(R.id.menu_share_collection_images_as_text).setOnMenuItemClickListener {
 
-            shareAsText(
-                requireActivity(),
-                getSavedImagesLinksAsString(
-                    savedImages.map { it.imageUrls.original },
-                    if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) null else receivedCollection
-                ),
-                "Saved images"
-            )
+            if (savedImages.isNotEmpty()) {
+
+                shareAsText(
+                    requireActivity(),
+                    getSavedImagesLinksAsString(
+                        savedImages.map { it.imageUrls.original },
+                        if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) null else receivedCollection
+                    ),
+                    "Saved images"
+                )
+            } else {
+                showToasty(requireContext(), "No images inside this collection", ToastyType.ERROR)
+            }
 
             true
         }
         menu.findItem(R.id.menu_share_collection_images_as_pdf).setOnMenuItemClickListener {
 
-            shareSavedImagesLinksAsPdf(
-                requireActivity(),
-                getSavedImagesLinksAsItextParagraph(
-                    savedImages.map { it.imageUrls.original },
-                    if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) null else receivedCollection
+            if (savedImages.isNotEmpty()) {
+                shareSavedImagesLinksAsPdf(
+                    requireActivity(),
+                    getSavedImagesLinksAsItextParagraph(
+                        savedImages.map { it.imageUrls.original },
+                        if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) null else receivedCollection
+                    )
                 )
-            )
+            } else {
+                showToasty(requireContext(), "No images inside this collection", ToastyType.ERROR)
+            }
 
             true
         }
         menu.findItem(R.id.menu_export_images_link).setOnMenuItemClickListener {
 
-            val fileName =
-                if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) "All_Saved" else receivedCollection.collectionName
+            if (savedImages.isNotEmpty()) {
+                val fileName =
+                    if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) "All_Saved" else receivedCollection.collectionName
 
-            exportSavedImagesLinkToFile(
-                requireActivity(),
-                getSavedImagesLinksAsItextParagraph(
-                    savedImages.map { it.imageUrls.original },
-                    if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) null else receivedCollection
-                ),
-                fileName
-            )
+                exportSavedImagesLinkToFile(
+                    requireActivity(),
+                    getSavedImagesLinksAsItextParagraph(
+                        savedImages.map { it.imageUrls.original },
+                        if (receivedCollectionKey == COLLECTION_KEY_FOR_ALL_PHOTOS) null else receivedCollection
+                    ),
+                    fileName
+                )
 
-            showToast(
-                requireContext(),
-                "Document saved to /PhoneStorage/Documents/$fileName.pdf",
-                Toast.LENGTH_LONG
-            )
+                showToast(
+                    requireContext(),
+                    "Document saved to /PhoneStorage/Documents/$fileName.pdf",
+                    Toast.LENGTH_LONG
+                )
+            } else {
+
+                showToasty(requireContext(), "No images inside this collection", ToastyType.ERROR)
+            }
 
             true
         }

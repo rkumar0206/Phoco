@@ -64,13 +64,33 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
 
         binding.addCollectionIB.setOnClickListener {
 
-            findNavController().navigate(R.id.action_chooseFromCollectionsFragment_to_addCollectionFragment)
+            openDialogForAddingNewCollection()
+
+
         }
 
         binding.addNewCollectionTV.setOnClickListener {
 
-            findNavController().navigate(R.id.action_chooseFromCollectionsFragment_to_addCollectionFragment)
+            openDialogForAddingNewCollection()
         }
+    }
+
+    private fun openDialogForAddingNewCollection() {
+
+        if (isArgumentReceivedFromNavigationComponent) {
+
+            findNavController().navigate(R.id.action_chooseFromCollectionsFragment_to_addCollectionFragment)
+        } else {
+
+            requireActivity().supportFragmentManager.let {
+
+                AddCollectionFragment.newInstance(null).apply {
+
+                    show(it, TAG)
+                }
+            }
+        }
+
     }
 
     private fun getPassedArgument() {
@@ -179,6 +199,7 @@ class ChooseFromCollectionsFragment : BottomSheetDialogFragment(), ChooseCollect
                 binding.chooseCollectionRV.show()
                 binding.addNewCollectionTV.hide()
 
+                binding.chooseCollectionRV.scrollToPosition(0)
                 chooseCollectionAdapter.submitList(it)
             } else {
 

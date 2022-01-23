@@ -58,19 +58,25 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
 
     private fun getPassedArguments() {
 
-        if (!arguments?.isEmpty!!) {
+        try {
+            if (!arguments?.isEmpty!!) {
 
-            val args = arguments?.let {
+                val args = arguments?.let {
 
-                AddCollectionFragmentArgs.fromBundle(it)
+                    AddCollectionFragmentArgs.fromBundle(it)
+                }
+
+                if (args?.collectionKey?.isValidString()!!) {
+
+                    isCollectionKeyReceived = true
+                    receivedCollectionKey = args.collectionKey!!
+                    getCollection()
+                }
             }
+        } catch (e: NullPointerException) {
 
-            if (args?.collectionKey?.isValidString()!!) {
-
-                isCollectionKeyReceived = true
-                receivedCollectionKey = args.collectionKey!!
-                getCollection()
-            }
+            isCollectionKeyReceived = false
+            e.printStackTrace()
         }
     }
 
@@ -240,6 +246,18 @@ class AddCollectionFragment : BottomSheetDialogFragment(), View.OnClickListener 
             }
         })
     }
+
+    companion object {
+
+        @JvmStatic
+        fun newInstance(bundle: Bundle?): AddCollectionFragment {
+
+            val fragment = AddCollectionFragment()
+            fragment.arguments = bundle
+            return fragment
+        }
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

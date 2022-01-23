@@ -1,10 +1,12 @@
 package com.rohitthebest.phoco_theimagesearchingapp.ui.fragments
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rohitthebest.phoco_theimagesearchingapp.Constants.COLLECTION_KEY_FOR_ALL_PHOTOS
@@ -17,7 +19,10 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.setImageToImageViewUsin
 import com.rohitthebest.phoco_theimagesearchingapp.utils.show
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.CollectionViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
+import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.fragmentsViewModels.FavouriteFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val TAG = "FavouritesFragment"
 
@@ -29,20 +34,42 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite), CollectionsAda
 
     private val savedImageViewModel by viewModels<SavedImageViewModel>()
     private val collectionViewModel by viewModels<CollectionViewModel>()
+    private val favouriteFragmentViewModel by viewModels<FavouriteFragmentViewModel>()
 
     private lateinit var collectionAdapter: CollectionsAdapter
+
+    private var recyclerViewSate: Parcelable? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         _binding = FragmentFavouriteBinding.bind(view)
 
-        getAllSavedPhotosList()
+        binding.progressBar.show()
+
+        // run this function to delete
+        collectionViewModel.deleteAllEmptyCollections()
+
+        lifecycleScope.launch {
+
+            delay(100)
+            getAllSavedPhotosList()
+        }
 
         binding.allPhotosCV.setOnClickListener {
 
             navigateToCollectionFragment(COLLECTION_KEY_FOR_ALL_PHOTOS)
         }
+
+        getRVState()
+    }
+
+    private fun getRVState() {
+
+        favouriteFragmentViewModel.favouriteRVState.observe(viewLifecycleOwner, { rvState ->
+
+            recyclerViewSate = rvState
+        })
     }
 
     private fun getAllSavedPhotosList() {
@@ -53,7 +80,11 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite), CollectionsAda
 
             setUpCollectionsRecyclerView()
 
-            getAllCollections()
+            lifecycleScope.launch {
+
+                delay(200)
+                getAllCollections()
+            }
 
             if (savedImages.isNotEmpty()) {
 
@@ -129,17 +160,29 @@ class FavouritesFragment : Fragment(R.layout.fragment_favourite), CollectionsAda
                 binding.noCollectionAddedTV.hide()
 
                 collectionAdapter.submitList(it)
+
+                recyclerViewSate?.let { rvState ->
+
+                    binding.collectionRV.layoutManager?.onRestoreInstanceState(rvState)
+                }
+
             } else {
 
                 binding.collectionRV.hide()
                 binding.noCollectionAddedTV.show()
 
             }
+
+            binding.progressBar.hide()
         })
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+
+        favouriteFragmentViewModel.saveFavouriteRVState(
+            binding.collectionRV.layoutManager?.onSaveInstanceState()
+        )
 
         _binding = null
     }
