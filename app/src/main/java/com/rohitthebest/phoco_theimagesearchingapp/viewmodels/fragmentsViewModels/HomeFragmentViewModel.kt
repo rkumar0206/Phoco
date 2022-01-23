@@ -12,7 +12,7 @@ class HomeFragmentViewModel(
 
     companion object {
 
-        private val HOME_FRAGMENT_SAVE_KEY = "nfjvnkjbskb"
+        private const val HOME_FRAGMENT_SAVE_KEY = "nfjvnkjbskb"
     }
 
     fun saveRVState(rvState: Parcelable?) {
