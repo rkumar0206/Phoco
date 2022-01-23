@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -31,6 +32,7 @@ import com.rohitthebest.phoco_theimagesearchingapp.utils.dataHelperClass.ImageDo
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.apiViewModels.UnsplashViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.SavedImageViewModel
 import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.databaseViewModels.UnsplashPhotoViewModel
+import com.rohitthebest.phoco_theimagesearchingapp.viewmodels.fragmentsViewModels.HomeFragmentViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -49,6 +51,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
     private val unsplashViewModel by viewModels<UnsplashViewModel>()
     private val unsplashPhotoViewModel by viewModels<UnsplashPhotoViewModel>()  //room database methods
     private val savedImageViewModel by viewModels<SavedImageViewModel>()
+    private val homeFragmentViewModel by viewModels<HomeFragmentViewModel>()
 
     private var isRefreshEnabled = true
     private var isObservingForImageSavedInCollection = false
@@ -57,6 +60,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
     private var lastDateSaved: String? = ""
 
     private var savedImagesIdList = emptyList<String>()
+
+    private var rvStateParcelable: Parcelable? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -85,8 +90,18 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
         observeForIfSavedImageAddedToTheCollection()
 
+        getRecyclerViewState()
+
         //deleteUserProfileDataFromSharedPreference(requireActivity())
         //deleteAuthTokensFromSharedPreference(requireActivity())
+    }
+
+    private fun getRecyclerViewState() {
+
+        homeFragmentViewModel.rVState.observe(viewLifecycleOwner, { parcelable ->
+
+            rvStateParcelable = parcelable
+        })
     }
 
     private fun getSavedImagesIdList() {
@@ -132,6 +147,8 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
                         homeAdapter.submitList(it)
 
+                        //restoreRecyclerViewState()
+
                     } else {
 
                         //if it's the next day i.e after 12:00 AM
@@ -144,6 +161,14 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
             }
 
         })
+    }
+
+    private fun restoreRecyclerViewState() {
+
+        rvStateParcelable?.let {
+
+            binding.homeRV.layoutManager?.onRestoreInstanceState(it)
+        }
     }
 
     private fun makeNewAPIRequest() {
@@ -210,6 +235,7 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
                 binding.homeSwipeRefreshLayout.isRefreshing = false
 
                 homeAdapter.submitList(data)
+
             }
 
             saveUnsplashPhotoDate()
@@ -312,7 +338,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         }
     }
 
-
     private fun updateItemOfUnsplashSearchAdapter(position: Int) {
 
         lifecycleScope.launch {
@@ -361,7 +386,6 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
         openLinkInBrowser(requireContext(), unsplashPhoto.user.attributionUrl)
 
     }
-
 
     private var position: Int = -1
 
@@ -485,6 +509,10 @@ class HomeFragment : Fragment(R.layout.fragment_home), HomeRVAdapter.OnClickList
 
     override fun onDestroyView() {
         super.onDestroyView()
+
+        homeFragmentViewModel.saveRVState(
+            binding.homeRV.layoutManager?.onSaveInstanceState()
+        )
 
         _binding = null
     }
